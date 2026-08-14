@@ -1,0 +1,290 @@
+/* Editor rows, statements, backups and shared crud toolbar. */
+/* Token / translation editor rows (appearance module) */
+.token-toolbar {
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-sm);
+}
+
+.token-toolbar__hint {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.token-toolbar__actions {
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.token-search {
+  width: calc(var(--sidebar-width) - var(--space-xl));
+}
+
+.token-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-sm);
+}
+
+.token-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xs) 0;
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.token-row:last-child {
+  border-bottom: none;
+}
+
+.token-row__key {
+  flex: 0 0 clamp(160px, 30%, 320px);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+/* Theme tokens are short — no need for a wide key column */
+.token-row__key--compact {
+  flex-basis: clamp(120px, 18%, 220px);
+}
+
+/* Two-letter language codes */
+.token-row__key--code {
+  flex-basis: calc(var(--space-xl) * 2);
+}
+
+.token-row .ui-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.ui-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.token-row__grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.token-row__swatch {
+  width: var(--control-height);
+  height: calc(var(--control-height) - var(--space-sm));
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--color-border-strong);
+  flex-shrink: 0;
+}
+
+/* Financial statement (P&L / balance sheet) */
+.statement {
+  display: flex;
+  flex-direction: column;
+}
+
+.statement__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: var(--border-width) solid var(--color-border);
+  font-size: var(--font-size-md);
+}
+
+.statement__row:last-child {
+  border-bottom: none;
+}
+
+.statement__row--header {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-sm);
+  margin-top: var(--space-sm);
+}
+
+.statement__row--line {
+  padding-inline-start: var(--space-xl);
+  color: var(--color-text-soft);
+}
+
+.statement__row--subtotal {
+  font-weight: var(--font-weight-medium);
+  background: var(--color-surface-alt);
+}
+
+.statement__row--total {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  background: var(--brand-gradient);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-sm);
+  box-shadow: var(--shadow-glow);
+}
+
+.statement__amount--negative {
+  color: var(--color-danger);
+}
+
+.statement__row--total .statement__amount--negative {
+  color: var(--color-text-inverse);
+}
+
+/* Customer statement (كشف حساب العميل) */
+.statement-summary {
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+.statement-summary__item strong {
+  color: var(--color-text);
+}
+
+.statement-card__note {
+  margin-top: var(--space-sm);
+}
+
+/* Backups module */
+.backup-card {
+  margin-bottom: var(--space-lg);
+}
+
+/* Schedule form: everything sits on the inputs' baseline */
+.backup-form {
+  align-items: flex-end;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-top: var(--space-md);
+}
+
+.backup-card__switch {
+  gap: var(--space-sm);
+  align-items: center;
+  height: var(--control-height);
+  white-space: nowrap;
+}
+
+.backup-card__field {
+  flex: 0 1 calc(var(--sidebar-width) * 0.6);
+
+  .ui-field__label {
+    margin-bottom: var(--space-xs);
+  }
+}
+
+.backup-form__save {
+  height: var(--control-height);
+}
+
+.backup-card__next {
+  margin: var(--space-md) 0 0;
+}
+
+/* History header: title + hint stacked, actions at the end */
+.backup-head {
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
+.backup-head__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+
+  .ui-card__title,
+  .ui-field__hint {
+    margin: 0;
+  }
+}
+
+/* Multi-image field (upload files or paste links) */
+.image-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.image-input__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.image-input__item {
+  position: relative;
+  display: inline-flex;
+}
+
+.image-input__remove {
+  position: absolute;
+  inset-block-start: calc(var(--space-xs) * -1);
+  inset-inline-end: calc(var(--space-xs) * -1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-lg);
+  height: var(--space-lg);
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid var(--color-border-strong);
+  background: var(--color-surface-solid);
+  color: var(--color-danger);
+  cursor: pointer;
+}
+
+.image-input__controls {
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.image-input__controls .ui-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.ui-table__thumbs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+/* Shared crud toolbar date filter */
+.crud-filter {
+  gap: var(--space-xs);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.crud-filter .ui-field__label {
+  margin: 0;
+}
+
+.crud-filter .ui-control {
+  width: auto;
+}
+
+/* Free-text search inside every module list */
+.crud-search {
+  flex: 1;
+  min-width: calc(var(--space-xl) * 5);
+  max-width: calc(var(--space-xl) * 9);
+}

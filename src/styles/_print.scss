@@ -1,0 +1,96 @@
+/* Roll label (بطاقة المقص) — mirrors the physical card glued on rolls. */
+.roll-label {
+  width: 340px;
+  background: var(--color-surface-solid);
+  color: var(--color-text);
+  border: var(--border-width) solid var(--color-text);
+  font-size: var(--font-size-sm);
+  direction: ltr;
+}
+
+.roll-label__head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-sm);
+  border-bottom: var(--border-width) solid var(--color-text);
+}
+
+.roll-label__logo {
+  width: 64px;
+  object-fit: contain;
+}
+
+.roll-label__company {
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+}
+
+.roll-label__product {
+  text-align: center;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md);
+  padding: var(--space-xs);
+  border-bottom: var(--border-width) solid var(--color-text);
+  direction: rtl;
+}
+
+.roll-label__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.roll-label__grid > div {
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: var(--border-width) solid var(--color-text);
+}
+
+.roll-label__grid > div:nth-child(odd) {
+  border-inline-end: var(--border-width) solid var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.roll-label__grid > div:nth-child(even) {
+  text-align: center;
+}
+
+.roll-label__iso {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  border-bottom: var(--border-width) solid var(--color-text);
+}
+
+.roll-label__footer {
+  text-align: center;
+  padding: var(--space-xs);
+  font-size: var(--font-size-xs);
+}
+
+.roll-label__barcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+  }
+}

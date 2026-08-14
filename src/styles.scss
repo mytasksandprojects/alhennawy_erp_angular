@@ -1,0 +1,18 @@
+/*
+ * Al Hennawy ERP — global stylesheet.
+ * HARD RULE: no literal colors, sizes, fonts or numbers with visual
+ * meaning. Everything references CSS variables injected at runtime by
+ * ThemeService from the API payload. Empty API ⇒ unstyled white screen.
+ */
+@use 'styles/base';
+@use 'styles/controls';
+@use 'styles/table';
+@use 'styles/charts';
+@use 'styles/panels';
+@use 'styles/shell';
+@use 'styles/search';
+@use 'styles/reports';
+@use 'styles/lightbox';
+@use 'styles/color-edit';
+@use 'styles/layout';
+@use 'styles/print';

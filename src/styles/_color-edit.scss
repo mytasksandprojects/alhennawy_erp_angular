@@ -1,0 +1,83 @@
+/* Theme token color pickers — solid swatch picker + gradient builder */
+app-token-color {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* Native color input styled to look exactly like the static swatch */
+.token-row__swatch--picker {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.token-row__swatch--btn {
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Gradient builder popover anchored under the swatch */
+.color-pop {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  inset-inline-start: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: calc(var(--space-xl) * 9);
+  padding: var(--space-md);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+.color-pop__row {
+  align-items: center;
+  gap: var(--space-sm);
+
+  .ui-field__label {
+    margin: 0;
+    flex-shrink: 0;
+  }
+}
+
+.color-pop__swatch {
+  width: var(--control-height);
+  height: calc(var(--control-height) - var(--space-sm));
+  padding: 0;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.color-pop__value {
+  flex: 1;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
