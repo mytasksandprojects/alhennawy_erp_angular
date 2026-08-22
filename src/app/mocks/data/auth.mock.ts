@@ -83,7 +83,7 @@ export function mockLogin(body: unknown): AuthSession {
       user: {
         id: employee.id,
         username: employee.email ?? login,
-        displayName: employee.name_en || employee.name,
+        displayName: employee['name_en'] || employee.name,
         roleKey: role?.nameKey ?? 'hr.fields.employee',
         roleId: employee.roleId,
         permissions: role?.permissions ?? ['checkin.view'],
