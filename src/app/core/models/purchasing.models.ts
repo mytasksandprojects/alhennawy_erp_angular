@@ -27,6 +27,8 @@ export interface PurchaseRequest {
   date: string;
   requestingDepartmentKey: string;
   status: PurchaseRequestStatus;
+  itemName?: string;
+  quantity?: number;
   lines: PurchaseRequestLine[];
 }
 

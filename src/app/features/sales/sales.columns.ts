@@ -105,7 +105,7 @@ export const INVOICE_COLUMNS: TableColumn[] = [
 ];
 
 export const WORK_ORDER_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'WO' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'channel', labelKey: 'sales.fields.channel', type: 'select', options: keysToOptions('sales.channels.', ['local', 'export']) },
   { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
@@ -118,7 +118,7 @@ export const WORK_ORDER_FIELDS: FormField[] = [
 ];
 
 export const CUSTOMER_FIELDS: FormField[] = [
-  { key: 'code', labelKey: 'common.code', required: true },
+  { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'CUS' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'region', labelKey: 'sales.fields.region', multilang: true },
   { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies' },
@@ -126,7 +126,7 @@ export const CUSTOMER_FIELDS: FormField[] = [
 ];
 
 export const EXPORT_ORDER_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'EO' },
   { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
   { key: 'stage', labelKey: 'logistics.fields.stage', type: 'select', options: keysToOptions('sales.stages.', ['quotation', 'internal-approval', 'proforma', 'supply-order', 'warehouse', 'production-scheduled', 'logistics', 'production', 'issued', 'invoiced']) },
   { key: 'rollsCount', labelKey: 'sales.fields.rolls', type: 'number' },
@@ -134,7 +134,7 @@ export const EXPORT_ORDER_FIELDS: FormField[] = [
 ];
 
 export const INVOICE_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'INV' },
   { key: 'kind', labelKey: 'common.type', type: 'select', options: keysToOptions('sales.kinds.', ['commercial', 'local', 'packing-list']) },
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },

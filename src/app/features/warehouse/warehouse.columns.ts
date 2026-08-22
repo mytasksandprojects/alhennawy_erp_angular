@@ -51,7 +51,7 @@ export const WAREHOUSE_FIELDS: FormField[] = [
 ];
 
 export const STOCK_ITEM_FIELDS: FormField[] = [
-  { key: 'code', labelKey: 'common.code', required: true },
+  { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'ITM' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'warehouseId', labelKey: 'warehouse.tabs.warehouses' },
   { key: 'quantity', labelKey: 'common.quantity', type: 'number' },
@@ -61,7 +61,7 @@ export const STOCK_ITEM_FIELDS: FormField[] = [
 ];
 
 export const MOVEMENT_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'MOV' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'type', labelKey: 'common.type', type: 'select', options: keysToOptions('warehouse.types.', ['receipt', 'issue', 'transfer', 'adjustment']) },
   { key: 'itemName', labelKey: 'common.name', multilang: true },

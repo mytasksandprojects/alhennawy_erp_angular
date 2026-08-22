@@ -5,6 +5,10 @@ import {
   ModuleTabbedView,
 } from '../../shared/components/module-tabbed-view';
 import {
+  DEPT_PURCHASE_REQUEST_FIELDS,
+  PURCHASE_REQUEST_COLUMNS,
+} from '../purchasing/purchasing.columns';
+import {
   MOVEMENT_COLUMNS,
   MOVEMENT_FIELDS,
   RECEIPT_COLUMNS,
@@ -59,6 +63,13 @@ export class WarehousePage {
       endpoint: API_ENDPOINTS.warehouse.receipts,
       columns: RECEIPT_COLUMNS,
       fields: RECEIPT_FIELDS,
+    },
+    {
+      id: 'purchaseRequests',
+      labelKey: 'purchasing.tabs.requests',
+      endpoint: API_ENDPOINTS.warehouse.purchaseRequests,
+      columns: PURCHASE_REQUEST_COLUMNS,
+      fields: DEPT_PURCHASE_REQUEST_FIELDS,
     },
   ];
 }

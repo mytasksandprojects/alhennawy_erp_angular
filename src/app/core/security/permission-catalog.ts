@@ -103,6 +103,7 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       tab('items', 'warehouse.tabs.items', STOCK_ITEM_COLUMNS),
       tab('movements', 'warehouse.tabs.movements', MOVEMENT_COLUMNS),
       tab('receipts', 'warehouse.tabs.receipts', RECEIPT_COLUMNS),
+      tab('purchaseRequests', 'purchasing.tabs.requests', PURCHASE_REQUEST_COLUMNS),
     ],
   },
   {
@@ -119,7 +120,11 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
   {
     id: 'production',
     labelKey: 'menu.production',
-    tabs: [dash(), tab('orders', 'production.tabs.orders', PRODUCTION_ORDER_COLUMNS)],
+    tabs: [
+      dash(),
+      tab('orders', 'production.tabs.orders', PRODUCTION_ORDER_COLUMNS),
+      tab('purchaseRequests', 'purchasing.tabs.requests', PURCHASE_REQUEST_COLUMNS),
+    ],
   },
   {
     id: 'chemicals',

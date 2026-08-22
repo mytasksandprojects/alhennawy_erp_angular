@@ -14,6 +14,7 @@ import { AccessService } from '../../core/security/access.service';
 import { exportRowsToCsv } from '../crud/export-csv';
 import { deleteRow, persistRow } from '../crud/crud-write';
 import { emptyDraft, rowMatches, shownColumns, shownFields } from '../crud/form-draft';
+import { withGenerated } from '../crud/serial';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { printWide } from '../crud/print-page';
 import { matchesStock, stockStatusOf } from '../crud/stock-filter';
@@ -218,7 +219,8 @@ export class CrudPanel extends Translated {
   }
 
   protected shownFields(): FormField[] {
-    return shownFields(this.fields(), this.columns(), this.shownColumns(), this.moduleId(), this.tabId(), this.access);
+    const fields = shownFields(this.fields(), this.columns(), this.shownColumns(), this.moduleId(), this.tabId(), this.access);
+    return this.editingId() ? fields : fields.filter((field) => !field.generated);
   }
 
   protected exportPdf(): void {
@@ -266,7 +268,7 @@ export class CrudPanel extends Translated {
   protected async save(): Promise<void> {
     if (!(await this.confirm.askSave())) return;
     this.busy.set(true);
-    persistRow(this.api, this.notifications, this.endpoint(), this.editingId(), this.draft(), () => {
+    persistRow(this.api, this.notifications, this.endpoint(), this.editingId(), withGenerated(this.fields(), this.draft(), this.rows()), () => {
       this.busy.set(false);
       this.close();
       this.reload();

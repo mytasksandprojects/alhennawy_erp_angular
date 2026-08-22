@@ -110,7 +110,7 @@ export const FLEET_FIELDS: FormField[] = [
 ];
 
 export const CUSTODY_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'CST' },
   { key: 'descriptionKey', labelKey: 'quality.fields.description' },
   { key: 'holderName', labelKey: 'administration.fields.holder', multilang: true },
   { key: 'issuedAt', labelKey: 'administration.fields.issuedAt', type: 'date' },
@@ -118,7 +118,7 @@ export const CUSTODY_FIELDS: FormField[] = [
 ];
 
 export const CONTRACT_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'CNT' },
   { key: 'titleKey', labelKey: 'common.name' },
   { key: 'vendorName', labelKey: 'administration.fields.vendor', multilang: true },
   { key: 'startDate', labelKey: 'administration.fields.startDate', type: 'date' },
@@ -128,7 +128,7 @@ export const CONTRACT_FIELDS: FormField[] = [
 ];
 
 export const PERMIT_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'PMT' },
   { key: 'visitorName', labelKey: 'administration.fields.visitor', multilang: true },
   { key: 'companyName', labelKey: 'administration.fields.company', multilang: true },
   { key: 'purposeKey', labelKey: 'administration.fields.purpose' },

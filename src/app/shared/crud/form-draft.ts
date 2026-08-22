@@ -7,7 +7,8 @@ type Row = Record<string, unknown>;
 export function emptyDraft(fields: FormField[]): Draft {
   const next: Draft = {};
   for (const field of fields) {
-    next[field.key] = field.type === 'number' ? 0 : field.options?.[0]?.value ?? '';
+    next[field.key] =
+      field.type === 'number' ? 0 : field.type === 'date' ? new Date().toISOString().slice(0, 10) : field.options?.[0]?.value ?? '';
   }
   return next;
 }

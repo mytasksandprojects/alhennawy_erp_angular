@@ -82,6 +82,7 @@ export const API_ENDPOINTS = {
     items: '/warehouse/items',
     movements: '/warehouse/movements',
     receipts: '/warehouse/receipts',
+    purchaseRequests: '/warehouse/purchase-requests',
   },
   quality: {
     dashtInspections: '/quality/dasht-inspections',
@@ -91,6 +92,7 @@ export const API_ENDPOINTS = {
   },
   production: {
     orders: '/production/orders',
+    purchaseRequests: '/production/purchase-requests',
   },
   sales: {
     customers: '/sales/customers',

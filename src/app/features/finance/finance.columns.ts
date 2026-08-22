@@ -43,7 +43,7 @@ export const ACCOUNT_COLUMNS: TableColumn[] = [
 ];
 
 export const JOURNAL_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'finance.fields.entryNo', type: 'number', required: true },
+  { key: 'number', labelKey: 'finance.fields.entryNo', type: 'number', generated: true },
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'sourceKey', labelKey: 'finance.fields.source', type: 'select', lookup: 'journalSources' },
   { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies', rateKey: 'exchangeRate' },
@@ -81,7 +81,7 @@ export const EXPENSE_FIELDS: FormField[] = [
 ];
 
 export const ACCOUNT_FIELDS: FormField[] = [
-  { key: 'code', labelKey: 'common.code', required: true },
+  { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'ACC' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'parentCode', labelKey: 'finance.fields.parentCode' },
   { key: 'level', labelKey: 'finance.fields.level', type: 'number' },

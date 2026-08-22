@@ -6,6 +6,7 @@ import {
   ZkSyncLog,
 } from '../../core/models/hr.models';
 import { MockApiError } from '../mock-backend.interceptor';
+import { nextGenerated } from '../../shared/crud/serial';
 
 /** MOCK LAYER — HR data incl. ZKTeco device sync logs. */
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
@@ -62,6 +63,7 @@ export function upsertEmployee(body: unknown): Employee {
   const row: Employee = {
     ...incoming,
     id: incoming.id || `e-${Date.now()}`,
+    code: incoming.code || nextGenerated(MOCK_EMPLOYEES, 'code', 'EMP'),
     email,
     password,
   };

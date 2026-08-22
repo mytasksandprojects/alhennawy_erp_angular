@@ -80,6 +80,7 @@ type Draft = Record<string, string | number | boolean>;
               <input
                 class="ui-control"
                 type="number"
+                [disabled]="!!field.generated"
                 [ngModel]="draft()[field.key]"
                 (ngModelChange)="set(field.key, toNumber($event))"
               />
@@ -118,6 +119,7 @@ type Draft = Record<string, string | number | boolean>;
                 class="ui-control"
                 [type]="field.type === 'password' ? 'password' : field.type === 'email' ? 'email' : 'text'"
                 [attr.autocomplete]="field.type === 'password' ? 'new-password' : null"
+                [disabled]="!!field.generated"
                 [ngModel]="asText(field.key)"
                 (ngModelChange)="set(field.key, $event)"
               />

@@ -67,7 +67,7 @@ export const EXPORT_SHIPMENT_COLUMNS: TableColumn[] = [
 ];
 
 export const IMPORT_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'IMP' },
   { key: 'supplierName', labelKey: 'purchasing.fields.supplier', multilang: true },
   { key: 'stage', labelKey: 'logistics.fields.stage', type: 'select', options: keysToOptions('logistics.importStages.', ['rfq', 'proforma', 'acid', 'cargox', 'form4', 'customs', 'warehouse-receipt', 'finance-costing', 'closed']) },
   { key: 'acidNo', labelKey: 'logistics.fields.acid' },
@@ -77,7 +77,7 @@ export const IMPORT_FIELDS: FormField[] = [
 ];
 
 export const EXPORT_SHIPMENT_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'EXP' },
   { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
   { key: 'stage', labelKey: 'logistics.fields.stage', type: 'select', options: keysToOptions('logistics.exportStages.', ['booking', 'loading', 'shipped', 'documents', 'delivered', 'closed']) },
   { key: 'containersCount', labelKey: 'logistics.fields.containers', type: 'number' },

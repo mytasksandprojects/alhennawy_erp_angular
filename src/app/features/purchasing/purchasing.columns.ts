@@ -4,6 +4,8 @@ import { keysToOptions } from '../../shared/crud/options';
 export const PURCHASE_REQUEST_COLUMNS: TableColumn[] = [
   { key: 'number', labelKey: 'common.number' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
+  { key: 'itemName', labelKey: 'warehouse.tabs.items' },
+  { key: 'quantity', labelKey: 'common.quantity', type: 'number' },
   { key: 'requestingDepartmentKey', labelKey: 'purchasing.fields.department', type: 'key' },
   {
     key: 'status',
@@ -64,14 +66,21 @@ export const QUOTATION_COLUMNS: TableColumn[] = [
 ];
 
 export const PURCHASE_REQUEST_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'PR' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
-  { key: 'requestingDepartmentKey', labelKey: 'purchasing.fields.department' },
+  { key: 'itemName', labelKey: 'warehouse.tabs.items', type: 'select', lookup: 'stockItems', required: true },
+  { key: 'quantity', labelKey: 'common.quantity', type: 'number', required: true },
+  { key: 'requestingDepartmentKey', labelKey: 'purchasing.fields.department', type: 'select', lookup: 'departments' },
   { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('purchasing.requestStatus.', ['pending', 'approved', 'rejected', 'ordered']) },
 ];
 
+/** Warehouse / production raise a request — department and status are set by the API. */
+export const DEPT_PURCHASE_REQUEST_FIELDS: FormField[] = PURCHASE_REQUEST_FIELDS.filter(
+  (field) => field.key !== 'requestingDepartmentKey' && field.key !== 'status',
+);
+
 export const PURCHASE_ORDER_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'PO' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'supplierName', labelKey: 'purchasing.fields.supplier', multilang: true },
   { key: 'totalValue', labelKey: 'common.value', type: 'number' },
@@ -83,7 +92,7 @@ export const PURCHASE_ORDER_FIELDS: FormField[] = [
 ];
 
 export const SUPPLIER_FIELDS: FormField[] = [
-  { key: 'code', labelKey: 'common.code', required: true },
+  { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'SUP' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies' },
   { key: 'balance', labelKey: 'common.balance', type: 'number' },

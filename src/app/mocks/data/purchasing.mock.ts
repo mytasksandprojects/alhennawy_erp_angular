@@ -4,6 +4,8 @@ import {
   Supplier,
   SupplierQuotation,
 } from '../../core/models/purchasing.models';
+import { nextGenerated } from '../../shared/crud/serial';
+import { MockApiError } from '../mock-backend.interceptor';
 
 /** MOCK LAYER — purchasing cycle data (PR → quotations → PO). */
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
@@ -42,3 +44,51 @@ export const MOCK_PURCHASE_ORDERS: PurchaseOrder[] = [
   { id: 'po-3', number: 'PO-2026-0079', date: daysAgo(12), supplierCode: 'SUP-005', supplierName: 'Shandong Pulp Co.', status: 'late', currency: 'USD', exchangeRate: 48.5, totalValue: 86000, expectedDelivery: daysAgo(2) },
   { id: 'po-4', number: 'PO-2026-0080', date: daysAgo(2), supplierCode: 'SUP-004', supplierName: 'Voith Paper GmbH', status: 'partially-received', currency: 'EUR', exchangeRate: 52.8, totalValue: 3150, expectedDelivery: daysAhead(10) },
 ];
+
+function flattenRequest(row: PurchaseRequest): PurchaseRequest {
+  const line = row.lines?.[0];
+  return {
+    ...row,
+    itemName: row.itemName || line?.itemName || '',
+    quantity: row.quantity ?? line?.quantity ?? 0,
+  };
+}
+
+export function listPurchaseRequests(): PurchaseRequest[] {
+  return MOCK_PURCHASE_REQUESTS.map(flattenRequest);
+}
+
+export function listDeptRequests(departmentKey: string): PurchaseRequest[] {
+  return listPurchaseRequests().filter((row) => row.requestingDepartmentKey === departmentKey);
+}
+
+export function upsertDeptRequest(departmentKey: string, body: unknown): PurchaseRequest {
+  const incoming = body as PurchaseRequest;
+  const itemName = String(incoming.itemName ?? incoming.lines?.[0]?.itemName ?? '');
+  const quantity = Number(incoming.quantity ?? incoming.lines?.[0]?.quantity ?? 0);
+  const row: PurchaseRequest = {
+    ...incoming,
+    id: incoming.id || `pr-${Date.now()}`,
+    number: incoming.number || nextGenerated(MOCK_PURCHASE_REQUESTS, 'number', 'PR'),
+    date: incoming.date || new Date().toISOString(),
+    requestingDepartmentKey: incoming.requestingDepartmentKey || departmentKey,
+    status: incoming.status || 'pending',
+    itemName,
+    quantity,
+    lines: incoming.lines?.length
+      ? incoming.lines
+      : itemName
+        ? [{ itemCode: '', itemName, quantity, unitKey: 'units.piece' }]
+        : [],
+  };
+  const index = MOCK_PURCHASE_REQUESTS.findIndex((item) => item.id === row.id);
+  if (index >= 0) MOCK_PURCHASE_REQUESTS[index] = row;
+  else MOCK_PURCHASE_REQUESTS.unshift(row);
+  return flattenRequest(row);
+}
+
+export function deletePurchaseRequest(id: string): PurchaseRequest {
+  const index = MOCK_PURCHASE_REQUESTS.findIndex((row) => row.id === id);
+  if (index < 0) throw new MockApiError(404, 'not-found');
+  return MOCK_PURCHASE_REQUESTS.splice(index, 1)[0];
+}

@@ -1,5 +1,6 @@
 import { LookupValue } from '../../core/models/system.models';
 import { MOCK_EMPLOYEES } from './hr.mock';
+import { MOCK_STOCK_ITEMS } from './warehouse.mock';
 import { MOCK_ROLES } from './roles.mock';
 import {
   MOCK_CLINIC_MEDICINES,
@@ -167,6 +168,7 @@ export function liveLookups(): LookupValue[] {
     ),
     ...MOCK_DOCTORS.map((d) => liveLk(`live-doctor-${d.id}`, 'doctors', d)),
     ...MOCK_EMPLOYEES.map((e) => liveLk(`live-emp-${e.id}`, 'employees', e)),
+    ...MOCK_STOCK_ITEMS.map((item) => liveLk(`live-item-${item.code}`, 'stockItems', item)),
     ...MOCK_ROLES.map((role) =>
       lk(
         `live-role-${role.id}`,

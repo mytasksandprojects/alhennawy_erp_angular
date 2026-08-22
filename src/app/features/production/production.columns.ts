@@ -35,7 +35,7 @@ export const PRODUCTION_ORDER_COLUMNS: TableColumn[] = [
 ];
 
 export const PRODUCTION_ORDER_FIELDS: FormField[] = [
-  { key: 'number', labelKey: 'common.number', required: true },
+  { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'MO' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'workOrderNumber', labelKey: 'production.fields.workOrder' },
   { key: 'specName', labelKey: 'production.fields.spec', multilang: true },

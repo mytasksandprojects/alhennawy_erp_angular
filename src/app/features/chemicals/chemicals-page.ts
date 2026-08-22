@@ -45,7 +45,7 @@ export const STAFF_COLUMNS: TableColumn[] = [
 ];
 
 const STAFF_FIELDS: FormField[] = [
-  { key: 'code', labelKey: 'common.code', required: true },
+  { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'CHM' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'role', labelKey: 'chemicals.fields.role', multilang: true },
   { key: 'phone', labelKey: 'clinic.fields.phone' },

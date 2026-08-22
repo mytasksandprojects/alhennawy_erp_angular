@@ -17,6 +17,7 @@ import { createReceipt, listReceipts, MOCK_MOVEMENTS, MOCK_STOCK_ITEMS, MOCK_WAR
 import { MOCK_ACCOUNT_FLAT, MOCK_BANKS, MOCK_JOURNAL_ENTRIES } from './data/finance.mock';
 import { MOCK_BALANCE_SHEET, MOCK_EXPENSES, MOCK_PNL } from './data/finance-reports.mock';
 import {
+  listPurchaseRequests,
   MOCK_PURCHASE_ORDERS,
   MOCK_PURCHASE_REQUESTS,
   MOCK_QUOTATIONS,
@@ -181,7 +182,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/finance/balance-sheet', handler: () => MOCK_BALANCE_SHEET },
   { method: 'GET', pattern: '/finance/expenses', handler: () => MOCK_EXPENSES },
 
-  { method: 'GET', pattern: '/purchasing/requests', handler: () => MOCK_PURCHASE_REQUESTS },
+  { method: 'GET', pattern: '/purchasing/requests', handler: () => listPurchaseRequests() },
   { method: 'GET', pattern: '/purchasing/orders', handler: () => MOCK_PURCHASE_ORDERS },
   { method: 'GET', pattern: '/purchasing/suppliers', handler: () => MOCK_SUPPLIERS },
   { method: 'GET', pattern: '/purchasing/quotations', handler: () => MOCK_QUOTATIONS },
