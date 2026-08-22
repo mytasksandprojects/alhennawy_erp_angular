@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { WeighingTicket } from '../../core/models/weighbridge.models';
 import { UiModal } from '../../shared/components/ui-modal';
@@ -103,6 +104,7 @@ export class WeighingCompleteModal extends Translated {
   readonly completed = output<void>();
 
   private readonly weighbridgeApi = inject(WeighbridgeApiService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
 
   protected readonly secondWeight = signal<number | null>(null);
@@ -137,7 +139,8 @@ export class WeighingCompleteModal extends Translated {
       });
   }
 
-  protected remove(): void {
+  protected async remove(): Promise<void> {
+    if (!(await this.confirm.askDelete())) return;
     this.busy.set(true);
     this.weighbridgeApi.remove(this.ticket().id).subscribe({
       next: () => {

@@ -13,6 +13,7 @@ import {
   BackupSchedule,
 } from '../../core/models/backup.models';
 import { TableColumn } from '../../core/models/common.models';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
@@ -142,6 +143,7 @@ const BACKUP_COLUMNS: TableColumn[] = [
 })
 export class BackupsPage extends Translated {
   private readonly api = inject(ApiClientService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notify = inject(NotificationService);
 
   protected readonly columns = BACKUP_COLUMNS;
@@ -169,9 +171,9 @@ export class BackupsPage extends Translated {
     if (current) this.schedule.set({ ...current, [key]: value });
   }
 
-  protected saveSchedule(): void {
+  protected async saveSchedule(): Promise<void> {
     const sched = this.schedule();
-    if (!sched) return;
+    if (!sched || !(await this.confirm.askSave())) return;
     this.api
       .post<BackupSchedule>(API_ENDPOINTS.backups.schedule, sched)
       .subscribe((saved) => {

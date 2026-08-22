@@ -190,6 +190,10 @@ textarea.ui-control {
   padding: var(--space-md);
 }
 
+.ui-modal-overlay--top {
+  z-index: 1100;
+}
+
 .ui-modal {
   background: var(--color-surface);
   backdrop-filter: blur(var(--glass-blur));

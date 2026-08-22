@@ -9,6 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WeighingTicket } from '../../core/models/weighbridge.models';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { ModuleDashboard } from '../../shared/components/module-dashboard';
 import { UiEntityForm } from '../../shared/components/ui-entity-form';
@@ -149,6 +150,7 @@ const TYPE_FILTERS = ['purchase', 'sales', 'returns', 'purchase-return', 'sales-
 })
 export class WeighbridgePage extends Translated implements OnInit {
   private readonly weighbridgeApi = inject(WeighbridgeApiService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -222,9 +224,9 @@ export class WeighbridgePage extends Translated implements OnInit {
     this.reload();
   }
 
-  protected saveEdit(): void {
+  protected async saveEdit(): Promise<void> {
     const ticket = this.editing();
-    if (!ticket) return;
+    if (!ticket || !(await this.confirm.askSave())) return;
     this.busy.set(true);
     // Edited weights change the net — recompute it before saving.
     const payload: Draft = { ...this.draft() };
@@ -241,9 +243,9 @@ export class WeighbridgePage extends Translated implements OnInit {
     });
   }
 
-  protected removeEdit(): void {
+  protected async removeEdit(): Promise<void> {
     const ticket = this.editing();
-    if (!ticket) return;
+    if (!ticket || !(await this.confirm.askDelete())) return;
     this.busy.set(true);
     this.weighbridgeApi.remove(ticket.id).subscribe({
       next: () => {

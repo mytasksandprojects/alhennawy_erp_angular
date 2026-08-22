@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { RuntimeConfigStore } from './core/config/runtime-config.store';
+import { UiConfirm } from './shared/components/ui-confirm';
 
 /**
  * Root component. Renders NOTHING until the API config bundle (settings,
@@ -11,10 +12,11 @@ import { RuntimeConfigStore } from './core/config/runtime-config.store';
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, UiConfirm],
   template: `
     @if (store.ready()) {
       <router-outlet />
+      <ui-confirm />
     }
   `,
 })

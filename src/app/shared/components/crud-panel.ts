@@ -12,7 +12,9 @@ import { FormField, TableColumn } from '../../core/models/common.models';
 import { NotificationService } from '../../core/services/notification.service';
 import { AccessService } from '../../core/security/access.service';
 import { exportRowsToCsv } from '../crud/export-csv';
+import { deleteRow, persistRow } from '../crud/crud-write';
 import { emptyDraft, rowMatches, shownColumns, shownFields } from '../crud/form-draft';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { printWide } from '../crud/print-page';
 import { matchesStock, stockStatusOf } from '../crud/stock-filter';
 import { Translated } from '../translated.base';
@@ -141,6 +143,7 @@ export class CrudPanel extends Translated {
 
   private readonly api = inject(ApiClientService);
   private readonly access = inject(AccessService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -260,36 +263,25 @@ export class CrudPanel extends Translated {
     this.open.set(false);
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
+    if (!(await this.confirm.askSave())) return;
     this.busy.set(true);
-    const id = this.editingId();
-    const request = id
-      ? this.api.put<Row>(`${this.endpoint()}/${id}`, this.draft())
-      : this.api.post<Row>(this.endpoint(), this.draft());
-    request.subscribe({
-      next: () => {
-        this.notifications.success(id ? 'common.updated' : 'common.created');
-        this.busy.set(false);
-        this.close();
-        this.reload();
-      },
-      error: () => this.busy.set(false),
-    });
+    persistRow(this.api, this.notifications, this.endpoint(), this.editingId(), this.draft(), () => {
+      this.busy.set(false);
+      this.close();
+      this.reload();
+    }, () => this.busy.set(false));
   }
 
-  protected remove(): void {
+  protected async remove(): Promise<void> {
     const id = this.editingId();
-    if (!id) return;
+    if (!id || !(await this.confirm.askDelete())) return;
     this.busy.set(true);
-    this.api.delete<Row>(`${this.endpoint()}/${id}`).subscribe({
-      next: () => {
-        this.notifications.success('common.deleted');
-        this.busy.set(false);
-        this.close();
-        this.reload();
-      },
-      error: () => this.busy.set(false),
-    });
+    deleteRow(this.api, this.notifications, this.endpoint(), id, () => {
+      this.busy.set(false);
+      this.close();
+      this.reload();
+    }, () => this.busy.set(false));
   }
 
   private reload(): void {

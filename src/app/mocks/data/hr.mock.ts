@@ -5,6 +5,7 @@ import {
   PerformanceReview,
   ZkSyncLog,
 } from '../../core/models/hr.models';
+import { MockApiError } from '../mock-backend.interceptor';
 
 /** MOCK LAYER — HR data incl. ZKTeco device sync logs. */
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
@@ -15,12 +16,64 @@ const IMG = 'assets/branding/alhennawy-logo.png';
 const FILES = `${IMG}#شهادة خبرة.pdf|${IMG}#شهادة تدريب.pdf`;
 
 export const MOCK_EMPLOYEES: Employee[] = [
-  { id: 'e-1', code: 'EMP-0001', name: 'محمد نبيل', name_en: 'Mohamed Nabil', departmentKey: 'departments.it', jobTitleKey: 'jobs.systemAdmin', hireDate: '2020-03-15', status: 'active', leaveBalanceDays: 18, salary: 28500, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: FILES, roleId: 'admin', workStart: '08:00', workEnd: '16:00' },
-  { id: 'e-2', code: 'EMP-0042', name: 'أحمد الحناوي', name_en: 'Ahmed El Hennawy', departmentKey: 'departments.production', jobTitleKey: 'jobs.machineOperator', hireDate: '2021-07-01', status: 'active', leaveBalanceDays: 11, salary: 14200, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: `${IMG}#شهادة تشغيل ماكينات.pdf`, roleId: 'operator', workStart: '07:00', workEnd: '19:00' },
-  { id: 'e-3', code: 'EMP-0078', name: 'سارة محمود', name_en: 'Sara Mahmoud', departmentKey: 'departments.finance', jobTitleKey: 'jobs.accountant', hireDate: '2023-01-10', status: 'on-leave', leaveBalanceDays: 4, salary: 16800, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: FILES, roleId: 'finance', workStart: '09:00', workEnd: '17:00' },
-  { id: 'e-4', code: 'EMP-0101', name: 'خالد عبد العزيز', name_en: 'Khaled Abdelaziz', departmentKey: 'departments.warehouse', jobTitleKey: 'jobs.storekeeper', hireDate: '2024-05-20', status: 'probation', leaveBalanceDays: 0, contractEndDate: daysAgo(-20), salary: 9800, photoUrl: IMG, drugTestImageUrl: IMG, roleId: 'store', workStart: '08:00', workEnd: '16:00' },
-  { id: 'e-5', code: 'EMP-0034', name: 'مصطفى رمضان', name_en: 'Mostafa Ramadan', departmentKey: 'departments.quality', jobTitleKey: 'jobs.qualityInspector', hireDate: '2019-11-02', status: 'active', leaveBalanceDays: 22, salary: 18400, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: `${IMG}#شهادة ISO 9001.pdf`, roleId: 'operator', workStart: '08:00', workEnd: '16:00' },
+  { id: 'e-1', code: 'EMP-0001', name: 'محمد نبيل', name_en: 'Mohamed Nabil', email: 'mohamed.nabil@alhennawy.net', password: 'admin123', departmentKey: 'departments.it', jobTitleKey: 'jobs.systemAdmin', hireDate: '2020-03-15', status: 'active', leaveBalanceDays: 18, salary: 28500, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: FILES, roleId: 'admin', workStart: '08:00', workEnd: '16:00' },
+  { id: 'e-2', code: 'EMP-0042', name: 'أحمد الحناوي', name_en: 'Ahmed El Hennawy', email: 'ahmed.hennawy@alhennawy.net', password: 'op123', departmentKey: 'departments.production', jobTitleKey: 'jobs.machineOperator', hireDate: '2021-07-01', status: 'active', leaveBalanceDays: 11, salary: 14200, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: `${IMG}#شهادة تشغيل ماكينات.pdf`, roleId: 'operator', workStart: '07:00', workEnd: '19:00' },
+  { id: 'e-3', code: 'EMP-0078', name: 'سارة محمود', name_en: 'Sara Mahmoud', email: 'sara.mahmoud@alhennawy.net', password: 'finance123', departmentKey: 'departments.finance', jobTitleKey: 'jobs.accountant', hireDate: '2023-01-10', status: 'on-leave', leaveBalanceDays: 4, salary: 16800, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: FILES, roleId: 'finance', workStart: '09:00', workEnd: '17:00' },
+  { id: 'e-4', code: 'EMP-0101', name: 'خالد عبد العزيز', name_en: 'Khaled Abdelaziz', email: 'khaled.aziz@alhennawy.net', password: 'store123', departmentKey: 'departments.warehouse', jobTitleKey: 'jobs.storekeeper', hireDate: '2024-05-20', status: 'probation', leaveBalanceDays: 0, contractEndDate: daysAgo(-20), salary: 9800, photoUrl: IMG, drugTestImageUrl: IMG, roleId: 'store', workStart: '08:00', workEnd: '16:00' },
+  { id: 'e-5', code: 'EMP-0034', name: 'مصطفى رمضان', name_en: 'Mostafa Ramadan', email: 'mostafa.ramadan@alhennawy.net', password: 'op123', departmentKey: 'departments.quality', jobTitleKey: 'jobs.qualityInspector', hireDate: '2019-11-02', status: 'active', leaveBalanceDays: 22, salary: 18400, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: `${IMG}#شهادة ISO 9001.pdf`, roleId: 'operator', workStart: '08:00', workEnd: '16:00' },
 ];
+
+function withoutPassword(row: Employee): Employee {
+  const { password: _password, ...publicRow } = row;
+  return publicRow;
+}
+
+export function listEmployees(): Employee[] {
+  return MOCK_EMPLOYEES.map(withoutPassword);
+}
+
+export function findEmployeeLogin(login: string, password: string): Employee | undefined {
+  const email = login.trim().toLowerCase();
+  return MOCK_EMPLOYEES.find(
+    (row) =>
+      row.email?.toLowerCase() === email &&
+      row.password === password &&
+      row.status !== 'terminated',
+  );
+}
+
+export function upsertEmployee(body: unknown): Employee {
+  const incoming = body as Employee;
+  const email = String(incoming.email ?? '').trim().toLowerCase();
+  if (!email.includes('@')) throw new MockApiError(400, 'invalid-credentials');
+  const taken = MOCK_EMPLOYEES.some(
+    (row) => row.email?.toLowerCase() === email && row.id !== incoming.id,
+  );
+  if (taken) throw new MockApiError(400, 'invalid-credentials');
+  const index = MOCK_EMPLOYEES.findIndex((row) => row.id === incoming.id);
+  if (index >= 0) {
+    const prev = MOCK_EMPLOYEES[index];
+    const password = String(incoming.password ?? '') || prev.password || '';
+    MOCK_EMPLOYEES[index] = { ...prev, ...incoming, email, password, id: prev.id };
+    return withoutPassword(MOCK_EMPLOYEES[index]);
+  }
+  const password = String(incoming.password ?? '');
+  if (!password) throw new MockApiError(400, 'invalid-credentials');
+  const row: Employee = {
+    ...incoming,
+    id: incoming.id || `e-${Date.now()}`,
+    email,
+    password,
+  };
+  MOCK_EMPLOYEES.unshift(row);
+  return withoutPassword(row);
+}
+
+export function deleteEmployee(id: string): Employee {
+  const index = MOCK_EMPLOYEES.findIndex((row) => row.id === id);
+  if (index < 0) throw new MockApiError(404, 'not-found');
+  return MOCK_EMPLOYEES.splice(index, 1)[0];
+}
 
 export const MOCK_ATTENDANCE: AttendanceRecord[] = [
   { id: 'a-1', employeeCode: 'EMP-0001', employeeName: 'محمد نبيل', date: today, checkIn: '08:02', checkOut: '16:10', lateMinutes: 2, overtimeMinutes: 10, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },

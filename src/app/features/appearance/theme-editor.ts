@@ -12,6 +12,7 @@ import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { AppConfigService } from '../../core/config/app-config.service';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { ThemeConfig, ThemeMode } from '../../core/models/config.models';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UiPager } from '../../shared/components/ui-pager';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
@@ -82,6 +83,7 @@ export class ThemeEditor extends Translated {
   private readonly api = inject(ApiClientService);
   private readonly store = inject(RuntimeConfigStore);
   private readonly config = inject(AppConfigService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
 
   protected readonly modeTabs: TabItem[] = [
@@ -152,9 +154,9 @@ export class ThemeEditor extends Translated {
     return COLOR_VALUE.test(value.trim());
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     const entries = Object.entries(this.dirty());
-    if (!entries.length) return;
+    if (!entries.length || !(await this.confirm.askSave())) return;
     this.busy.set(true);
     forkJoin(
       entries.map(([key, value]) =>

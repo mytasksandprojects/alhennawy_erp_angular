@@ -102,7 +102,7 @@ export const EN_CORE: TranslationMap = {
 
   'auth.loginTitle': 'Sign In',
   'auth.loginSubtitle': 'Al Hennawy Enterprise Resource Planning',
-  'auth.username': 'Username',
+  'auth.username': 'Email or username',
   'auth.password': 'Password',
   'auth.signIn': 'Sign In',
   'auth.invalidCredentials': 'Invalid username or password',
@@ -170,13 +170,13 @@ export const EN_CORE: TranslationMap = {
   'roles.admin': 'System Administrator',
   'roles.finance': 'Finance',
   'roles.store': 'Storekeeper',
-
   'errors.forbidden': 'You are not authorized for this action',
   'errors.server': 'Server error, please try again',
   'errors.network': 'Could not reach the server',
-
   'common.all': 'All',
   'common.save': 'Save',
+  'common.confirmSave': 'Save this record?',
+  'common.confirmDelete': 'Delete this record? This cannot be undone.',
   'common.prev': 'Previous',
   'common.next': 'Next',
   'common.pageOf': 'Page {0} of {1}',

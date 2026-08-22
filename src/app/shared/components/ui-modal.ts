@@ -12,7 +12,11 @@ import { UiIcon } from './ui-icon';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [UiIcon],
   template: `
-    <div class="ui-modal-overlay" (click)="onOverlay($event)">
+    <div
+      class="ui-modal-overlay"
+      [class.ui-modal-overlay--top]="stacked()"
+      (click)="onOverlay($event)"
+    >
       <div class="ui-modal" role="dialog" aria-modal="true">
         <div class="ui-modal__header">
           <h2 class="ui-modal__title">{{ t(titleKey()) }}</h2>
@@ -32,6 +36,7 @@ import { UiIcon } from './ui-icon';
 })
 export class UiModal extends Translated {
   readonly titleKey = input.required<string>();
+  readonly stacked = input(false);
   readonly closed = output<void>();
 
   protected onOverlay(event: MouseEvent): void {

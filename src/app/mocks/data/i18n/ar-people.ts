@@ -28,6 +28,7 @@ export const AR_PEOPLE: TranslationMap = {
   'hr.fields.jobTitle': 'الوظيفة',
   'hr.fields.hireDate': 'تاريخ التعيين',
   'hr.fields.salary': 'الراتب',
+  'hr.fields.email': 'البريد الإلكتروني',
   'hr.fields.photo': 'الصورة الشخصية',
   'hr.fields.files': 'الشهادات والملفات',
   'hr.fields.leaveBalance': 'رصيد الإجازات',
@@ -47,7 +48,6 @@ export const AR_PEOPLE: TranslationMap = {
   'hr.status.on-leave': 'في إجازة',
   'hr.status.terminated': 'انتهت خدمته',
   'hr.status.probation': 'فترة تجربة',
-
   'hr.attendance.present': 'حاضر',
   'hr.attendance.late': 'متأخر',
   'hr.attendance.onLeave': 'إجازة',

@@ -14,6 +14,7 @@ import { AuthService } from '../../core/security/auth.service';
 import { AccessService } from '../../core/security/access.service';
 import { expandCatalogLanguages } from '../../core/security/lang-columns';
 import { PERMISSION_CATALOG } from '../../core/security/permission-catalog';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { exportRowsToCsv } from '../../shared/crud/export-csv';
 import { printWide } from '../../shared/crud/print-page';
@@ -150,6 +151,7 @@ export class RolesPage extends Translated {
   private readonly auth = inject(AuthService);
   private readonly access = inject(AccessService);
   private readonly store = inject(RuntimeConfigStore);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   protected readonly catalog = computed(() =>
     expandCatalogLanguages(
@@ -246,9 +248,9 @@ export class RolesPage extends Translated {
     this.select(role.id);
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     const current = this.roles().find((item) => item.id === this.roleId());
-    if (!current) return;
+    if (!current || !(await this.confirm.askSave())) return;
     const next = { ...current, permissions: this.draft() };
     this.api.put<AppRole>(`${API_ENDPOINTS.roles}/${current.id}`, next).subscribe((saved) => {
       this.roles.update((list) => list.map((item) => (item.id === saved.id ? saved : item)));

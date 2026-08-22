@@ -28,6 +28,7 @@ export const EN_PEOPLE: TranslationMap = {
   'hr.fields.jobTitle': 'Job Title',
   'hr.fields.hireDate': 'Hire Date',
   'hr.fields.salary': 'Salary',
+  'hr.fields.email': 'Email',
   'hr.fields.photo': 'Photo',
   'hr.fields.files': 'Certificates & Files',
   'hr.fields.leaveBalance': 'Leave Balance',
@@ -47,7 +48,6 @@ export const EN_PEOPLE: TranslationMap = {
   'hr.status.on-leave': 'On Leave',
   'hr.status.terminated': 'Terminated',
   'hr.status.probation': 'Probation',
-
   'hr.attendance.present': 'Present',
   'hr.attendance.late': 'Late',
   'hr.attendance.onLeave': 'On Leave',

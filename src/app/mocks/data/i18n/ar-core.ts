@@ -102,7 +102,7 @@ export const AR_CORE: TranslationMap = {
 
   'auth.loginTitle': 'تسجيل الدخول',
   'auth.loginSubtitle': 'نظام تخطيط موارد شركة الحناوي',
-  'auth.username': 'اسم المستخدم',
+  'auth.username': 'البريد أو اسم المستخدم',
   'auth.password': 'كلمة المرور',
   'auth.signIn': 'دخول',
   'auth.invalidCredentials': 'بيانات الدخول غير صحيحة',
@@ -170,13 +170,13 @@ export const AR_CORE: TranslationMap = {
   'roles.admin': 'مدير النظام',
   'roles.finance': 'الإدارة المالية',
   'roles.store': 'أمين مخزن',
-
   'errors.forbidden': 'غير مصرح لك بهذه العملية',
   'errors.server': 'حدث خطأ في الخادم، حاول مرة أخرى',
   'errors.network': 'تعذر الاتصال بالخادم',
-
   'common.all': 'الكل',
   'common.save': 'حفظ',
+  'common.confirmSave': 'حفظ هذا السجل؟',
+  'common.confirmDelete': 'حذف هذا السجل؟ لا يمكن التراجع.',
   'common.prev': 'السابق',
   'common.next': 'التالي',
   'common.pageOf': 'صفحة {0} من {1}',

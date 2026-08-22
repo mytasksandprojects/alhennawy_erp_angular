@@ -116,7 +116,8 @@ type Draft = Record<string, string | number | boolean>;
             @default {
               <input
                 class="ui-control"
-                type="text"
+                [type]="field.type === 'password' ? 'password' : field.type === 'email' ? 'email' : 'text'"
+                [attr.autocomplete]="field.type === 'password' ? 'new-password' : null"
                 [ngModel]="asText(field.key)"
                 (ngModelChange)="set(field.key, $event)"
               />

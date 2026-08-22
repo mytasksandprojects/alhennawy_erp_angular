@@ -5,6 +5,7 @@ export const EMPLOYEE_COLUMNS: TableColumn[] = [
   { key: 'photoUrl', labelKey: 'hr.fields.photo', type: 'image' },
   { key: 'code', labelKey: 'common.code' },
   { key: 'name', labelKey: 'common.name', multilang: true },
+  { key: 'email', labelKey: 'hr.fields.email' },
   { key: 'departmentKey', labelKey: 'hr.fields.department', type: 'key' },
   { key: 'jobTitleKey', labelKey: 'hr.fields.jobTitle', type: 'key' },
   { key: 'hireDate', labelKey: 'hr.fields.hireDate', type: 'date' },
@@ -120,6 +121,8 @@ export function reviewFields(
 export const EMPLOYEE_FIELDS: FormField[] = [
   { key: 'code', labelKey: 'common.code', required: true },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
+  { key: 'email', labelKey: 'hr.fields.email', type: 'email', required: true },
+  { key: 'password', labelKey: 'auth.password', type: 'password', required: true },
   { key: 'departmentKey', labelKey: 'hr.fields.department', type: 'select', lookup: 'departments' },
   { key: 'jobTitleKey', labelKey: 'hr.fields.jobTitle' },
   { key: 'hireDate', labelKey: 'hr.fields.hireDate', type: 'date' },

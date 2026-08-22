@@ -1,5 +1,6 @@
 import { AuthSession, LoginRequest } from '../../core/models/auth.models';
 import { MockApiError } from '../mock-backend.interceptor';
+import { findEmployeeLogin } from './hr.mock';
 import { MOCK_ROLES } from './roles.mock';
 
 /**
@@ -69,18 +70,41 @@ const USERS: Record<string, MockUser> = {
 
 export function mockLogin(body: unknown): AuthSession {
   const request = body as LoginRequest;
-  const user = USERS[request.username?.toLowerCase() ?? ''];
-  if (!user || user.password !== request.password) {
-    throw new MockApiError(400, 'invalid-credentials');
+  const login = request.username?.trim().toLowerCase() ?? '';
+  const builtin = USERS[login];
+  if (builtin && builtin.password === request.password) {
+    return issueSession(builtin.session, login);
   }
-  const role = MOCK_ROLES.find((item) => item.id === user.session.user.roleId);
-  return {
-    ...user.session,
-    user: {
-      ...user.session.user,
-      permissions: role?.permissions ?? user.session.user.permissions,
+  const employee = findEmployeeLogin(login, request.password ?? '');
+  if (!employee) throw new MockApiError(400, 'invalid-credentials');
+  const role = MOCK_ROLES.find((item) => item.id === employee.roleId);
+  return issueSession(
+    {
+      user: {
+        id: employee.id,
+        username: employee.email ?? login,
+        displayName: employee.name_en || employee.name,
+        roleKey: role?.nameKey ?? 'hr.fields.employee',
+        roleId: employee.roleId,
+        permissions: role?.permissions ?? ['checkin.view'],
+      },
     },
-    token: `mock-token-${request.username}-${Date.now()}`,
+    login,
+  );
+}
+
+function issueSession(
+  session: Omit<AuthSession, 'token' | 'expiresAt'>,
+  login: string,
+): AuthSession {
+  const role = MOCK_ROLES.find((item) => item.id === session.user.roleId);
+  return {
+    ...session,
+    user: {
+      ...session.user,
+      permissions: role?.permissions ?? session.user.permissions,
+    },
+    token: `mock-token-${login}-${Date.now()}`,
     expiresAt: new Date(Date.now() + 8 * 3600 * 1000).toISOString(),
   };
 }

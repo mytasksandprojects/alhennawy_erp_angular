@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { CustomerSpec } from '../../core/models/cutter.models';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
@@ -87,6 +88,7 @@ import { CutterApiService } from './cutter-api.service';
 export class RollCreatePage extends Translated implements OnInit {
   private readonly cutterApi = inject(CutterApiService);
   private readonly router = inject(Router);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
 
   protected readonly specs = signal<CustomerSpec[]>([]);
@@ -121,8 +123,8 @@ export class RollCreatePage extends Translated implements OnInit {
     );
   }
 
-  protected submit(): void {
-    if (!this.isValid() || this.busy()) return;
+  protected async submit(): Promise<void> {
+    if (!this.isValid() || this.busy() || !(await this.confirm.askSave())) return;
     this.busy.set(true);
     this.cutterApi
       .createRoll({

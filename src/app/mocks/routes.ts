@@ -31,8 +31,8 @@ import {
 } from './data/sales.mock';
 import { MOCK_EXPORT_SHIPMENTS, MOCK_IMPORTS } from './data/logistics.mock';
 import {
+  listEmployees,
   MOCK_ATTENDANCE,
-  MOCK_EMPLOYEES,
   MOCK_EMPLOYEE_REVIEWS,
   MOCK_LEAVES,
   MOCK_MANAGER_REVIEWS,
@@ -195,7 +195,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/logistics/imports', handler: () => MOCK_IMPORTS },
   { method: 'GET', pattern: '/logistics/exports', handler: () => MOCK_EXPORT_SHIPMENTS },
 
-  { method: 'GET', pattern: '/hr/employees', handler: () => MOCK_EMPLOYEES },
+  { method: 'GET', pattern: '/hr/employees', handler: () => listEmployees() },
   { method: 'GET', pattern: '/hr/attendance', handler: () => MOCK_ATTENDANCE },
   { method: 'GET', pattern: '/hr/leaves', handler: () => MOCK_LEAVES },
   { method: 'GET', pattern: '/hr/zk-sync-logs', handler: () => MOCK_ZK_LOGS },
@@ -265,7 +265,6 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/sales/invoices', MOCK_INVOICES),
   ...crudRoutes('/logistics/imports', MOCK_IMPORTS),
   ...crudRoutes('/logistics/exports', MOCK_EXPORT_SHIPMENTS),
-  ...crudRoutes('/hr/employees', MOCK_EMPLOYEES),
   ...crudRoutes('/hr/attendance', MOCK_ATTENDANCE),
   ...crudRoutes('/hr/leaves', MOCK_LEAVES),
   ...crudRoutes('/hr/zk-sync-logs', MOCK_ZK_LOGS),

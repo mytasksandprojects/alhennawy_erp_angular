@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { CutterRoll } from '../../core/models/cutter.models';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { CrudPanel } from '../../shared/components/crud-panel';
 import { UiEntityForm } from '../../shared/components/ui-entity-form';
@@ -118,6 +119,7 @@ type Draft = Record<string, string | number | boolean>;
 })
 export class CutterPage extends Translated implements OnInit {
   private readonly cutterApi = inject(CutterApiService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   private readonly document = inject(DOCUMENT);
 
@@ -169,9 +171,9 @@ export class CutterPage extends Translated implements OnInit {
     });
   }
 
-  protected saveRoll(): void {
+  protected async saveRoll(): Promise<void> {
     const roll = this.selected();
-    if (!roll) return;
+    if (!roll || !(await this.confirm.askSave())) return;
     this.busy.set(true);
     this.cutterApi.updateRoll(roll.id, this.draft()).subscribe({
       next: () => {
@@ -184,9 +186,9 @@ export class CutterPage extends Translated implements OnInit {
     });
   }
 
-  protected removeRoll(): void {
+  protected async removeRoll(): Promise<void> {
     const roll = this.selected();
-    if (!roll) return;
+    if (!roll || !(await this.confirm.askDelete())) return;
     this.busy.set(true);
     this.cutterApi.removeRoll(roll.id).subscribe({
       next: () => {

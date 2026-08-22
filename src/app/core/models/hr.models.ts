@@ -13,6 +13,10 @@ export interface Employee extends Localized {
   leaveBalanceDays: number;
   contractEndDate?: string;
   salary?: number;
+  /** Login identifier. Employees sign in with this address. */
+  email?: string;
+  /** Login secret. Omitted from list responses; blank on edit keeps the current value. */
+  password?: string;
   /** الصورة الشخصية */
   photoUrl?: string;
   /** صورة تحليل المخدرات */

@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import {
   WeighingDirection,
@@ -145,6 +146,7 @@ const DIRECTION_BY_TYPE: Record<WeighingType, WeighingDirection> = {
 export class WeighingCreatePage extends Translated {
   private readonly weighbridgeApi = inject(WeighbridgeApiService);
   private readonly router = inject(Router);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
 
   protected readonly typeOptions: WeighingType[] = [
@@ -181,8 +183,8 @@ export class WeighingCreatePage extends Translated {
     );
   }
 
-  protected submit(): void {
-    if (!this.isValid() || this.busy()) return;
+  protected async submit(): Promise<void> {
+    if (!this.isValid() || this.busy() || !(await this.confirm.askSave())) return;
     this.busy.set(true);
     this.weighbridgeApi
       .create({

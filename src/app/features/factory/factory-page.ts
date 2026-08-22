@@ -10,6 +10,7 @@ import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { FactoryProfilePayload } from '../../core/models/config.models';
 import { FormField, multilangKey } from '../../core/models/common.models';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UiEntityForm } from '../../shared/components/ui-entity-form';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
@@ -59,6 +60,7 @@ const FIELDS: FormField[] = [
 export class FactoryPage extends Translated implements OnInit {
   private readonly api = inject(ApiClientService);
   private readonly store = inject(RuntimeConfigStore);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
 
   protected readonly fields = FIELDS;
@@ -71,7 +73,8 @@ export class FactoryPage extends Translated implements OnInit {
       .subscribe((profile) => this.draft.set(this.toDraft(profile)));
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
+    if (!(await this.confirm.askSave())) return;
     this.busy.set(true);
     const payload = this.toPayload();
     this.api

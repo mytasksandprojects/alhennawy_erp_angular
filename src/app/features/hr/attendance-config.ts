@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { AttendancePolicy } from '../../core/models/access.models';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { CrudPanel } from '../../shared/components/crud-panel';
 import { UiSwitch } from '../../shared/components/ui-switch';
@@ -44,6 +45,7 @@ import { LOCATION_COLUMNS, LOCATION_FIELDS } from './attendance-config.columns';
 })
 export class AttendanceConfig extends Translated {
   private readonly api = inject(ApiClientService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   protected readonly locations = API_ENDPOINTS.hr.attendanceLocations;
   protected readonly columns = LOCATION_COLUMNS;
@@ -67,7 +69,8 @@ export class AttendanceConfig extends Translated {
     this.policy.update((current) => ({ ...current, [key]: value }));
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
+    if (!(await this.confirm.askSave())) return;
     this.api
       .put<AttendancePolicy>(API_ENDPOINTS.hr.attendancePolicy, this.policy())
       .subscribe(() => this.notifications.success('hr.attendanceConfig.saved'));

@@ -13,6 +13,7 @@ import { AppConfigService } from '../../core/config/app-config.service';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { TranslationMap } from '../../core/models/config.models';
 import { AccessService } from '../../core/security/access.service';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UiPager } from '../../shared/components/ui-pager';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
@@ -78,6 +79,7 @@ export class TranslationEditor extends Translated {
   private readonly api = inject(ApiClientService);
   private readonly store = inject(RuntimeConfigStore);
   private readonly config = inject(AppConfigService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   private readonly access = inject(AccessService);
 
@@ -146,9 +148,9 @@ export class TranslationEditor extends Translated {
     });
   }
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     const changed = Object.entries(this.dirty());
-    if (!changed.length) return;
+    if (!changed.length || !(await this.confirm.askSave())) return;
     this.busy.set(true);
     forkJoin(
       changed.map(([key, value]) =>

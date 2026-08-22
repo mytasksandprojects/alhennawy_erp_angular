@@ -3,6 +3,7 @@ import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { AppRole } from '../../core/models/access.models';
 import { FormField } from '../../core/models/common.models';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { emptyDraft } from '../../shared/crud/form-draft';
 import { UiEntityForm } from '../../shared/components/ui-entity-form';
@@ -43,15 +44,16 @@ const FIELDS: FormField[] = [
 export class RoleCreate extends Translated {
   readonly created = output<AppRole>();
   private readonly api = inject(ApiClientService);
+  private readonly confirm = inject(ConfirmService);
   private readonly notifications = inject(NotificationService);
   protected readonly fields = FIELDS;
   protected readonly open = signal(false);
   protected readonly busy = signal(false);
   protected readonly draft = signal(emptyDraft(FIELDS));
 
-  protected save(): void {
+  protected async save(): Promise<void> {
     const name = String(this.draft()['name'] ?? '').trim();
-    if (!name) return;
+    if (!name || !(await this.confirm.askSave())) return;
     this.busy.set(true);
     this.api.post<AppRole>(API_ENDPOINTS.roles, { ...this.draft(), permissions: [] }).subscribe({
       next: (role) => {
