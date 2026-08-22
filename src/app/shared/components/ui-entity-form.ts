@@ -13,6 +13,8 @@ import {
   multilangKey,
   SelectOption,
 } from '../../core/models/common.models';
+import { LanguageOption } from '../../core/models/config.models';
+import { AccessService } from '../../core/security/access.service';
 import { LookupService } from '../../core/services/lookup.service';
 import { Translated } from '../translated.base';
 import { UiImageInput } from './ui-image-input';
@@ -29,7 +31,7 @@ type Draft = Record<string, string | number | boolean>;
       @for (field of fields(); track field.key) {
         @if (field.multilang) {
           <!-- One input per configured language; new languages auto-appear -->
-          @for (lang of languages(); track lang.code) {
+          @for (lang of langsFor(field); track lang.code) {
             <label class="ui-field">
               <span class="ui-field__label">
                 {{ t(field.labelKey) }} — {{ t(lang.labelKey) }}
@@ -103,6 +105,14 @@ type Draft = Record<string, string | number | boolean>;
                 (ngModelChange)="set(field.key, $event)"
               />
             }
+            @case ('time') {
+              <input
+                class="ui-control"
+                type="time"
+                [ngModel]="asText(field.key)"
+                (ngModelChange)="set(field.key, $event)"
+              />
+            }
             @default {
               <input
                 class="ui-control"
@@ -121,8 +131,11 @@ type Draft = Record<string, string | number | boolean>;
 export class UiEntityForm extends Translated {
   readonly fields = input.required<FormField[]>();
   readonly draft = model.required<Draft>();
+  readonly moduleId = input('');
+  readonly tabId = input('');
 
   private readonly lookups = inject(LookupService);
+  private readonly access = inject(AccessService);
   private readonly store = inject(RuntimeConfigStore);
 
   protected readonly languages = computed(
@@ -133,6 +146,14 @@ export class UiEntityForm extends Translated {
     super();
     // Forms open rarely; always re-fetch so admin lookup edits apply.
     this.lookups.refresh();
+  }
+
+  protected langsFor(field: FormField): LanguageOption[] {
+    const moduleId = this.moduleId();
+    const tabId = this.tabId();
+    return this.languages().filter(
+      (lang) => !moduleId || !tabId || this.access.canColumn(moduleId, tabId, this.langKey(field, lang.code)),
+    );
   }
 
   /** Draft key holding a multilang field's value for one language. */

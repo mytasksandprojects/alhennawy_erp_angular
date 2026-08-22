@@ -6,12 +6,12 @@ export const EN_CORE: TranslationMap = {
   'company.name': 'Alhennawy Co. for Paper & Chemicals industry',
   'company.address': 'Block 7079 - 7th industrial zone, Sadat city - Monofya',
   'company.madeIn': 'MADE IN EGYPT',
-  'company.poweredBy': 'Powered By B-Force',
 
   'lang.arabic': 'العربية',
   'lang.english': 'English',
 
   'menu.home': 'Home',
+  'menu.alerts': 'Alerts',
   'menu.weighbridge': 'Weighbridge',
   'menu.cutter': 'Cutter',
   'menu.warehouse': 'Warehouses',
@@ -24,6 +24,7 @@ export const EN_CORE: TranslationMap = {
   'menu.finance': 'Finance',
   'menu.hr': 'Human Resources',
   'menu.administration': 'Administration',
+  'menu.factory': 'Factory Settings',
   'menu.safety': 'Safety & OSH',
   'menu.backups': 'Backups',
   'menu.reports': 'Reports',
@@ -284,4 +285,15 @@ export const EN_CORE: TranslationMap = {
   'home.charts.weighbridgeWeek': 'Weighbridge Tonnage This Week (kg)',
   'home.recentAudit': 'Latest audit logs',
   'home.switchStatus': 'Switches status',
+
+  'alerts.title': 'Alerts',
+  'alerts.subtitle': 'Every factory alert in one place — click a row to open it',
+  'alerts.stats.total': 'All Alerts',
+  'alerts.stats.danger': 'Critical',
+  'alerts.stats.warning': 'Warnings',
+  'alerts.stats.info': 'Info',
+  'alerts.fields.module': 'Module',
+  'alerts.severity.danger': 'Critical',
+  'alerts.severity.warning': 'Warning',
+  'alerts.severity.info': 'Info',
 };

@@ -12,7 +12,7 @@ import { PURCHASE_ORDER_COLUMNS, PURCHASE_REQUEST_COLUMNS, QUOTATION_COLUMNS, SU
 import { DASHT_INSPECTION_COLUMNS, MAINTENANCE_COLUMNS, MATERIAL_INSPECTION_COLUMNS } from '../quality/quality.columns';
 import { CUSTOMER_COLUMNS, EXPORT_ORDER_COLUMNS, INVOICE_COLUMNS, workOrderColumns } from '../sales/sales.columns';
 import { CERTIFICATE_COLUMNS, INSURANCE_COLUMNS } from '../safety/safety.columns';
-import { MOVEMENT_COLUMNS, STOCK_ITEM_COLUMNS } from '../warehouse/warehouse.columns';
+import { MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_ITEM_COLUMNS } from '../warehouse/warehouse.columns';
 import { WEIGHING_COLUMNS } from '../weighbridge/weighbridge.columns';
 
 /** One printable/exportable report backed by an existing collection. */
@@ -59,6 +59,7 @@ export const REPORT_CATEGORIES: ReportCategory[] = [
       { id: 'rolls', labelKey: 'cutter.tabs.rolls', endpoint: API.cutter.rolls, columns: ROLL_COLUMNS },
       { id: 'stockItems', labelKey: 'warehouse.tabs.items', endpoint: API.warehouse.items, columns: STOCK_ITEM_COLUMNS },
       { id: 'movements', labelKey: 'warehouse.tabs.movements', endpoint: API.warehouse.movements, columns: MOVEMENT_COLUMNS },
+      { id: 'receipts', labelKey: 'warehouse.tabs.receipts', endpoint: API.warehouse.receipts, columns: RECEIPT_COLUMNS },
       { id: 'imports', labelKey: 'logistics.tabs.imports', endpoint: API.logistics.imports, columns: IMPORT_COLUMNS },
       { id: 'exports', labelKey: 'logistics.tabs.exports', endpoint: API.logistics.exports, columns: EXPORT_SHIPMENT_COLUMNS },
       { id: 'dashtInspections', labelKey: 'quality.tabs.dasht', endpoint: API.quality.dashtInspections, columns: DASHT_INSPECTION_COLUMNS },

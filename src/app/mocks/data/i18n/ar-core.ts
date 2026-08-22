@@ -6,12 +6,12 @@ export const AR_CORE: TranslationMap = {
   'company.name': 'شركة الحناوي لصناعة الورق والكيماويات',
   'company.address': 'قطعة 7079 - المنطقة الصناعية السابعة - مدينة السادات - المنوفية',
   'company.madeIn': 'MADE IN EGYPT',
-  'company.poweredBy': 'Powered By B-Force',
 
   'lang.arabic': 'العربية',
   'lang.english': 'English',
 
   'menu.home': 'الرئيسية',
+  'menu.alerts': 'التنبيهات',
   'menu.weighbridge': 'الميزان',
   'menu.cutter': 'المقص',
   'menu.warehouse': 'المخازن',
@@ -24,6 +24,7 @@ export const AR_CORE: TranslationMap = {
   'menu.finance': 'الإدارة المالية',
   'menu.hr': 'الموارد البشرية',
   'menu.administration': 'الشئون الإدارية',
+  'menu.factory': 'إعدادات المصنع',
   'menu.safety': 'السلامة والصحة المهنية',
   'menu.backups': 'النسخ الاحتياطي',
   'menu.reports': 'التقارير',
@@ -284,4 +285,15 @@ export const AR_CORE: TranslationMap = {
   'home.charts.weighbridgeWeek': 'حمولة الميزان هذا الأسبوع (كجم)',
   'home.recentAudit': 'آخر سجلات المراجعة',
   'home.switchStatus': 'حالة المفاتيح',
+
+  'alerts.title': 'التنبيهات',
+  'alerts.subtitle': 'كل تنبيهات المصنع في شاشة واحدة — اضغط الصف لفتحه',
+  'alerts.stats.total': 'كل التنبيهات',
+  'alerts.stats.danger': 'حرجة',
+  'alerts.stats.warning': 'تحذيرات',
+  'alerts.stats.info': 'معلومات',
+  'alerts.fields.module': 'الوحدة',
+  'alerts.severity.danger': 'حرج',
+  'alerts.severity.warning': 'تحذير',
+  'alerts.severity.info': 'معلومة',
 };

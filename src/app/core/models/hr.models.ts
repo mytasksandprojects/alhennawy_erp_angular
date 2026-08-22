@@ -19,6 +19,10 @@ export interface Employee extends Localized {
   drugTestImageUrl?: string;
   /** ملفات الشهادات والخبرات — `|`-joined list, names in `#fragment`. */
   fileUrls?: string;
+  /** System role used by the roles matrix (`admin`, `finance`, …). */
+  roleId?: string;
+  workStart?: string;
+  workEnd?: string;
 }
 
 export interface AttendanceRecord {

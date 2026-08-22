@@ -6,9 +6,11 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
-import { DashboardData } from '../../core/models/common.models';
+import { AlertItem, DashboardData } from '../../core/models/common.models';
+import { navigateToTarget } from '../tab-route';
 import { Translated } from '../translated.base';
 import { UiBarChart } from './ui-bar-chart';
 import { UiColumnChart } from './ui-column-chart';
@@ -34,11 +36,19 @@ import { UiStatCard } from './ui-stat-card';
         }
       </div>
       <div class="content-grid">
-        <section class="ui-card">
+        <section class="ui-card" id="alerts">
           <h2 class="ui-card__title">{{ t('dashboard.alerts') }}</h2>
           <div class="alert-list">
             @for (alert of d.alerts; track alert.id) {
-              <div class="alert-item" [class]="'alert-item--' + alert.severity">
+              <div
+                class="alert-item"
+                [class]="'alert-item--' + alert.severity"
+                [class.alert-item--link]="!!alert.route"
+                [attr.role]="alert.route ? 'link' : null"
+                [attr.tabindex]="alert.route ? 0 : null"
+                (click)="openAlert(alert)"
+                (keydown.enter)="openAlert(alert)"
+              >
                 <ui-icon name="alert" [size]="16" />
                 <span>{{ t(alert.messageKey, alert.params) }}</span>
               </div>
@@ -75,7 +85,12 @@ export class ModuleDashboard extends Translated implements OnInit {
   readonly moduleId = input.required<string>();
 
   private readonly api = inject(ApiClientService);
+  private readonly router = inject(Router);
   protected readonly data = signal<DashboardData | null>(null);
+
+  protected openAlert(alert: AlertItem): void {
+    navigateToTarget(this.router, alert);
+  }
 
   ngOnInit(): void {
     this.api

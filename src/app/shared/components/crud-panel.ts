@@ -6,10 +6,15 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiClientService } from '../../core/api/api-client.service';
 import { FormField, TableColumn } from '../../core/models/common.models';
 import { NotificationService } from '../../core/services/notification.service';
+import { AccessService } from '../../core/security/access.service';
 import { exportRowsToCsv } from '../crud/export-csv';
+import { emptyDraft, rowMatches, shownColumns, shownFields } from '../crud/form-draft';
+import { printWide } from '../crud/print-page';
+import { matchesStock, stockStatusOf } from '../crud/stock-filter';
 import { Translated } from '../translated.base';
 import { UiEntityForm } from './ui-entity-form';
 import { UiIcon } from './ui-icon';
@@ -19,11 +24,6 @@ import { UiTable } from './ui-table';
 type Row = Record<string, unknown>;
 type Draft = Record<string, string | number | boolean>;
 
-/**
- * List + create/edit/delete modal for one API collection, with a shared
- * toolbar every module inherits: from/to date filter, print (browser
- * print dialog also produces PDF) and Excel export.
- */
 @Component({
   selector: 'crud-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +37,17 @@ type Draft = Record<string, string | number | boolean>;
         [value]="search()"
         (input)="search.set($any($event.target).value)"
       />
+      @if (hasStockFilter()) {
+        <select
+          class="ui-control"
+          [value]="stock()"
+          (change)="setStock($any($event.target).value)"
+        >
+          <option value="">{{ t('common.all') }}</option>
+          <option value="below">{{ t('warehouse.stats.belowMinimum') }}</option>
+          <option value="out">{{ t('warehouse.stats.outOfStock') }}</option>
+        </select>
+      }
       @if (dateKey()) {
         <label class="row crud-filter">
           <span class="ui-field__label">{{ t('common.from') }}</span>
@@ -58,19 +69,25 @@ type Draft = Record<string, string | number | boolean>;
         </label>
       }
       <div class="row token-toolbar__actions">
-        <button type="button" class="ui-btn ui-btn--ghost" (click)="print()">
-          <ui-icon name="print" [size]="16" />
-          {{ t('common.print') }}
-        </button>
-        <button type="button" class="ui-btn ui-btn--ghost" (click)="exportPdf()">
-          <ui-icon name="document" [size]="16" />
-          {{ t('common.exportPdf') }}
-        </button>
-        <button type="button" class="ui-btn ui-btn--ghost" (click)="exportExcel()">
-          <ui-icon name="download" [size]="16" />
-          {{ t('common.exportExcel') }}
-        </button>
-        @if (!readOnly()) {
+        @if (allow('print')) {
+          <button type="button" class="ui-btn ui-btn--ghost" (click)="print()">
+            <ui-icon name="print" [size]="16" [brand]="true" />
+            {{ t('common.print') }}
+          </button>
+        }
+        @if (allow('pdf')) {
+          <button type="button" class="ui-btn ui-btn--ghost" (click)="exportPdf()">
+            <ui-icon name="pdf" [size]="16" />
+            {{ t('common.exportPdf') }}
+          </button>
+        }
+        @if (allow('excel')) {
+          <button type="button" class="ui-btn ui-btn--ghost" (click)="exportExcel()">
+            <ui-icon name="xls" [size]="16" />
+            {{ t('common.exportExcel') }}
+          </button>
+        }
+        @if (!readOnly() && allow('create')) {
           <button type="button" class="ui-btn ui-btn--primary" (click)="openCreate()">
             <ui-icon name="plus" [size]="16" />
             {{ t('common.create') }}
@@ -80,9 +97,13 @@ type Draft = Record<string, string | number | boolean>;
     </div>
     <div class="print-area">
       <ui-table
-        [columns]="columns()"
+        [columns]="shownColumns()"
         [rows]="filtered()"
-        [clickable]="!readOnly()"
+        [clickable]="!readOnly() && allow('edit')"
+        [rowExport]="allow('print') || allow('pdf') || allow('excel')"
+        [allowPrint]="allow('print')"
+        [allowPdf]="allow('pdf')"
+        [allowExcel]="allow('excel')"
         (rowClick)="openEdit($event)"
       />
     </div>
@@ -90,12 +111,12 @@ type Draft = Record<string, string | number | boolean>;
     @if (open()) {
       <ui-modal [titleKey]="editingId() ? 'common.edit' : 'common.create'" (closed)="close()">
         <div class="stack">
-          <ui-entity-form [fields]="fields()" [(draft)]="draft" />
+          <ui-entity-form [fields]="shownFields()" [moduleId]="moduleId()" [tabId]="tabId()" [(draft)]="draft" />
           <div class="row">
             <button type="button" class="ui-btn ui-btn--primary" [disabled]="busy()" (click)="save()">
               {{ t('common.save') }}
             </button>
-            @if (editingId()) {
+            @if (editingId() && allow('delete')) {
               <button type="button" class="ui-btn ui-btn--danger" [disabled]="busy()" (click)="remove()">
                 {{ t('common.delete') }}
               </button>
@@ -114,11 +135,15 @@ export class CrudPanel extends Translated {
   readonly columns = input.required<TableColumn[]>();
   readonly fields = input<FormField[]>([]);
   readonly idKey = input('id');
-  /** Report mode: toolbar filters + exports only, no create/edit. */
+  readonly moduleId = input('');
+  readonly tabId = input('');
   readonly readOnly = input(false);
 
   private readonly api = inject(ApiClientService);
+  private readonly access = inject(AccessService);
   private readonly notifications = inject(NotificationService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected readonly rows = signal<Row[]>([]);
   protected readonly open = signal(false);
@@ -128,8 +153,11 @@ export class CrudPanel extends Translated {
   protected readonly fromDate = signal('');
   protected readonly toDate = signal('');
   protected readonly search = signal('');
+  protected readonly stock = signal('');
+  protected readonly hasStockFilter = computed(() =>
+    this.columns().some((col) => col.key === 'stockStatus'),
+  );
 
-  /** First date-typed column drives the from/to filter (if any). */
   protected readonly dateKey = computed(
     () =>
       this.columns().find((col) => col.type === 'date' || col.type === 'datetime')
@@ -141,47 +169,63 @@ export class CrudPanel extends Translated {
     const from = this.fromDate();
     const to = this.toDate();
     const term = this.search().trim().toLowerCase();
-    return this.rows().filter((row) => {
-      if (key && (from || to)) {
-        const value = String(row[key] ?? '').slice(0, 10);
-        if (!value) return false;
-        if ((from && value < from) || (to && value > to)) return false;
-      }
-      return !term || this.matches(row, term);
-    });
+    const stock = this.stock();
+    return this.rows()
+      .filter((row) => {
+        if (key && (from || to)) {
+          const value = String(row[key] ?? '').slice(0, 10);
+          if (!value) return false;
+          if ((from && value < from) || (to && value > to)) return false;
+        }
+        if (!matchesStock(row, stock)) return false;
+        return !term || rowMatches(row, this.columns(), term, this.t);
+      })
+      .map((row) =>
+        this.hasStockFilter() ? { ...row, stockStatus: stockStatusOf(row) } : row,
+      );
   });
-
-  /** Search across every column, including translated labels. */
-  private matches(row: Row, term: string): boolean {
-    return this.columns().some((col) => {
-      const raw = String(row[col.key] ?? '').toLowerCase();
-      if (raw.includes(term)) return true;
-      const translated =
-        col.type === 'key' || col.type === 'badge'
-          ? this.t((col.keyPrefix ?? '') + String(row[col.key] ?? '')).toLowerCase()
-          : '';
-      return translated.includes(term);
-    });
-  }
 
   constructor() {
     super();
+    this.route.queryParamMap.subscribe((params) => {
+      this.stock.set(params.get('stock') ?? '');
+      this.search.set(params.get('q') ?? '');
+    });
     queueMicrotask(() => this.reload());
   }
 
-  protected print(): void {
-    window.print();
+  protected setStock(value: string): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { stock: value || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
-  /** Browsers ship a "Save as PDF" printer — same dialog, PDF output. */
+  protected print(): void {
+    printWide();
+  }
+
+  protected allow(action: string): boolean {
+    return this.access.canAction(this.moduleId(), this.tabId(), action);
+  }
+
+  protected shownColumns(): TableColumn[] {
+    return shownColumns(this.columns(), this.moduleId(), this.tabId(), this.access);
+  }
+
+  protected shownFields(): FormField[] {
+    return shownFields(this.fields(), this.columns(), this.shownColumns(), this.moduleId(), this.tabId(), this.access);
+  }
+
   protected exportPdf(): void {
     this.notifications.info('common.pdfHint');
-    window.print();
+    printWide();
   }
 
   protected exportExcel(): void {
     exportRowsToCsv(
-      this.columns(),
+      this.shownColumns(),
       this.filtered(),
       this.endpoint(),
       this.t,
@@ -191,7 +235,7 @@ export class CrudPanel extends Translated {
 
   protected openCreate(): void {
     this.editingId.set(null);
-    this.draft.set(this.emptyDraft());
+    this.draft.set(emptyDraft(this.shownFields()));
     this.open.set(true);
   }
 
@@ -199,10 +243,9 @@ export class CrudPanel extends Translated {
     if (this.readOnly()) return;
     this.editingId.set(String(row[this.idKey()] ?? ''));
     const next: Draft = {};
-    for (const field of this.fields()) {
+    for (const field of this.shownFields()) {
       next[field.key] = (row[field.key] as string | number | boolean) ?? '';
       if (!field.multilang) continue;
-      // Also prefill the per-language variants (key_<code>).
       for (const [key, value] of Object.entries(row)) {
         if (key.startsWith(`${field.key}_`)) {
           next[key] = (value as string | number | boolean) ?? '';
@@ -253,11 +296,4 @@ export class CrudPanel extends Translated {
     this.api.get<Row[]>(this.endpoint()).subscribe((data) => this.rows.set(data));
   }
 
-  private emptyDraft(): Draft {
-    const next: Draft = {};
-    for (const field of this.fields()) {
-      next[field.key] = field.type === 'number' ? 0 : field.options?.[0]?.value ?? '';
-    }
-    return next;
-  }
 }

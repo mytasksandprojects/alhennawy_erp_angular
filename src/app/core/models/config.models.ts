@@ -42,9 +42,21 @@ export interface CompanyProfile {
   phone: string;
   fax: string;
   logoUrl: string;
+  /** Wordmark-on-light variant for the dark sidebar (transparent, no plate). */
+  sidebarLogoUrl: string;
   madeInKey: string;
-  poweredByKey: string;
   isoCertifications: string[];
+}
+
+/** Factory Settings payload — company letterhead used on printed documents. */
+export interface FactoryProfilePayload {
+  phone: string;
+  fax: string;
+  logoUrl: string;
+  sidebarLogoUrl: string;
+  isoCertifications: string[];
+  names: Record<string, string>;
+  addresses: Record<string, string>;
 }
 
 export interface WeighbridgeSettings {

@@ -26,6 +26,8 @@ export const MOCK_STOCK_ITEMS: StockItem[] = [
   { code: 'FIN-SMP-22', name: 'سوبر مكس مطبخ ط ٢ ج ٢٢', name_en: 'Super Mix Kitchen T2 G22', warehouseId: 'wh-fin1', unitKey: 'units.kg', quantity: 61200, minimumStock: 15000, unitCost: 27.5, isBelowMinimum: false },
   { code: 'FIN-TWL-25', name: 'تواليت فاخر ج ٢٥', name_en: 'Premium Toilet Tissue G25', warehouseId: 'wh-fin1', unitKey: 'units.kg', quantity: 8250, minimumStock: 10000, unitCost: 31, isBelowMinimum: true },
   { code: 'FIN2-SMP-22', name: 'سوبر مكس درجة ثانية ج ٢٢', name_en: 'Super Mix Grade 2 G22', warehouseId: 'wh-fin2', unitKey: 'units.kg', quantity: 4300, minimumStock: 0, unitCost: 18, isBelowMinimum: false },
+  { code: 'SPR-409', name: 'فلتر هواء MP-1', name_en: 'Air Filter MP-1', warehouseId: 'wh-spare', unitKey: 'units.piece', quantity: 0, minimumStock: 4, unitCost: 220, isBelowMinimum: true },
+  { code: 'CHM-020', name: 'مضاد رغوة سيليكون', name_en: 'Silicone Defoamer', warehouseId: 'wh-chem', unitKey: 'units.liter', quantity: 0, minimumStock: 50, unitCost: 78, isBelowMinimum: true },
 ];
 
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
@@ -37,4 +39,30 @@ export const MOCK_MOVEMENTS: StockMovement[] = [
   { id: 'mv-4', number: 'TRF-2026-0102', date: daysAgo(1), type: 'transfer', itemCode: 'DSH-002-S1', itemName: 'ورق دشت درجة ثانية — تحويل داخلي', quantity: 5200, unitKey: 'units.kg', fromWarehouseId: 'wh-dasht', toWarehouseId: 'wh-fin2', referenceKey: 'warehouse.refs.weighing', reference: '3011', byUser: 'STORE2' },
   { id: 'mv-5', number: 'RCV-2026-0842', date: daysAgo(2), type: 'receipt', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 10, unitKey: 'units.piece', toWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.purchaseOrder', reference: 'PO-2026-077', byUser: 'STORE1' },
   { id: 'mv-6', number: 'ADJ-2026-0009', date: daysAgo(3), type: 'adjustment', itemCode: 'FIN-TWL-25', itemName: 'تواليت فاخر ج ٢٥', quantity: -120, unitKey: 'units.kg', fromWarehouseId: 'wh-fin1', referenceKey: 'warehouse.refs.stockCount', reference: 'CNT-2026-03', byUser: 'ADMIN' },
+  { id: 'mv-7', number: 'RCV-2026-0843', date: daysAgo(3), type: 'receipt', itemCode: 'CHM-014', itemName: 'مثبت رغوة', quantity: 800, unitKey: 'units.liter', toWarehouseId: 'wh-chem', referenceKey: 'warehouse.refs.purchaseOrder', reference: 'PO-2026-081', byUser: 'STORE1' },
+  { id: 'mv-8', number: 'RCV-2026-0844', date: daysAgo(4), type: 'receipt', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantity: 9200, unitKey: 'units.kg', toWarehouseId: 'wh-fin1', referenceKey: 'warehouse.refs.weighing', reference: '3022', byUser: 'STORE2' },
 ];
+
+export function listReceipts(): StockMovement[] {
+  return MOCK_MOVEMENTS.filter((row) => row.type === 'receipt');
+}
+
+export function createReceipt(body: unknown): StockMovement {
+  const draft = body as Partial<StockMovement>;
+  const row: StockMovement = {
+    id: `mv-${Date.now()}`,
+    number: draft.number || `RCV-${Date.now()}`,
+    date: draft.date || new Date().toISOString(),
+    type: 'receipt',
+    itemCode: draft.itemCode || '',
+    itemName: draft.itemName || '',
+    quantity: Number(draft.quantity) || 0,
+    unitKey: draft.unitKey || 'units.kg',
+    toWarehouseId: draft.toWarehouseId,
+    referenceKey: draft.referenceKey,
+    reference: draft.reference,
+    byUser: draft.byUser || '',
+  };
+  MOCK_MOVEMENTS.unshift(row);
+  return row;
+}

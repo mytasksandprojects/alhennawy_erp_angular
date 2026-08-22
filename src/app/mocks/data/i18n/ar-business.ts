@@ -16,6 +16,7 @@ export const AR_BUSINESS: TranslationMap = {
   'sales.statement.totalDebit': 'إجمالي مدين',
   'sales.statement.totalCredit': 'إجمالي دائن',
   'sales.statement.finalBalance': 'الرصيد النهائي',
+  'sales.statement.printTitle': 'كشف حساب',
 
   'sales.docs.opening': 'رصيد أول المدة',
   'sales.docs.invoice': 'فاتورة مبيعات',

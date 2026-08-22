@@ -18,7 +18,7 @@ import { UiModal } from '../../shared/components/ui-modal';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
 import { UiTable } from '../../shared/components/ui-table';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
-import { initialTab, tabNavigator } from '../../shared/tab-route';
+import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { Translated } from '../../shared/translated.base';
 import { CutterApiService } from './cutter-api.service';
 import { ROLL_COLUMNS, ROLL_FIELDS, SPEC_COLUMNS, SPEC_FIELDS } from './cutter.columns';
@@ -131,7 +131,7 @@ export class CutterPage extends Translated implements OnInit {
     { id: 'specs', labelKey: 'cutter.tabs.specs' },
   ];
 
-  protected readonly active = signal(initialTab('rolls'));
+  protected readonly active = routedTab('rolls');
   private readonly navigateToTab = tabNavigator();
 
   protected activate(tabId: string): void {

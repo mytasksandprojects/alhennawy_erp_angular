@@ -79,7 +79,9 @@ export function listWeighings(query: URLSearchParams): WeighingTicket[] {
   const type = query.get('type');
   const status = query.get('status');
   return MOCK_TICKETS
-    .filter((t) => !type || t.type === type)
+    .filter((t) => !type || (type === 'returns'
+      ? t.type === 'purchase-return' || t.type === 'sales-return'
+      : t.type === type))
     .filter((t) => !status || t.status === status)
     .sort((a, b) => b.serial - a.serial);
 }

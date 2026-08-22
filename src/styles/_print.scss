@@ -78,19 +78,216 @@
   padding: var(--space-xs);
 }
 
+.print-only {
+  display: none;
+}
+
+.print-sheet__logo {
+  height: var(--print-sheet-logo-height);
+  width: auto;
+  object-fit: contain;
+}
+
+.print-sheet__title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin: var(--space-sm) 0 0;
+  text-align: center;
+}
+
+.print-sheet__doc {
+  text-align: center;
+  font-weight: var(--font-weight-medium);
+  margin: var(--space-xs) 0 0;
+}
+
+.print-sheet__foot {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: var(--border-width) solid var(--color-text);
+}
+
+.print-record {
+  width: 100%;
+  margin: 0;
+  border: var(--border-width) solid var(--color-text);
+}
+
+.print-record__row {
+  display: grid;
+  grid-template-columns: var(--print-record-label) 1fr;
+  border-bottom: var(--border-width) solid var(--color-text);
+}
+
+.print-record__row:last-child {
+  border-bottom: none;
+}
+
+.print-record dt {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-surface-alt);
+  border-inline-end: var(--border-width) solid var(--color-text);
+}
+
+.print-record dd {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+}
+
 @media print {
+  @page {
+    margin: var(--print-page-margin);
+  }
+
+  .print-only {
+    display: block;
+  }
+
   body * {
     visibility: hidden;
   }
 
   .print-area,
-  .print-area * {
+  .print-area *,
+  .print-sheet,
+  .print-sheet * {
     visibility: visible;
   }
 
-  .print-area {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: 0;
+  app-sidebar,
+  .sidebar,
+  .topbar,
+  .page-header,
+  .ui-tabs,
+  .token-toolbar,
+  .ui-table__actions-col,
+  .ui-table-wrap--solo .ui-table,
+  .print-sheet .print-nested-hide,
+  body.is-print-row .print-sheet:not(.ui-table-wrap--solo) > .print-sheet__head,
+  body.is-print-row .print-sheet:not(.ui-table-wrap--solo) > .print-sheet__foot,
+  body.is-print-row .print-sheet:not(.ui-table-wrap--solo) > .statement-summary {
+    display: none;
+  }
+
+  html,
+  body,
+  .shell,
+  .shell__main,
+  .shell__content,
+  .ui-card,
+  .statement-card,
+  .print-area,
+  .print-sheet,
+  .ui-table-wrap {
+    display: block;
+    position: static;
+    overflow: visible;
+    box-sizing: border-box;
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transform: none;
+    filter: none;
+  }
+
+  .ui-modal-overlay,
+  .ui-modal {
+    position: static;
+    overflow: visible;
+    max-height: none;
+    width: auto;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .print-area:has(.roll-label) {
+    padding: var(--print-label-inset);
+    width: auto;
+  }
+
+  .print-sheet {
+    padding-inline: var(--print-sheet-inset);
+  }
+
+  .print-area .ui-table,
+  .print-sheet .ui-table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+  }
+
+  .print-area .ui-table th,
+  .print-area .ui-table td,
+  .print-sheet .ui-table th,
+  .print-sheet .ui-table td,
+  .print-area .ui-table tbody tr:last-child td,
+  .print-sheet .ui-table tbody tr:last-child td {
+    border: var(--border-width) solid var(--color-text);
+    padding: var(--space-xs) var(--space-sm);
+    height: auto;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .print-area .ui-table th,
+  .print-area .ui-table td {
+    white-space: nowrap;
+  }
+
+  .print-sheet .ui-table th {
+    white-space: nowrap;
+  }
+
+  .print-sheet .ui-table td {
+    white-space: normal;
+  }
+
+  .print-sheet .statement-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm) var(--space-md);
+    box-sizing: border-box;
+    width: 100%;
+    margin-block: var(--space-md);
+    padding: var(--space-sm) 0;
+    background: transparent;
+    border-radius: 0;
+    border-block: var(--border-width) solid var(--color-text);
+  }
+
+  .print-sheet__head {
+    text-align: center;
+    margin-bottom: var(--space-md);
+  }
+
+  .print-sheet__logo {
+    display: block;
+    margin-inline: auto;
+  }
+
+  .print-record dt {
+    background: var(--color-surface-solid);
+  }
+
+  .roll-label {
+    overflow: visible;
+    break-inside: avoid;
   }
 }

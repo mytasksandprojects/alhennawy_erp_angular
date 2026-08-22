@@ -16,6 +16,7 @@ export const EN_BUSINESS: TranslationMap = {
   'sales.statement.totalDebit': 'Total Debit',
   'sales.statement.totalCredit': 'Total Credit',
   'sales.statement.finalBalance': 'Final Balance',
+  'sales.statement.printTitle': 'Account Statement',
 
   'sales.docs.opening': 'Opening Balance',
   'sales.docs.invoice': 'Sales Invoice',

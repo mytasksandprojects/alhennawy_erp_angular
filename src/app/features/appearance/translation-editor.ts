@@ -12,6 +12,7 @@ import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { AppConfigService } from '../../core/config/app-config.service';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { TranslationMap } from '../../core/models/config.models';
+import { AccessService } from '../../core/security/access.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UiPager } from '../../shared/components/ui-pager';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
@@ -78,6 +79,7 @@ export class TranslationEditor extends Translated {
   private readonly store = inject(RuntimeConfigStore);
   private readonly config = inject(AppConfigService);
   private readonly notifications = inject(NotificationService);
+  private readonly access = inject(AccessService);
 
   protected readonly lang = signal(this.store.language());
   protected readonly entries = signal<TranslationMap>({});
@@ -86,10 +88,9 @@ export class TranslationEditor extends Translated {
   protected readonly busy = signal(false);
 
   protected readonly langTabs = computed<TabItem[]>(() =>
-    (this.store.settings()?.languages ?? []).map((l) => ({
-      id: l.code,
-      labelKey: l.labelKey,
-    })),
+    (this.store.settings()?.languages ?? [])
+      .filter((lang) => this.access.canColumn('appearance', 'translations', lang.code))
+      .map((lang) => ({ id: lang.code, labelKey: lang.labelKey })),
   );
 
   private readonly filtered = computed(() => {

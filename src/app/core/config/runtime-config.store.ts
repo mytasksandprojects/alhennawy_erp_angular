@@ -51,6 +51,14 @@ export class RuntimeConfigStore {
     this.menuSignal.set(menu);
   }
 
+  setSettings(settings: AppSettings): void {
+    this.settingsSignal.set(settings);
+  }
+
+  patchTranslations(partial: TranslationMap): void {
+    this.translationsSignal.update((current) => ({ ...current, ...partial }));
+  }
+
   setTranslations(lang: LanguageCode, map: TranslationMap): void {
     this.languageSignal.set(lang);
     this.translationsSignal.set(map);

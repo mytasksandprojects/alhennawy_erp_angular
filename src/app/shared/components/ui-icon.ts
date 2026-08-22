@@ -36,7 +36,7 @@ const PATHS: Record<string, string> = {
   transfer: 'M4 8h13m0 0-3-3m3 3-3 3m6 5H7m0 0 3-3m-3 3 3 3',
   items: 'M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z',
   empty: 'M4 6h16v12H4V6Zm0 4h16M9 14h6',
-  document: 'M6 2h9l4 4v16H6V2Zm9 0v4h4M9 12h6m-6 4h6',
+  document: 'M7 3h8l4 4v14H7V3Zm8 0v4h4M9 12h6M9 16h4',
   invoice: 'M6 2h12v20l-2-1.5L14 22l-2-1.5L10 22l-2-1.5L6 22V2Zm3 6h6m-6 4h6',
   plus: 'M12 5v14M5 12h14',
   minus: 'M5 12h14',
@@ -48,7 +48,7 @@ const PATHS: Record<string, string> = {
   search: 'M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Zm5-1.5L21 21',
   logout: 'M15 4h5v16h-5M4 12h11m0 0-4-4m4 4-4 4',
   lang: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm-9-9h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9Z',
-  print: 'M7 8V3h10v5M7 8H4v9h3m10-9h3v9h-3M7 14h10v7H7v-7Z',
+  print: 'M7 8V4h10v4M5 8h14a2 2 0 0 1 2 2v5h-4v-2H7v2H3v-5a2 2 0 0 1 2-2Zm2 7h10v5H7v-5Z',
   user: 'M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-8 10a8 8 0 0 1 16 0',
   menu: 'M4 6h16M4 12h16M4 18h16',
   eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
@@ -60,33 +60,75 @@ const PATHS: Record<string, string> = {
   settings: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8-3a8 8 0 0 0-.2-1.7l2-1.5-2-3.5-2.4 1a8 8 0 0 0-2.9-1.7L14 2h-4l-.5 2.6a8 8 0 0 0-2.9 1.7l-2.4-1-2 3.5 2 1.5A8 8 0 0 0 4 12c0 .6.1 1.1.2 1.7l-2 1.5 2 3.5 2.4-1a8 8 0 0 0 2.9 1.7L10 22h4l.5-2.6a8 8 0 0 0 2.9-1.7l2.4 1 2-3.5-2-1.5c.1-.6.2-1.1.2-1.7Z',
   safety: 'M5 14a7 7 0 0 1 14 0v3H5v-3ZM3 17h18M12 4v3m-6 7v3m12-3v3',
   backup: 'M4 6c0 1.7 3.6 3 8 3s8-1.3 8-3-3.6-3-8-3-8 1.3-8 3Zm0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
-  download: 'M12 3v12m0 0-4-4m4 4 4-4M4 20h16',
+  download: 'M12 4v11m0 0 5-5m-5 5-5-5M5 19h14',
+  pdf: 'M7 3h8l4 4v14H7V3Zm8 0v4h4M8 13h3.2a1.6 1.6 0 1 0 0-3.2H8V17m5.5-4H18',
+  xls: 'M4 5h16v14H4V5Zm5 0v14M4 10h16M4 15h16',
   upload: 'M12 16V4m0 0-4 4m4-4 4 4M4 20h16',
   clinic: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-13v8m-4-4h8',
+  factory: 'M3 21V9l5-3v3l5-3v3h8v12H3Zm6-8h2v8H9v-8Zm5 0h2v8h-2v-8Zm5 3h2v5h-2v-5Z',
 };
 
 @Component({
   selector: 'ui-icon',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { '[style.color]': 'ink()' },
   template: `
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.7"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      [attr.width]="size()"
-      [attr.height]="size()"
-      aria-hidden="true"
-    >
-      <path [attr.d]="path()" />
-    </svg>
+    @if (name() === 'pdf') {
+      <svg viewBox="0 0 24 24" [attr.width]="size()" [attr.height]="size()" aria-hidden="true">
+        <rect width="24" height="24" rx="5" fill="var(--color-icon-pdf)" />
+        <text
+          x="12"
+          y="16"
+          text-anchor="middle"
+          fill="var(--color-icon-mark)"
+          font-size="8"
+          font-weight="700"
+          font-family="var(--font-family)"
+        >PDF</text>
+      </svg>
+    } @else if (name() === 'xls') {
+      <svg viewBox="0 0 24 24" [attr.width]="size()" [attr.height]="size()" aria-hidden="true">
+        <rect width="24" height="24" rx="5" fill="var(--color-icon-xls)" />
+        <rect x="5" y="6" width="14" height="12" rx="1" fill="var(--color-icon-mark)" />
+        <rect x="5" y="6" width="14" height="3.2" fill="var(--color-icon-xls)" />
+        <path
+          fill="none"
+          stroke="var(--color-icon-xls)"
+          stroke-width="1.1"
+          d="M5 12.2h14M5 16h14M9.7 9.2v8.8M14.3 9.2v8.8"
+        />
+      </svg>
+    } @else if (name() === 'print') {
+      <svg viewBox="0 0 24 24" [attr.width]="size()" [attr.height]="size()" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M7 3h10v5H7V3Zm12 6H5a3 3 0 0 0-3 3v6h4v-3h12v3h4v-6a3 3 0 0 0-3-3ZM7 16h10v5H7v-5Zm2 2v1h6v-1H9Z"
+        />
+      </svg>
+    } @else {
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        [attr.width]="size()"
+        [attr.height]="size()"
+        aria-hidden="true"
+      >
+        <path [attr.d]="path()" />
+      </svg>
+    }
   `,
   styles: [':host { display: inline-flex; line-height: 0; }'],
 })
 export class UiIcon {
   readonly name = input.required<string>();
   readonly size = input(20);
+  readonly brand = input(false);
   protected readonly path = computed(() => PATHS[this.name()] ?? PATHS['items']);
+  protected readonly ink = computed(() =>
+    this.name() === 'print' && this.brand() ? 'var(--color-icon-print)' : null,
+  );
 }

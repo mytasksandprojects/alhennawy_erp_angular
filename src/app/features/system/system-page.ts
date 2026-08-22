@@ -10,7 +10,7 @@ import { ApiClientService } from '../../core/api/api-client.service';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { SystemToggle } from '../../core/models/system.models';
 import { NotificationService } from '../../core/services/notification.service';
-import { initialTab, tabNavigator } from '../../shared/tab-route';
+import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { Translated } from '../../shared/translated.base';
 import { CrudPanel } from '../../shared/components/crud-panel';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
@@ -67,6 +67,8 @@ import {
           {{ t('system.lookupsHint') }}
         </p>
         <crud-panel
+          moduleId="system"
+          tabId="lookups"
           [endpoint]="lookupsUrl"
           [columns]="lookupColumns"
           [fields]="lookupFields()"
@@ -74,6 +76,8 @@ import {
       }
       @default {
         <crud-panel
+          moduleId="system"
+          tabId="audit"
           [endpoint]="auditUrl"
           [columns]="auditColumns"
           [fields]="auditFields"
@@ -102,7 +106,7 @@ export class SystemPage extends Translated {
     { id: 'switches', labelKey: 'system.tabs.switches' },
   ];
 
-  protected readonly active = signal(initialTab('audit'));
+  protected readonly active = routedTab('audit');
   private readonly navigateToTab = tabNavigator();
   protected readonly toggles = signal<SystemToggle[]>([]);
   protected readonly saving = signal(false);

@@ -1,0 +1,185 @@
+.role-mod {
+  margin-bottom: var(--space-md);
+  background: var(--color-surface);
+  backdrop-filter: blur(var(--glass-blur));
+  border: var(--border-width) solid var(--glass-highlight);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--card-padding);
+}
+
+.role-mod__head,
+.role-screen__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  list-style: none;
+}
+
+.role-mod__head {
+  font-size: var(--font-size-lg);
+}
+
+.role-mod__head::-webkit-details-marker,
+.role-screen__head::-webkit-details-marker {
+  display: none;
+}
+
+.role-mod__head::before,
+.role-screen__head::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-block-start: var(--space-sm) solid transparent;
+  border-block-end: var(--space-sm) solid transparent;
+  border-inline-start: var(--space-sm) solid var(--color-text-soft);
+  flex-shrink: 0;
+}
+
+details[open] > .role-mod__head::before,
+details[open] > .role-screen__head::before {
+  border-inline-start-color: transparent;
+  border-inline-start-width: var(--space-sm);
+  border-inline-end: var(--space-sm) solid transparent;
+  border-block-start: var(--space-sm) solid var(--color-text-soft);
+  border-block-end: none;
+}
+
+.role-screen,
+.role-mod > app-role-perms {
+  display: block;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.role-screen .ui-field__label {
+  margin-top: var(--space-sm);
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--sidebar-width) * 0.65), 1fr));
+  gap: var(--space-xs) var(--space-md);
+  margin-top: var(--space-xs);
+}
+
+.checkin {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.checkin-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.checkin-hero__who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.checkin-hero__photo {
+  width: calc(var(--control-height) * 2);
+  height: calc(var(--control-height) * 2);
+  border-radius: var(--radius-full);
+  object-fit: contain;
+  background: var(--color-primary-soft);
+  border: var(--border-width) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.checkin-hero__photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-gradient);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  border-color: transparent;
+  box-shadow: var(--shadow-glow);
+}
+
+.checkin-hero__id {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.checkin-hero__name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  overflow-wrap: break-word;
+}
+
+.checkin-hero__status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.checkin-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--sidebar-width) * 0.55), 1fr));
+  gap: var(--space-md);
+}
+
+.checkin-metric {
+  background: var(--color-surface);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: var(--border-width) solid var(--glass-highlight);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--card-padding);
+}
+
+.checkin-metric__value {
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-bold);
+}
+
+.checkin-metric__label {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+.checkin-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--sidebar-width) * 0.7), 1fr));
+  gap: var(--space-md);
+}
+
+.checkin-actions .ui-btn {
+  width: 100%;
+  height: calc(var(--control-height) * 1.7);
+  font-size: var(--font-size-lg);
+}
+
+.checkin-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.checkin-history .ui-card__title {
+  margin-bottom: 0;
+}
+
+@media print {
+  .role-editor {
+    display: none;
+  }
+}

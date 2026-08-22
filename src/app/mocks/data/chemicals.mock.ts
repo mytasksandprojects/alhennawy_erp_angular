@@ -39,10 +39,10 @@ export const MOCK_CHEM_OP_PURCHASES: ChemicalsPurchase[] = [
 
 export const CHEMICALS_DASHBOARD: DashboardData = {
   stats: [
-    { id: 'output', labelKey: 'chemicals.stats.monthOutput', value: 96400, icon: 'production', unitKey: 'units.kg', trendPercent: 6 },
-    { id: 'staff', labelKey: 'chemicals.stats.staffCount', value: 38, icon: 'hr' },
-    { id: 'raw', labelKey: 'chemicals.stats.rawSpend', value: 757500, icon: 'purchasing', unitKey: 'units.egp' },
-    { id: 'op', labelKey: 'chemicals.stats.opSpend', value: 114100, icon: 'wrench', unitKey: 'units.egp' },
+    { id: 'output', labelKey: 'chemicals.stats.monthOutput', value: 96400, icon: 'production', unitKey: 'units.kg', trendPercent: 6, route: '/chemicals', query: { tab: 'output' } },
+    { id: 'staff', labelKey: 'chemicals.stats.staffCount', value: 38, icon: 'hr', route: '/chemicals', query: { tab: 'staff' } },
+    { id: 'raw', labelKey: 'chemicals.stats.rawSpend', value: 757500, icon: 'purchasing', unitKey: 'units.egp', route: '/chemicals', query: { tab: 'rawPurchases' } },
+    { id: 'op', labelKey: 'chemicals.stats.opSpend', value: 114100, icon: 'wrench', unitKey: 'units.egp', route: '/chemicals', query: { tab: 'opPurchases' } },
   ],
   charts: [
     {
@@ -70,6 +70,6 @@ export const CHEMICALS_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'cha-1', messageKey: 'chemicals.alerts.rawLow', params: ['ملح صناعي'], severity: 'warning', date: daysAgo(0) },
+    { id: 'cha-1', messageKey: 'chemicals.alerts.rawLow', params: ['ملح صناعي'], severity: 'warning', date: daysAgo(0), route: '/chemicals', query: { tab: 'rawPurchases', q: 'ملح صناعي' } },
   ],
 };

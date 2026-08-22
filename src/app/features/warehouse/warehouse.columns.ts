@@ -16,11 +16,11 @@ export const STOCK_ITEM_COLUMNS: TableColumn[] = [
   { key: 'minimumStock', labelKey: 'warehouse.fields.minimum', type: 'number' },
   { key: 'unitCost', labelKey: 'warehouse.fields.unitCost', type: 'currency' },
   {
-    key: 'isBelowMinimum',
+    key: 'stockStatus',
     labelKey: 'common.status',
     type: 'badge',
     keyPrefix: 'warehouse.stock.',
-    badgeToneMap: { true: 'danger', false: 'success' },
+    badgeToneMap: { available: 'success', below: 'warning', out: 'danger' },
   },
 ];
 
@@ -70,3 +70,12 @@ export const MOVEMENT_FIELDS: FormField[] = [
   { key: 'reference', labelKey: 'warehouse.fields.reference' },
   { key: 'byUser', labelKey: 'common.user' },
 ];
+
+/** أذون الإضافة — receipts only; type is fixed on the server. */
+export const RECEIPT_COLUMNS: TableColumn[] = MOVEMENT_COLUMNS.filter(
+  (col) => col.key !== 'type',
+);
+
+export const RECEIPT_FIELDS: FormField[] = MOVEMENT_FIELDS.filter(
+  (field) => field.key !== 'type',
+);

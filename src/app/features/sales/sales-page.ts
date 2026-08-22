@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
+import { AccessService } from '../../core/security/access.service';
 import { AuthService } from '../../core/security/auth.service';
 import { CrudPanel } from '../../shared/components/crud-panel';
 import { ListTabConfig } from '../../shared/components/module-tabbed-view';
 import { ModuleDashboard } from '../../shared/components/module-dashboard';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
-import { initialTab, tabNavigator } from '../../shared/tab-route';
+import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { CustomerStatement } from './customer-statement';
 import {
   CUSTOMER_COLUMNS,
@@ -32,7 +33,7 @@ import {
     <ui-page-header titleKey="sales.title" subtitleKey="sales.subtitle" />
 
     <ui-tabs
-      [tabs]="tabItems"
+      [tabs]="tabItems()"
       [active]="active()"
       (activeChange)="activate($event)"
     />
@@ -48,9 +49,11 @@ import {
         @for (tab of crudTabs; track tab.id) {
           @if (tab.id === active()) {
             <crud-panel
-              [endpoint]="tab.endpoint"
-              [columns]="tab.columns"
-              [fields]="tab.fields"
+              moduleId="sales"
+              [tabId]="tab.id"
+              [endpoint]="tab.endpoint!"
+              [columns]="tab.columns!"
+              [fields]="tab.fields ?? []"
               [idKey]="tab.idKey ?? 'id'"
             />
           }
@@ -61,8 +64,9 @@ import {
 })
 export class SalesPage {
   private readonly auth = inject(AuthService);
+  private readonly access = inject(AccessService);
 
-  protected readonly active = signal(initialTab('dashboard'));
+  protected readonly active = routedTab('dashboard');
   private readonly navigateToTab = tabNavigator();
 
   protected activate(tabId: string): void {
@@ -102,9 +106,16 @@ export class SalesPage {
     },
   ];
 
-  protected readonly tabItems: TabItem[] = [
-    { id: 'dashboard', labelKey: 'common.dashboardTab' },
-    ...this.crudTabs.map((tab) => ({ id: tab.id, labelKey: tab.labelKey })),
-    { id: 'statement', labelKey: 'sales.tabs.statement' },
-  ];
+  protected tabItems(): TabItem[] {
+    const tabs = this.crudTabs
+      .filter((tab) => this.access.canTab('sales', tab.id))
+      .map((tab) => ({ id: tab.id, labelKey: tab.labelKey }));
+    if (this.access.canTab('sales', 'statement')) {
+      tabs.push({ id: 'statement', labelKey: 'sales.tabs.statement' });
+    }
+    if (this.access.canTab('sales', 'dashboard')) {
+      tabs.unshift({ id: 'dashboard', labelKey: 'common.dashboardTab' });
+    }
+    return tabs;
+  }
 }

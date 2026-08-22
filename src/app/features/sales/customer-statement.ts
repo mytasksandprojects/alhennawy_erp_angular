@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
+import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { Customer, StatementLine } from '../../core/models/sales.models';
 import { TableColumn } from '../../core/models/common.models';
 import { UiIcon } from '../../shared/components/ui-icon';
@@ -54,35 +55,53 @@ const STATEMENT_COLUMNS: TableColumn[] = [
           [disabled]="!lines().length"
           (click)="print()"
         >
-          <ui-icon name="print" [size]="16" />
+          <ui-icon name="print" [size]="16" [brand]="true" />
           {{ t('common.print') }}
         </button>
       </div>
 
       @if (customer(); as active) {
-        <div class="print-area">
-        <div class="row statement-summary">
-          <span class="statement-summary__item">
-            {{ t('common.code') }}: <strong>{{ active.code }}</strong>
-          </span>
-          <span class="statement-summary__item">
-            {{ t('common.currency') }}: <strong>{{ active.currency }}</strong>
-          </span>
-          <span class="statement-summary__item">
-            {{ t('sales.statement.totalDebit') }}:
-            <strong class="mono">{{ fmtNum(totalDebit()) }}</strong>
-          </span>
-          <span class="statement-summary__item">
-            {{ t('sales.statement.totalCredit') }}:
-            <strong class="mono">{{ fmtNum(totalCredit()) }}</strong>
-          </span>
-          <span class="statement-summary__item">
-            {{ t('sales.statement.finalBalance') }}:
-            <strong class="mono">{{ fmtNum(finalBalance()) }}</strong>
-          </span>
-        </div>
-
-        <ui-table [columns]="columns" [rows]="$any(lines())" />
+        <div class="print-sheet">
+          <header class="print-sheet__head print-only">
+            <img
+              class="print-sheet__logo"
+              [src]="logoUrl()"
+              [alt]="t(nameKey())"
+            />
+            <h1 class="print-sheet__title">{{ t(nameKey()) }}</h1>
+            <p class="print-sheet__doc">
+              {{ t('sales.statement.printTitle') }} — {{ active.name }}
+            </p>
+          </header>
+          <div class="row statement-summary">
+            <span class="statement-summary__item">
+              {{ t('common.code') }}: <strong>{{ active.code }}</strong>
+            </span>
+            <span class="statement-summary__item">
+              {{ t('common.currency') }}: <strong>{{ active.currency }}</strong>
+            </span>
+            <span class="statement-summary__item">
+              {{ t('sales.statement.totalDebit') }}:
+              <strong class="mono">{{ fmtNum(totalDebit()) }}</strong>
+            </span>
+            <span class="statement-summary__item">
+              {{ t('sales.statement.totalCredit') }}:
+              <strong class="mono">{{ fmtNum(totalCredit()) }}</strong>
+            </span>
+            <span class="statement-summary__item">
+              {{ t('sales.statement.finalBalance') }}:
+              <strong class="mono">{{ fmtNum(finalBalance()) }}</strong>
+            </span>
+          </div>
+          <ui-table [columns]="columns" [rows]="$any(lines())" />
+          <footer class="print-sheet__foot print-only">
+            <div>{{ t(addressKey()) }}</div>
+            <div>
+              {{ t('factory.fields.phone') }}: {{ company()?.phone }}
+              ·
+              {{ t('factory.fields.fax') }}: {{ company()?.fax }}
+            </div>
+          </footer>
         </div>
 
         @if (active.currency === 'USD') {
@@ -96,6 +115,14 @@ const STATEMENT_COLUMNS: TableColumn[] = [
 })
 export class CustomerStatement extends Translated {
   private readonly api = inject(ApiClientService);
+  private readonly store = inject(RuntimeConfigStore);
+
+  protected readonly company = computed(() => this.store.settings()?.company);
+  protected readonly logoUrl = computed(() => this.company()?.logoUrl ?? '');
+  protected readonly nameKey = computed(() => this.company()?.nameKey ?? 'company.name');
+  protected readonly addressKey = computed(
+    () => this.company()?.addressKey ?? 'company.address',
+  );
 
   protected readonly columns = STATEMENT_COLUMNS;
   protected readonly customers = signal<Customer[]>([]);

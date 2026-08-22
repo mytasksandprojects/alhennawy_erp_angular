@@ -20,6 +20,11 @@ export const routes: Routes = [
           import('./features/home/home-page').then((m) => m.HomePage),
       },
       {
+        path: 'alerts',
+        loadComponent: () =>
+          import('./features/alerts/alerts-page').then((m) => m.AlertsPage),
+      },
+      {
         path: 'weighbridge',
         canActivate: [permissionGuard],
         data: { permission: 'weighbridge.view' },
@@ -100,6 +105,20 @@ export const routes: Routes = [
           import('./features/hr/hr-page').then((m) => m.HrPage),
       },
       {
+        path: 'checkin',
+        canActivate: [permissionGuard],
+        data: { permission: 'checkin.view' },
+        loadComponent: () =>
+          import('./features/checkin/checkin-page').then((m) => m.CheckinPage),
+      },
+      {
+        path: 'roles',
+        canActivate: [permissionGuard],
+        data: { permission: 'roles.view' },
+        loadComponent: () =>
+          import('./features/roles/roles-page').then((m) => m.RolesPage),
+      },
+      {
         path: 'administration',
         canActivate: [permissionGuard],
         data: { permission: 'administration.view' },
@@ -107,6 +126,13 @@ export const routes: Routes = [
           import('./features/administration/administration-page').then(
             (m) => m.AdministrationPage,
           ),
+      },
+      {
+        path: 'factory',
+        canActivate: [permissionGuard],
+        data: { permission: 'factory.view' },
+        loadComponent: () =>
+          import('./features/factory/factory-page').then((m) => m.FactoryPage),
       },
       {
         path: 'safety',

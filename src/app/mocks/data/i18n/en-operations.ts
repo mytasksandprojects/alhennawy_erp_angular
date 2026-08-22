@@ -13,6 +13,7 @@ export const EN_OPERATIONS: TranslationMap = {
   'weighbridge.types.sales': 'Sales Weighing',
   'weighbridge.types.purchase-return': 'Purchase Return',
   'weighbridge.types.sales-return': 'Sales Return',
+  'weighbridge.types.returns': 'Returns',
   'weighbridge.types.internal-transfer': 'Internal Transfer',
 
   'weighbridge.status.first-done': 'First Weighing Only',
@@ -99,6 +100,7 @@ export const EN_OPERATIONS: TranslationMap = {
   'warehouse.tabs.warehouses': 'Warehouses',
   'warehouse.tabs.items': 'Items',
   'warehouse.tabs.movements': 'Movements',
+  'warehouse.tabs.receipts': 'Receipts',
 
   'warehouse.names.spareParts': 'Spare Parts Store',
   'warehouse.names.chemicals': 'Chemicals Store',
@@ -129,8 +131,9 @@ export const EN_OPERATIONS: TranslationMap = {
   'warehouse.types.transfer': 'Transfer',
   'warehouse.types.adjustment': 'Count Adjustment',
 
-  'warehouse.stock.true': 'Below Minimum',
-  'warehouse.stock.false': 'Available',
+  'warehouse.stock.available': 'Available',
+  'warehouse.stock.below': 'Below Minimum',
+  'warehouse.stock.out': 'Out of Stock',
 
   'warehouse.refs.weighing': 'Weighbridge Ticket',
   'warehouse.refs.dailyBatch': 'Daily Lab Batch',

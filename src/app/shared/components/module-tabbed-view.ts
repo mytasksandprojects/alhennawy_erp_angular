@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { FormField, TableColumn } from '../../core/models/common.models';
-import { initialTab, tabNavigator } from '../tab-route';
+import { AccessService } from '../../core/security/access.service';
+import { routedTab, tabNavigator } from '../tab-route';
 import { Translated } from '../translated.base';
 import { CrudPanel } from './crud-panel';
 import { ModuleDashboard } from './module-dashboard';
@@ -11,10 +12,11 @@ import { UiTabs, TabItem } from './ui-tabs';
 export interface ListTabConfig {
   id: string;
   labelKey: string;
-  endpoint: string;
-  columns: TableColumn[];
-  fields: FormField[];
+  endpoint?: string;
+  columns?: TableColumn[];
+  fields?: FormField[];
   idKey?: string;
+  custom?: boolean;
 }
 
 /**
@@ -38,13 +40,17 @@ export interface ListTabConfig {
 
     @if (active() === 'dashboard') {
       <module-dashboard [moduleId]="moduleId()" />
+    } @else if (customActive()) {
+      <ng-content />
     } @else {
-      @for (tab of listTabs(); track tab.id) {
-        @if (tab.id === active()) {
+      @for (tab of visibleTabs(); track tab.id) {
+        @if (tab.id === active() && tab.endpoint && tab.columns) {
           <crud-panel
+            [moduleId]="moduleId()"
+            [tabId]="tab.id"
             [endpoint]="tab.endpoint"
             [columns]="tab.columns"
-            [fields]="tab.fields"
+            [fields]="tab.fields ?? []"
             [idKey]="tab.idKey ?? 'id'"
           />
         }
@@ -57,9 +63,18 @@ export class ModuleTabbedView extends Translated {
   readonly titleKey = input.required<string>();
   readonly subtitleKey = input<string | null>(null);
   readonly listTabs = input.required<ListTabConfig[]>();
+  private readonly access = inject(AccessService);
 
-  protected readonly active = signal(initialTab('dashboard'));
+  protected readonly active = routedTab('dashboard');
   private readonly navigateToTab = tabNavigator();
+
+  protected visibleTabs(): ListTabConfig[] {
+    return this.listTabs().filter((tab) => this.access.canTab(this.moduleId(), tab.id));
+  }
+
+  protected customActive(): boolean {
+    return this.visibleTabs().some((tab) => tab.id === this.active() && tab.custom);
+  }
 
   protected activate(tabId: string): void {
     this.active.set(tabId);
@@ -67,9 +82,8 @@ export class ModuleTabbedView extends Translated {
   }
 
   protected tabItems(): TabItem[] {
-    return [
-      { id: 'dashboard', labelKey: 'common.dashboardTab' },
-      ...this.listTabs().map((tab) => ({ id: tab.id, labelKey: tab.labelKey })),
-    ];
+    const lists = this.visibleTabs().map((tab) => ({ id: tab.id, labelKey: tab.labelKey }));
+    if (!this.access.canTab(this.moduleId(), 'dashboard')) return lists;
+    return [{ id: 'dashboard', labelKey: 'common.dashboardTab' }, ...lists];
   }
 }

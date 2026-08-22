@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WeighingTicket } from '../../core/models/weighbridge.models';
 import { NotificationService } from '../../core/services/notification.service';
 import { ModuleDashboard } from '../../shared/components/module-dashboard';
@@ -23,7 +23,7 @@ import { WeighingCompleteModal } from './weighing-complete-modal';
 
 type Draft = Record<string, string | number | boolean>;
 
-const TYPE_FILTERS = ['purchase', 'sales', 'purchase-return', 'sales-return', 'internal-transfer'];
+const TYPE_FILTERS = ['purchase', 'sales', 'returns', 'purchase-return', 'sales-return', 'internal-transfer'];
 
 /** الميزان — dashboard + serial-numbered tickets with two-weighing flow. */
 @Component({
@@ -53,7 +53,7 @@ const TYPE_FILTERS = ['purchase', 'sales', 'purchase-return', 'sales-return', 'i
 
     <module-dashboard moduleId="weighbridge" />
 
-    <section class="ui-card" style="margin-top: var(--space-lg)">
+    <section id="tickets" class="ui-card" style="margin-top: var(--space-lg)">
       <div class="row row--between" style="margin-bottom: var(--space-md)">
         <h2 class="ui-card__title" style="margin-bottom: 0">
           {{ t('weighbridge.ticketsTitle') }}
@@ -150,6 +150,8 @@ const TYPE_FILTERS = ['purchase', 'sales', 'purchase-return', 'sales-return', 'i
 export class WeighbridgePage extends Translated implements OnInit {
   private readonly weighbridgeApi = inject(WeighbridgeApiService);
   private readonly notifications = inject(NotificationService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected readonly columns = WEIGHING_COLUMNS;
   protected readonly ticketFields = WEIGHING_FIELDS;
@@ -157,6 +159,7 @@ export class WeighbridgePage extends Translated implements OnInit {
   protected readonly tickets = signal<WeighingTicket[]>([]);
   protected readonly typeFilter = signal('');
   protected readonly statusFilter = signal('');
+  protected readonly search = signal('');
   protected readonly selected = signal<WeighingTicket | null>(null);
   protected readonly editing = signal<WeighingTicket | null>(null);
   protected readonly draft = signal<Draft>({});
@@ -177,17 +180,28 @@ export class WeighbridgePage extends Translated implements OnInit {
   });
 
   ngOnInit(): void {
-    this.reload();
+    this.route.queryParamMap.subscribe((params) => {
+      this.typeFilter.set(params.get('type') ?? '');
+      this.statusFilter.set(params.get('status') ?? '');
+      this.search.set(params.get('q') ?? '');
+      this.reload();
+    });
   }
 
   protected setTypeFilter(value: string): void {
-    this.typeFilter.set(value);
-    this.reload();
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { type: value || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected setStatusFilter(value: string): void {
-    this.statusFilter.set(value);
-    this.reload();
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { status: value || null },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected openTicket(ticket: WeighingTicket): void {
@@ -248,6 +262,17 @@ export class WeighbridgePage extends Translated implements OnInit {
         type: this.typeFilter() || undefined,
         status: this.statusFilter() || undefined,
       })
-      .subscribe((tickets) => this.tickets.set(tickets));
+      .subscribe((tickets) => {
+        const q = this.search().trim().toLowerCase();
+        this.tickets.set(
+          q
+            ? tickets.filter(
+                (t) =>
+                  String(t.serial).includes(q) ||
+                  t.vehiclePlate.toLowerCase().includes(q),
+              )
+            : tickets,
+        );
+      });
   }
 }

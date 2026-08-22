@@ -63,6 +63,18 @@ export class AuthService {
     return user.permissions.includes('*') || user.permissions.includes(permission);
   }
 
+  applyPermissions(permissions: string[]): void {
+    const session = this.sessionSignal();
+    if (!session) return;
+    const next = { ...session, user: { ...session.user, permissions } };
+    this.sessionSignal.set(next);
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  }
+
   private restore(): AuthSession | null {
     try {
       const raw = sessionStorage.getItem(SESSION_KEY);

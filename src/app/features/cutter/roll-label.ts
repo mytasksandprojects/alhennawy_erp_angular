@@ -57,7 +57,6 @@ import { Translated } from '../../shared/translated.base';
       </div>
 
       <div class="roll-label__barcode">
-        <span class="text-faint">{{ t(poweredByKey()) }}</span>
         <ui-barcode [value]="r.barcode" [height]="34" [renderWidth]="220" />
         <strong>{{ t(madeInKey()) }}</strong>
       </div>
@@ -76,8 +75,5 @@ export class RollLabel extends Translated {
   );
   protected readonly madeInKey = computed(
     () => this.company()?.madeInKey ?? '',
-  );
-  protected readonly poweredByKey = computed(
-    () => this.company()?.poweredByKey ?? '',
   );
 }

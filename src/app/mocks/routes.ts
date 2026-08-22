@@ -1,4 +1,6 @@
+import { ACCESS_ROUTES } from './access-routes';
 import { MockRoute } from './mock-registry';
+import { filterBy } from './data/crud.util';
 import { MOCK_MENU, MOCK_SETTINGS } from './data/settings.mock';
 import { MOCK_THEME, MOCK_THEMES } from './data/theme.mock';
 import { ThemeMode } from '../core/models/config.models';
@@ -11,7 +13,7 @@ import {
   listWeighings,
 } from './data/weighbridge.mock';
 import { MOCK_SPECS, createRoll, listRolls, registerPrint } from './data/cutter.mock';
-import { MOCK_MOVEMENTS, MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './data/warehouse.mock';
+import { createReceipt, listReceipts, MOCK_MOVEMENTS, MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './data/warehouse.mock';
 import { MOCK_ACCOUNT_FLAT, MOCK_BANKS, MOCK_JOURNAL_ENTRIES } from './data/finance.mock';
 import { MOCK_BALANCE_SHEET, MOCK_EXPENSES, MOCK_PNL } from './data/finance-reports.mock';
 import {
@@ -70,6 +72,8 @@ import {
   PURCHASING_DASHBOARD,
   SALES_DASHBOARD,
 } from './data/dashboards-biz.mock';
+import { SYSTEM_ALERTS } from './data/alerts.mock';
+import { getFactoryProfile, saveFactoryProfile } from './data/factory.mock';
 import { HOME_DASHBOARD } from './data/dashboards-home.mock';
 import {
   PRODUCTION_DASHBOARD,
@@ -145,13 +149,15 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'POST', pattern: '/config/languages', handler: ({ body }) => addLanguage(body) },
   { method: 'POST', pattern: '/auth/login', handler: ({ body }) => mockLogin(body) },
   { method: 'POST', pattern: '/auth/logout', handler: () => ({ ok: true }) },
+  { method: 'GET', pattern: '/alerts', handler: () => SYSTEM_ALERTS },
+  { method: 'GET', pattern: '/factory/profile', handler: () => getFactoryProfile() },
+  { method: 'PUT', pattern: '/factory/profile', handler: ({ body }) => saveFactoryProfile(body) },
   { method: 'GET', pattern: '/dashboards/:id', handler: ({ path }) => {
       const id = path.split('/').pop() ?? '';
       const dashboard = DASHBOARDS[id];
       if (!dashboard) throw new MockApiError(404, 'unknown-dashboard');
       return dashboard;
     } },
-
   { method: 'GET', pattern: '/weighbridge/tickets', handler: ({ query }) => listWeighings(query) },
   { method: 'GET', pattern: '/weighbridge/tickets/:id', handler: ({ path }) => getWeighing(path.split('/').pop() ?? '') },
   { method: 'POST', pattern: '/weighbridge/tickets', handler: ({ body }) => createWeighing(body) },
@@ -165,6 +171,8 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/warehouse/warehouses', handler: () => MOCK_WAREHOUSES },
   { method: 'GET', pattern: '/warehouse/items', handler: ({ query }) => filterBy(MOCK_STOCK_ITEMS, 'warehouseId', query.get('warehouseId')) },
   { method: 'GET', pattern: '/warehouse/movements', handler: ({ query }) => filterBy(MOCK_MOVEMENTS, 'type', query.get('type')) },
+  { method: 'GET', pattern: '/warehouse/receipts', handler: () => listReceipts() },
+  { method: 'POST', pattern: '/warehouse/receipts', handler: ({ body }) => createReceipt(body) },
 
   { method: 'GET', pattern: '/finance/accounts', handler: () => MOCK_ACCOUNT_FLAT },
   { method: 'GET', pattern: '/finance/journal-entries', handler: () => MOCK_JOURNAL_ENTRIES },
@@ -240,6 +248,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/warehouse/warehouses', MOCK_WAREHOUSES),
   ...crudRoutes('/warehouse/items', MOCK_STOCK_ITEMS, 'code'),
   ...crudRoutes('/warehouse/movements', MOCK_MOVEMENTS),
+  ...crudRoutes('/warehouse/receipts', MOCK_MOVEMENTS, 'id', false),
   ...crudRoutes('/finance/accounts', MOCK_ACCOUNT_FLAT, 'code'),
   ...crudRoutes('/finance/journal-entries', MOCK_JOURNAL_ENTRIES),
   ...crudRoutes('/finance/banks', MOCK_BANKS),
@@ -284,9 +293,5 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/quality/chemical-consumption', MOCK_CHEMICAL_CONSUMPTION),
   ...crudRoutes('/quality/maintenance', MOCK_MAINTENANCE),
   ...crudRoutes('/production/orders', MOCK_PRODUCTION_ORDERS),
+  ...ACCESS_ROUTES,
 ];
-
-function filterBy<T>(list: T[], key: keyof T, value: string | null): T[] {
-  if (!value) return list;
-  return list.filter((item) => String(item[key]) === value);
-}

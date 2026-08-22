@@ -1,13 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { CrudPanel } from '../../shared/components/crud-panel';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
-import { initialTab, tabNavigator } from '../../shared/tab-route';
+import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { REPORT_CATEGORIES, ReportDef } from './report-defs';
 import { Translated } from '../../shared/translated.base';
 
@@ -55,6 +50,8 @@ import { Translated } from '../../shared/translated.base';
         <span class="report-view__crumb">{{ t(categoryOf(selected()!.id).labelKey) }}</span>
       </div>
       <crud-panel
+        moduleId="reports"
+        [tabId]="selected()!.id"
         [endpoint]="selected()!.endpoint"
         [columns]="selected()!.columns"
         [readOnly]="true"
@@ -65,7 +62,7 @@ import { Translated } from '../../shared/translated.base';
 export class ReportsPage extends Translated {
   protected readonly categories = REPORT_CATEGORIES;
   /** `?tab=` holds either a report id (open view) or a category (catalog). */
-  protected readonly activeId = signal(initialTab(''));
+  protected readonly activeId = routedTab('');
   private readonly navigateToTab = tabNavigator();
 
   protected readonly selected = computed<ReportDef | null>(() => {

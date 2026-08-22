@@ -1,5 +1,6 @@
 import { LookupValue } from '../../core/models/system.models';
 import { MOCK_EMPLOYEES } from './hr.mock';
+import { MOCK_ROLES } from './roles.mock';
 import {
   MOCK_CLINIC_MEDICINES,
   MOCK_CLINICS,
@@ -166,6 +167,15 @@ export function liveLookups(): LookupValue[] {
     ),
     ...MOCK_DOCTORS.map((d) => liveLk(`live-doctor-${d.id}`, 'doctors', d)),
     ...MOCK_EMPLOYEES.map((e) => liveLk(`live-emp-${e.id}`, 'employees', e)),
+    ...MOCK_ROLES.map((role) =>
+      lk(
+        `live-role-${role.id}`,
+        'roles',
+        role.id,
+        role.name ?? { admin: 'مدير النظام', finance: 'الإدارة المالية', store: 'أمين مخزن', operator: 'مشغل' }[role.id] ?? role.id,
+        role.name_en ?? { admin: 'System Administrator', finance: 'Finance', store: 'Storekeeper', operator: 'Operator' }[role.id] ?? role.id,
+      ),
+    ),
     // rate carries the unit price so dispense forms prefill it.
     ...MOCK_CLINIC_MEDICINES.map((m) =>
       liveLk(`live-med-${m.id}`, 'clinicMedicines', m, m.price),

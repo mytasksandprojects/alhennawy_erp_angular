@@ -1,0 +1,11 @@
+erp.alhennawy.net {
+	encode gzip zstd
+	root * /usr/share/caddy
+	try_files {path} /index.html
+	file_server
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		X-Frame-Options DENY
+	}
+}

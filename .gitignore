@@ -42,3 +42,7 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Live VPS credentials — do not commit
+docs/AlHennawy_OVH_VPS_Access_2026.html
+docs/AlHennawy_OVH_VPS_Access_2026.pdf

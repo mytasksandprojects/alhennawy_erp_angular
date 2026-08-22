@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
-import { initialTab, tabNavigator } from '../../shared/tab-route';
+import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { Translated } from '../../shared/translated.base';
 import { LanguageManager } from './language-manager';
 import { ThemeEditor } from './theme-editor';
@@ -41,7 +41,7 @@ export class AppearancePage extends Translated {
     { id: 'languages', labelKey: 'appearance.tabs.languages' },
   ];
 
-  protected readonly active = signal(initialTab('theme'));
+  protected readonly active = routedTab('theme');
   private readonly navigateToTab = tabNavigator();
 
   protected activate(tabId: string): void {

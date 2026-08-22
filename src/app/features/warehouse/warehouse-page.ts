@@ -7,6 +7,8 @@ import {
 import {
   MOVEMENT_COLUMNS,
   MOVEMENT_FIELDS,
+  RECEIPT_COLUMNS,
+  RECEIPT_FIELDS,
   STOCK_ITEM_COLUMNS,
   STOCK_ITEM_FIELDS,
   WAREHOUSE_COLUMNS,
@@ -50,6 +52,13 @@ export class WarehousePage {
       endpoint: API_ENDPOINTS.warehouse.movements,
       columns: MOVEMENT_COLUMNS,
       fields: MOVEMENT_FIELDS,
+    },
+    {
+      id: 'receipts',
+      labelKey: 'warehouse.tabs.receipts',
+      endpoint: API_ENDPOINTS.warehouse.receipts,
+      columns: RECEIPT_COLUMNS,
+      fields: RECEIPT_FIELDS,
     },
   ];
 }

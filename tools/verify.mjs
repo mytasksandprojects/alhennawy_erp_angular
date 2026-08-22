@@ -53,7 +53,7 @@ for (const file of files) {
   for (const match of source.matchAll(/\bt\('([^']+)'/g)) used.add(match[1]);
   for (const match of source.matchAll(/labelKey[:=]\s*'([^']+)'/g)) used.add(match[1]);
   for (const match of source.matchAll(/labelKey="([^"]+)"/g)) used.add(match[1]);
-  for (const match of source.matchAll(/(?:titleKey|subtitleKey|messageKey|nameKey|deviceLocationKey|purposeKey|statusKey|typeKey|gradeKey|sourceKey|descriptionKey|referenceKey|materialKey|machineNameKey|bankNameKey|customsNameKey|portKey|unitKey|jobTitleKey|departmentKey|roleKey|appTitleKey|addressKey|madeInKey|poweredByKey|collectionStatusKey|requestingDepartmentKey)[:=]\s*'([^']+)'/g)) {
+  for (const match of source.matchAll(/(?:titleKey|subtitleKey|messageKey|nameKey|deviceLocationKey|purposeKey|statusKey|typeKey|gradeKey|sourceKey|descriptionKey|referenceKey|materialKey|machineNameKey|bankNameKey|customsNameKey|portKey|unitKey|jobTitleKey|departmentKey|roleKey|appTitleKey|addressKey|madeInKey|collectionStatusKey|requestingDepartmentKey)[:=]\s*'([^']+)'/g)) {
     used.add(match[1]);
   }
   for (const match of source.matchAll(/(?:titleKey|subtitleKey)="([^"]+)"/g)) used.add(match[1]);

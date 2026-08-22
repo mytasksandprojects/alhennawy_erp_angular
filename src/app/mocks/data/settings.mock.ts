@@ -15,9 +15,9 @@ export const MOCK_SETTINGS: AppSettings = {
     addressKey: 'company.address',
     phone: '0482630659',
     fax: '0482630296',
-    logoUrl: 'assets/branding/alhennawy-logo.png?v=on-green',
+    logoUrl: 'assets/branding/alhennawy-logo.png?v=no-plate',
+    sidebarLogoUrl: 'assets/branding/alhennawy-logo-on-dark.png?v=no-plate',
     madeInKey: 'company.madeIn',
-    poweredByKey: 'company.poweredBy',
     isoCertifications: ['9001 : 2015', '14001 : 2015', '45001 : 2018'],
   },
   weighbridge: {
@@ -40,6 +40,20 @@ export const MOCK_SETTINGS: AppSettings = {
 /** MOCK LAYER — sidebar navigation, permission-filtered per user. */
 export const MOCK_MENU: MenuItem[] = [
   { id: 'home', labelKey: 'menu.home', icon: 'home', route: '/' },
+  { id: 'alerts', labelKey: 'menu.alerts', icon: 'alert', route: '/alerts' },
+  {
+    id: 'checkin',
+    labelKey: 'menu.checkin',
+    icon: 'clock',
+    route: '/checkin',
+  },
+  {
+    id: 'roles',
+    labelKey: 'menu.roles',
+    icon: 'shield',
+    route: '/roles',
+    permission: 'roles.view',
+  },
   {
     id: 'weighbridge',
     labelKey: 'menu.weighbridge',
@@ -123,6 +137,13 @@ export const MOCK_MENU: MenuItem[] = [
     icon: 'administration',
     route: '/administration',
     permission: 'administration.view',
+  },
+  {
+    id: 'factory',
+    labelKey: 'menu.factory',
+    icon: 'factory',
+    route: '/factory',
+    permission: 'factory.view',
   },
   {
     id: 'safety',

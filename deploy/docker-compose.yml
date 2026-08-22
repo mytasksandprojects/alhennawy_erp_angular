@@ -1,0 +1,17 @@
+# Server-side only: the baked ERP image (static build + Caddy). No source tree.
+services:
+  erp:
+    image: alhennawy-erp:latest
+    container_name: alhennawy-erp
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

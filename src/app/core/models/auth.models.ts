@@ -10,6 +10,7 @@ export interface AuthUser {
   username: string;
   displayName: string;
   roleKey: string;
+  roleId?: string;
   /**
    * Fine-grained permissions, e.g. `finance.viewPrices` controls the
    * price fields that must stay hidden from everyone except Finance.

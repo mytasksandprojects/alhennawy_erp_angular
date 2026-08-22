@@ -9,11 +9,12 @@ import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { Account, StatementRow } from '../../core/models/finance.models';
+import { AccessService } from '../../core/security/access.service';
 import { CrudPanel } from '../../shared/components/crud-panel';
 import { ModuleDashboard } from '../../shared/components/module-dashboard';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
-import { initialTab, tabNavigator } from '../../shared/tab-route';
+import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { Translated } from '../../shared/translated.base';
 import { AccountsTree } from './accounts-tree';
 import { StatementView } from './statement-view';
@@ -63,7 +64,7 @@ function nestAccounts(flat: Account[]): Account[] {
   template: `
     <ui-page-header titleKey="finance.title" subtitleKey="finance.subtitle" />
 
-    <ui-tabs [tabs]="tabItems" [active]="active()" (activeChange)="activate($event)" />
+    <ui-tabs [tabs]="tabItems()" [active]="active()" (activeChange)="activate($event)" />
 
     @switch (active()) {
       @case ('dashboard') {
@@ -75,6 +76,8 @@ function nestAccounts(flat: Account[]): Account[] {
           <app-accounts-tree [accounts]="accounts()" />
         </section>
         <crud-panel
+          moduleId="finance"
+          tabId="accounts"
           [endpoint]="accountsUrl"
           [columns]="accountColumns"
           [fields]="accountFields"
@@ -83,6 +86,8 @@ function nestAccounts(flat: Account[]): Account[] {
       }
       @case ('journal') {
         <crud-panel
+          moduleId="finance"
+          tabId="journal"
           [endpoint]="journalUrl"
           [columns]="journalColumns"
           [fields]="journalFields"
@@ -93,6 +98,8 @@ function nestAccounts(flat: Account[]): Account[] {
       }
       @case ('banks') {
         <crud-panel
+          moduleId="finance"
+          tabId="banks"
           [endpoint]="banksUrl"
           [columns]="bankColumns"
           [fields]="bankFields"
@@ -109,6 +116,8 @@ function nestAccounts(flat: Account[]): Account[] {
       }
       @case ('expenses') {
         <crud-panel
+          moduleId="finance"
+          tabId="expenses"
           [endpoint]="expensesUrl"
           [columns]="expenseColumns"
           [fields]="expenseFields"
@@ -119,6 +128,8 @@ function nestAccounts(flat: Account[]): Account[] {
           {{ t('finance.currenciesHint') }}
         </p>
         <crud-panel
+          moduleId="finance"
+          tabId="currencies"
           [endpoint]="currenciesUrl"
           [columns]="currencyColumns"
           [fields]="currencyFields()"
@@ -129,6 +140,7 @@ function nestAccounts(flat: Account[]): Account[] {
 })
 export class FinancePage extends Translated {
   private readonly api = inject(ApiClientService);
+  private readonly access = inject(AccessService);
   private readonly store = inject(RuntimeConfigStore);
 
   protected readonly accountsUrl = API_ENDPOINTS.finance.accounts;
@@ -150,7 +162,7 @@ export class FinancePage extends Translated {
     currencyFields(this.store.settings()?.languages ?? []),
   );
 
-  protected readonly tabItems: TabItem[] = [
+  private readonly allTabs: TabItem[] = [
     { id: 'dashboard', labelKey: 'common.dashboardTab' },
     { id: 'accounts', labelKey: 'finance.tabs.accounts' },
     { id: 'journal', labelKey: 'finance.tabs.journal' },
@@ -160,8 +172,11 @@ export class FinancePage extends Translated {
     { id: 'expenses', labelKey: 'finance.tabs.expenses' },
     { id: 'currencies', labelKey: 'finance.tabs.currencies' },
   ];
+  protected readonly tabItems = computed(() =>
+    this.allTabs.filter((item) => this.access.canTab('finance', item.id)),
+  );
 
-  protected readonly active = signal(initialTab('dashboard'));
+  protected readonly active = routedTab('dashboard');
   private readonly navigateToTab = tabNavigator();
   protected readonly accounts = signal<Account[]>([]);
   protected readonly pnl = signal<StatementRow[]>([]);

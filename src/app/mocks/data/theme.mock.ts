@@ -27,10 +27,9 @@ const LIGHT_TOKENS: Record<string, string> = {
     'color-surface': 'rgba(255, 255, 255, 0.86)',
     'color-surface-alt': 'rgba(255, 255, 255, 0.62)',
     'color-surface-solid': '#ffffff',
-    // Logo renders in its true colors on a light plate; admins can switch
-    // back to the flat white look by setting the filter to
-    // brightness(0) invert(1) and the plate to transparent (Appearance).
-    'color-logo-plate': 'rgba(255, 255, 255, 0.92)',
+    // Logo sits on the sidebar with no plate; filter stays none so colors
+    // stay true. Admins can still flatten it via Appearance if needed.
+    'color-logo-plate': 'transparent',
     'sidebar-logo-filter': 'none',
     'glass-blur': '28px',
     'glass-highlight': 'rgba(255, 255, 255, 0.72)',
@@ -104,6 +103,15 @@ const LIGHT_TOKENS: Record<string, string> = {
     'sidebar-logo-height': '120px',
     'login-logo-width': '220px',
     'topbar-logo-height': '44px',
+    'print-page-margin': '12mm',
+    'print-label-inset': '6mm',
+    'print-sheet-inset': '3mm',
+    'print-sheet-logo-height': '72px',
+    'print-record-label': '34%',
+    'color-icon-print': '#1d7fc4',
+    'color-icon-pdf': '#e5252a',
+    'color-icon-xls': '#107c41',
+    'color-icon-mark': '#ffffff',
     'card-padding': '20px',
     'chart-bar-height': '14px',
     'chart-column-height': '170px',

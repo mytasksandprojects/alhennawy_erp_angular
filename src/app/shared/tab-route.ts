@@ -1,13 +1,28 @@
-import { inject } from '@angular/core';
+import { inject, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RouteTarget } from '../core/models/common.models';
 
 /**
- * Sub-modules are routable: the active tab lives in the URL as `?tab=`,
- * so every tab has its own address, survives refresh and supports
- * back/forward navigation.
+ * Sub-modules are routable: the active tab lives in the URL as `?tab=`.
+ * The signal stays in sync when dashboard cards, search, or back/forward
+ * change the query — not only on the first render.
  */
-export function initialTab(fallback: string): string {
-  return inject(ActivatedRoute).snapshot.queryParamMap.get('tab') ?? fallback;
+export function routedTab(fallback: string): WritableSignal<string> {
+  const route = inject(ActivatedRoute);
+  const active = signal(route.snapshot.queryParamMap.get('tab') ?? fallback);
+  route.queryParamMap.subscribe((params) => {
+    active.set(params.get('tab') ?? fallback);
+  });
+  return active;
+}
+
+/** KPI cards and alerts share this so a click always lands on the same URL. */
+export function navigateToTarget(router: Router, target: RouteTarget): void {
+  if (!target.route) return;
+  void router.navigate([target.route], {
+    queryParams: target.query ?? {},
+    fragment: target.fragment,
+  });
 }
 
 /** Must be called in an injection context; returns the URL-sync setter. */

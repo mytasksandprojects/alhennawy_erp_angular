@@ -1,0 +1,43 @@
+name: Deploy ERP
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: node tools/verify.mjs
+      - run: npm run build
+
+      - name: Build ERP image
+        run: docker build -t alhennawy-erp:latest .
+
+      - name: Ship image to VPS
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_HOST: ${{ secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy -o IdentitiesOnly=yes "$SSH_USER@$SSH_HOST" 'mkdir -p /opt/alhennawy-erp'
+          scp -i ~/.ssh/deploy -o IdentitiesOnly=yes deploy/docker-compose.yml "$SSH_USER@$SSH_HOST:/opt/alhennawy-erp/docker-compose.yml"
+          docker save alhennawy-erp:latest | gzip | ssh -i ~/.ssh/deploy -o IdentitiesOnly=yes "$SSH_USER@$SSH_HOST" 'gunzip | docker load'
+          ssh -i ~/.ssh/deploy -o IdentitiesOnly=yes "$SSH_USER@$SSH_HOST" 'cd /opt/alhennawy-erp && docker compose up -d --remove-orphans'

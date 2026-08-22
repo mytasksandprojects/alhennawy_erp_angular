@@ -1,5 +1,6 @@
 import { AuthSession, LoginRequest } from '../../core/models/auth.models';
 import { MockApiError } from '../mock-backend.interceptor';
+import { MOCK_ROLES } from './roles.mock';
 
 /**
  * MOCK LAYER — demo users.
@@ -21,6 +22,7 @@ const USERS: Record<string, MockUser> = {
         username: 'admin',
         displayName: 'MOHAMED NABIL',
         roleKey: 'roles.admin',
+        roleId: 'admin',
         permissions: ['*'],
       },
     },
@@ -33,6 +35,7 @@ const USERS: Record<string, MockUser> = {
         username: 'finance',
         displayName: 'FINANCE USER',
         roleKey: 'roles.finance',
+        roleId: 'finance',
         permissions: [
           'finance.view',
           'finance.viewPrices',
@@ -51,6 +54,7 @@ const USERS: Record<string, MockUser> = {
         username: 'store1',
         displayName: 'STORE1',
         roleKey: 'roles.store',
+        roleId: 'store',
         permissions: [
           'warehouse.view',
           'weighbridge.view',
@@ -69,8 +73,13 @@ export function mockLogin(body: unknown): AuthSession {
   if (!user || user.password !== request.password) {
     throw new MockApiError(400, 'invalid-credentials');
   }
+  const role = MOCK_ROLES.find((item) => item.id === user.session.user.roleId);
   return {
     ...user.session,
+    user: {
+      ...user.session.user,
+      permissions: role?.permissions ?? user.session.user.permissions,
+    },
     token: `mock-token-${request.username}-${Date.now()}`,
     expiresAt: new Date(Date.now() + 8 * 3600 * 1000).toISOString(),
   };

@@ -49,3 +49,8 @@ export function crudRoutes(
   );
   return routes;
 }
+
+export function filterBy<T>(list: T[], key: keyof T, value: string | null): T[] {
+  if (!value) return list;
+  return list.filter((item) => String(item[key]) === value);
+}

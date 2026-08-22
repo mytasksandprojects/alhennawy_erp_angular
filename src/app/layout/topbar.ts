@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { AppConfigService } from '../core/config/app-config.service';
 import { RuntimeConfigStore } from '../core/config/runtime-config.store';
 import { LanguageCode } from '../core/models/config.models';
+import { AccessService } from '../core/security/access.service';
 import { AuthService } from '../core/security/auth.service';
 import { LayoutService } from './layout.service';
 import { SUB_MODULES } from './search-targets';
@@ -120,6 +121,7 @@ interface SearchResult {
 })
 export class Topbar extends Translated {
   protected readonly auth = inject(AuthService);
+  private readonly access = inject(AccessService);
   protected readonly layout = inject(LayoutService);
   private readonly store = inject(RuntimeConfigStore);
   private readonly config = inject(AppConfigService);
@@ -142,6 +144,7 @@ export class Topbar extends Translated {
       }
       for (const sub of SUB_MODULES) {
         if (sub.route !== item.route) continue;
+        if (!this.access.canTab(item.id, sub.tab)) continue;
         const subLabel = this.t(sub.labelKey);
         if (!subLabel.toLowerCase().includes(term)) continue;
         results.push({

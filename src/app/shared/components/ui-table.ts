@@ -4,6 +4,7 @@ import {
   inject,
   input,
   output,
+  signal,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
@@ -15,34 +16,71 @@ import {
   TableColumn,
 } from '../../core/models/common.models';
 import { ImageViewerService } from '../../core/services/image-viewer.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { exportRowsToCsv } from '../crud/export-csv';
 import { Translated } from '../translated.base';
 import { UiBadge } from './ui-badge';
 import { UiEmptyState } from './ui-empty-state';
+import { UiIcon } from './ui-icon';
 
 type Row = Record<string, unknown>;
 
 /**
  * Generic, config-driven data table used by every list screen.
- * Columns carry translation keys and formatting types — no screen ever
- * hand-writes a table again.
+ * Every row can print, save as PDF, or export Excel for that record.
  */
 @Component({
   selector: 'ui-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiBadge, UiEmptyState],
+  imports: [UiBadge, UiEmptyState, UiIcon],
   template: `
-    <div class="ui-table-wrap">
+    <div
+      class="ui-table-wrap"
+      [class.print-sheet]="!!solo()"
+      [class.ui-table-wrap--solo]="!!solo()"
+    >
+      @if (!solo()) {
+        <header class="print-sheet__head print-only print-nested-hide">
+          <img class="print-sheet__logo" [src]="logoUrl()" [alt]="t(nameKey())" />
+          <h1 class="print-sheet__title">{{ t(nameKey()) }}</h1>
+        </header>
+      }
+      @if (solo(); as rec) {
+        <header class="print-sheet__head print-only">
+          <img class="print-sheet__logo" [src]="logoUrl()" [alt]="t(nameKey())" />
+          <h1 class="print-sheet__title">{{ t(nameKey()) }}</h1>
+        </header>
+        <dl class="print-record print-only">
+          @for (col of columns(); track col.key) {
+            @if (col.type !== 'image' && col.type !== 'files') {
+              <div class="print-record__row">
+                <dt>{{ t(col.labelKey) }}</dt>
+                <dd>{{ printValue(rec, col) }}</dd>
+              </div>
+            }
+          }
+        </dl>
+        <footer class="print-sheet__foot print-only">
+          <div>{{ t(addressKey()) }}</div>
+        </footer>
+      }
       <table class="ui-table" [class.ui-table--clickable]="clickable()">
         <thead>
           <tr>
             @for (col of columns(); track col.key) {
               <th [class]="cellClass(col)">{{ t(col.labelKey) }}</th>
             }
+            @if (rowExport()) {
+              <th class="ui-table__actions-col cell--center">{{ t('common.actions') }}</th>
+            }
           </tr>
         </thead>
         <tbody>
           @for (row of rows(); track $index) {
-            <tr (click)="clickable() && rowClick.emit(row)">
+            <tr
+              [class.ui-table__row--solo]="solo() === row"
+              (click)="clickable() && rowClick.emit(row)"
+            >
               @for (col of columns(); track col.key) {
                 <td [class]="cellClass(col)">
                   @switch (col.type) {
@@ -60,7 +98,6 @@ type Row = Record<string, unknown>;
                       <span class="text-faint">{{ fmtTime(asText(row[col.key])) }}</span>
                     }
                     @case ('key') {
-                      <!-- Admin-managed lookup values are raw text, not keys -->
                       {{ t(asText(row[col.key])) || asText(row[col.key]) }}
                     }
                     @case ('badge') {
@@ -115,10 +152,36 @@ type Row = Record<string, unknown>;
                   }
                 </td>
               }
+              @if (rowExport()) {
+                <td class="ui-table__actions-col" (click)="$event.stopPropagation()">
+                  <div class="ui-table__actions">
+                    @if (allowPrint()) {
+                      <button type="button" class="ui-table__action" [attr.aria-label]="t('common.print')" (click)="printRow(row, false)">
+                        <ui-icon name="print" [size]="20" [brand]="true" />
+                      </button>
+                    }
+                    @if (allowPdf()) {
+                      <button type="button" class="ui-table__action" [attr.aria-label]="t('common.exportPdf')" (click)="printRow(row, true)">
+                        <ui-icon name="pdf" [size]="20" />
+                      </button>
+                    }
+                    @if (allowExcel()) {
+                      <button type="button" class="ui-table__action" [attr.aria-label]="t('common.exportExcel')" (click)="excelRow(row)">
+                        <ui-icon name="xls" [size]="20" />
+                      </button>
+                    }
+                  </div>
+                </td>
+              }
             </tr>
           }
         </tbody>
       </table>
+      @if (!solo()) {
+        <footer class="print-sheet__foot print-only print-nested-hide">
+          <div>{{ t(addressKey()) }}</div>
+        </footer>
+      }
       @if (!rows().length) {
         <ui-empty-state />
       }
@@ -129,12 +192,57 @@ export class UiTable extends Translated {
   readonly columns = input.required<TableColumn[]>();
   readonly rows = input.required<Row[]>();
   readonly clickable = input(false);
+  readonly rowExport = input(true);
+  readonly allowPrint = input(true);
+  readonly allowPdf = input(true);
+  readonly allowExcel = input(true);
   readonly rowClick = output<Row>();
   protected readonly viewer = inject(ImageViewerService);
   private readonly document = inject(DOCUMENT);
   private readonly store = inject(RuntimeConfigStore);
+  private readonly notifications = inject(NotificationService);
+  protected readonly solo = signal<Row | null>(null);
+  protected readonly logoUrl = () => this.store.settings()?.company.logoUrl ?? '';
+  protected readonly nameKey = () => this.store.settings()?.company.nameKey ?? 'company.name';
+  protected readonly addressKey = () =>
+    this.store.settings()?.company.addressKey ?? 'company.address';
 
-  /** Multilang cells show the active language's value, base as fallback. */
+  constructor() {
+    super();
+    this.document.defaultView?.addEventListener('afterprint', () => {
+      this.solo.set(null);
+      this.document.body.classList.remove('is-print-row');
+    });
+  }
+
+  protected printRow(row: Row, asPdf: boolean): void {
+    if (asPdf) this.notifications.info('common.pdfHint');
+    this.document.body.classList.add('is-print-row');
+    this.solo.set(row);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => this.document.defaultView?.print()),
+    );
+  }
+
+  protected printValue(row: Row, col: TableColumn): string {
+    const raw = row[col.key];
+    if (raw === undefined || raw === null || raw === '') return '';
+    if (col.type === 'number' || col.type === 'currency') {
+      return typeof raw === 'number' ? this.fmtNum(raw) : String(raw);
+    }
+    if (col.type === 'date' || col.type === 'datetime') return this.fmtDate(String(raw));
+    if (col.type === 'key') return this.t(String(raw)) || String(raw);
+    if (col.type === 'badge') {
+      return this.t((col.keyPrefix ?? '') + String(raw)) || String(raw);
+    }
+    return this.cellText(row, col);
+  }
+
+  protected excelRow(row: Row): void {
+    const id = this.asText(row['id'] || row['code'] || row['number'] || 'row');
+    exportRowsToCsv(this.columns(), [row], id, this.t, this.i18n.formatNumber);
+  }
+
   protected cellText(row: Row, col: TableColumn): string {
     if (!col.multilang) return this.asText(row[col.key]);
     const key = multilangKey(

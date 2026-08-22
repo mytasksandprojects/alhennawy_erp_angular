@@ -1,4 +1,5 @@
 import { DashboardData, StatCardData } from '../../core/models/common.models';
+import { SYSTEM_ALERTS } from './alerts.mock';
 
 /** MOCK LAYER — the cross-department home dashboard. */
 const stat = (
@@ -13,14 +14,14 @@ const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString()
 
 export const HOME_DASHBOARD: DashboardData = {
   stats: [
-    stat('sales', 'home.stats.monthSales', 5230000, 'sales', { unitKey: 'units.egp', trendPercent: 11 }),
-    stat('production', 'home.stats.monthProduction', 186000, 'production', { unitKey: 'units.kg', trendPercent: 4 }),
-    stat('weighings', 'home.stats.todayWeighings', 18, 'scale'),
-    stat('stockValue', 'home.stats.stockValue', 11616000, 'warehouse', { unitKey: 'units.egp' }),
-    stat('openImports', 'home.stats.openImports', 2, 'inbox'),
-    stat('openExports', 'home.stats.openExports', 2, 'outbox'),
-    stat('employees', 'home.stats.presentToday', 201, 'hr'),
-    stat('alerts', 'home.stats.activeAlerts', 7, 'alert', { toneToken: 'warning' }),
+    stat('sales', 'home.stats.monthSales', 5230000, 'sales', { unitKey: 'units.egp', trendPercent: 11, route: '/sales', query: { tab: 'workOrders' } }),
+    stat('production', 'home.stats.monthProduction', 186000, 'production', { unitKey: 'units.kg', trendPercent: 4, route: '/production', query: { tab: 'orders' } }),
+    stat('weighings', 'home.stats.todayWeighings', 18, 'scale', { route: '/weighbridge', fragment: 'tickets' }),
+    stat('stockValue', 'home.stats.stockValue', 11616000, 'warehouse', { unitKey: 'units.egp', route: '/warehouse', query: { tab: 'items' } }),
+    stat('openImports', 'home.stats.openImports', 2, 'inbox', { route: '/logistics', query: { tab: 'imports' } }),
+    stat('openExports', 'home.stats.openExports', 2, 'outbox', { route: '/logistics', query: { tab: 'exports' } }),
+    stat('employees', 'home.stats.presentToday', 201, 'hr', { route: '/hr', query: { tab: 'attendance' } }),
+    stat('alerts', 'home.stats.activeAlerts', SYSTEM_ALERTS.length, 'alert', { toneToken: 'warning', route: '/alerts' }),
   ],
   charts: [
     {
@@ -88,8 +89,8 @@ export const HOME_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'ho-1', messageKey: 'weighbridge.alerts.overdueSecond', params: [3020, 'م ص ر 1188'], severity: 'warning', date: daysAgo(0) },
-    { id: 'ho-2', messageKey: 'warehouse.alerts.belowMinimum', params: ['CHM-011'], severity: 'danger', date: daysAgo(0) },
-    { id: 'ho-3', messageKey: 'administration.alerts.insuranceExpired', params: ['م ص ر 1188'], severity: 'danger', date: daysAgo(0) },
+    { id: 'ho-1', messageKey: 'weighbridge.alerts.overdueSecond', params: [3020, 'م ص ر 1188'], severity: 'warning', date: daysAgo(0), route: '/weighbridge', query: { status: 'first-done', q: '3020' }, fragment: 'tickets' },
+    { id: 'ho-2', messageKey: 'warehouse.alerts.belowMinimum', params: ['CHM-011'], severity: 'danger', date: daysAgo(0), route: '/warehouse', query: { tab: 'items', stock: 'below', q: 'CHM-011' } },
+    { id: 'ho-3', messageKey: 'administration.alerts.insuranceExpired', params: ['م ص ر 1188'], severity: 'danger', date: daysAgo(0), route: '/administration', query: { tab: 'fleet', q: '1188' } },
   ],
 };

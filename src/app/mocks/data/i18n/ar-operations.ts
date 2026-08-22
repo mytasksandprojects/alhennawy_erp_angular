@@ -13,6 +13,7 @@ export const AR_OPERATIONS: TranslationMap = {
   'weighbridge.types.sales': 'وزنة مبيعات',
   'weighbridge.types.purchase-return': 'مرتجع مشتريات',
   'weighbridge.types.sales-return': 'مرتجع مبيعات',
+  'weighbridge.types.returns': 'مرتجعات',
   'weighbridge.types.internal-transfer': 'تحويل داخلي',
 
   'weighbridge.status.first-done': 'وزنة أولى فقط',
@@ -99,6 +100,7 @@ export const AR_OPERATIONS: TranslationMap = {
   'warehouse.tabs.warehouses': 'المخازن',
   'warehouse.tabs.items': 'الأصناف',
   'warehouse.tabs.movements': 'الحركات',
+  'warehouse.tabs.receipts': 'أذون الإضافة',
 
   'warehouse.names.spareParts': 'مخزن قطع الغيار',
   'warehouse.names.chemicals': 'مخزن الكيماويات',
@@ -129,8 +131,9 @@ export const AR_OPERATIONS: TranslationMap = {
   'warehouse.types.transfer': 'تحويل بين مخازن',
   'warehouse.types.adjustment': 'تسوية جرد',
 
-  'warehouse.stock.true': 'تحت الحد الأدنى',
-  'warehouse.stock.false': 'متوفر',
+  'warehouse.stock.available': 'متوفر',
+  'warehouse.stock.below': 'تحت الحد الأدنى',
+  'warehouse.stock.out': 'غير متوفر',
 
   'warehouse.refs.weighing': 'وزنة ميزان',
   'warehouse.refs.dailyBatch': 'باتش يومي للمعمل',

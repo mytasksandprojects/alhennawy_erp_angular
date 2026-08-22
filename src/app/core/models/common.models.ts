@@ -31,7 +31,14 @@ export interface TableColumn<T = Record<string, unknown>> {
   badgeToneMap?: Record<string, 'success' | 'warning' | 'danger' | 'info' | 'neutral'>;
 }
 
-export interface StatCardData {
+/** In-app destination used by clickable KPI cards and alert rows. */
+export interface RouteTarget {
+  route?: string;
+  query?: Record<string, string>;
+  fragment?: string;
+}
+
+export interface StatCardData extends RouteTarget {
   id: string;
   labelKey: string;
   value: number;
@@ -58,13 +65,15 @@ export interface ChartData {
   points: ChartPoint[];
 }
 
-export interface AlertItem {
+export interface AlertItem extends RouteTarget {
   id: string;
   messageKey: string;
   /** Values interpolated into the message ({0}, {1}...). */
   params?: (string | number)[];
   severity: 'info' | 'warning' | 'danger';
   date: string;
+  /** Sidebar module that owns this alert (`menu.weighbridge`, …). */
+  moduleKey?: string;
 }
 
 export interface DashboardData {
@@ -136,7 +145,7 @@ export interface Localized {
 export interface FormField {
   key: string;
   labelKey: string;
-  type?: 'text' | 'number' | 'date' | 'select' | 'textarea' | 'images' | 'files';
+  type?: 'text' | 'number' | 'date' | 'time' | 'select' | 'textarea' | 'images' | 'files';
   required?: boolean;
   /** Text field repeated once per configured language (see multilangKey). */
   multilang?: boolean;

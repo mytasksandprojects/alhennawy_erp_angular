@@ -4,6 +4,7 @@ import {
   ListTabConfig,
   ModuleTabbedView,
 } from '../../shared/components/module-tabbed-view';
+import { AttendanceConfig } from './attendance-config';
 import {
   ATTENDANCE_COLUMNS,
   ATTENDANCE_FIELDS,
@@ -23,14 +24,16 @@ import {
 @Component({
   selector: 'app-hr-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ModuleTabbedView],
+  imports: [ModuleTabbedView, AttendanceConfig],
   template: `
     <module-tabbed-view
       moduleId="hr"
       titleKey="hr.title"
       subtitleKey="hr.subtitle"
       [listTabs]="tabs"
-    />
+    >
+      <app-attendance-config />
+    </module-tabbed-view>
   `,
 })
 export class HrPage {
@@ -48,6 +51,11 @@ export class HrPage {
       endpoint: API_ENDPOINTS.hr.attendance,
       columns: ATTENDANCE_COLUMNS,
       fields: ATTENDANCE_FIELDS,
+    },
+    {
+      id: 'attendanceConfig',
+      labelKey: 'hr.tabs.attendanceConfig',
+      custom: true,
     },
     {
       id: 'leaves',

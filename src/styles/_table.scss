@@ -91,6 +91,34 @@
   text-align: center;
 }
 
+.ui-table__actions-col {
+  width: calc(var(--sidebar-icon-plate) * 3.4);
+}
+
+.ui-table__actions {
+  display: flex;
+  gap: var(--space-xs);
+  justify-content: center;
+}
+
+.ui-table__action {
+  width: var(--sidebar-icon-plate);
+  height: var(--sidebar-icon-plate);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-solid);
+  cursor: pointer;
+}
+
+.ui-table__action:hover,
+.ui-table__action:focus-visible {
+  background: var(--color-primary-soft);
+  outline: none;
+}
+
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -98,10 +126,25 @@
   margin-bottom: var(--space-lg);
 }
 
+#alerts,
+#tickets {
+  scroll-margin-top: var(--space-xl);
+}
+
 .stat-card {
   display: flex;
   gap: var(--space-md);
   align-items: center;
+}
+
+.stat-card--link {
+  cursor: pointer;
+}
+
+.stat-card--link:hover,
+.stat-card--link:focus-visible {
+  box-shadow: var(--shadow-lg);
+  outline: none;
 }
 
 .stat-card__icon {
@@ -197,6 +240,16 @@
   font-size: var(--font-size-md);
   line-height: 1.45;
   border: var(--border-width) solid var(--color-border);
+}
+
+.alert-item--link {
+  cursor: pointer;
+}
+
+.alert-item--link:hover,
+.alert-item--link:focus-visible {
+  box-shadow: var(--shadow-md);
+  outline: none;
 }
 
 @each $tone in (info, warning, danger) {

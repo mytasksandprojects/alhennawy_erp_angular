@@ -57,9 +57,10 @@ export class Sidebar extends Translated {
   private readonly auth = inject(AuthService);
   protected readonly layout = inject(LayoutService);
 
-  protected readonly logoUrl = computed(
-    () => this.store.settings()?.company.logoUrl ?? '',
-  );
+  protected readonly logoUrl = computed(() => {
+    const company = this.store.settings()?.company;
+    return company?.sidebarLogoUrl || company?.logoUrl || '';
+  });
 
   protected readonly visibleMenu = computed(() =>
     this.store.menu().filter((item) => this.auth.hasPermission(item.permission)),

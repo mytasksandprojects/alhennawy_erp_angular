@@ -17,6 +17,10 @@ export const API_ENDPOINTS = {
     logout: '/auth/logout',
   },
   dashboards: (moduleId: string) => `/dashboards/${moduleId}`,
+  alerts: '/alerts',
+  factory: {
+    profile: '/factory/profile',
+  },
   finance: {
     accounts: '/finance/accounts',
     journalEntries: '/finance/journal-entries',
@@ -64,7 +68,11 @@ export const API_ENDPOINTS = {
     employeeReviews: '/hr/employee-reviews',
     managerReviews: '/hr/manager-reviews',
     penalties: '/hr/penalties',
+    attendancePolicy: '/hr/attendance-policy',
+    attendanceLocations: '/hr/attendance-locations',
   },
+  roles: '/roles',
+  checkin: '/hr/attendance',
   logistics: {
     imports: '/logistics/imports',
     exports: '/logistics/exports',
@@ -73,6 +81,7 @@ export const API_ENDPOINTS = {
     warehouses: '/warehouse/warehouses',
     items: '/warehouse/items',
     movements: '/warehouse/movements',
+    receipts: '/warehouse/receipts',
   },
   quality: {
     dashtInspections: '/quality/dasht-inspections',

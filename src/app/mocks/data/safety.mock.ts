@@ -73,11 +73,11 @@ export const MOCK_CLINIC_VISITS: ClinicVisit[] = [
 
 export const SAFETY_DASHBOARD: DashboardData = {
   stats: [
-    { id: 'certs', labelKey: 'safety.stats.validCertificates', value: 2, icon: 'certificate', toneToken: 'success' },
-    { id: 'expiring', labelKey: 'safety.stats.expiringCertificates', value: 1, icon: 'clock', toneToken: 'warning' },
-    { id: 'expired', labelKey: 'safety.stats.expiredCertificates', value: 1, icon: 'alert', toneToken: 'danger' },
-    { id: 'policies', labelKey: 'safety.stats.activePolicies', value: 4, icon: 'shield' },
-    { id: 'daysNoAccident', labelKey: 'safety.stats.daysWithoutAccident', value: 3, icon: 'check', unitKey: 'units.day' },
+    { id: 'certs', labelKey: 'safety.stats.validCertificates', value: 2, icon: 'certificate', toneToken: 'success', route: '/safety', query: { tab: 'certificates' } },
+    { id: 'expiring', labelKey: 'safety.stats.expiringCertificates', value: 1, icon: 'clock', toneToken: 'warning', route: '/safety', query: { tab: 'certificates' } },
+    { id: 'expired', labelKey: 'safety.stats.expiredCertificates', value: 1, icon: 'alert', toneToken: 'danger', route: '/safety', query: { tab: 'certificates' } },
+    { id: 'policies', labelKey: 'safety.stats.activePolicies', value: 4, icon: 'shield', route: '/safety', query: { tab: 'insurance' } },
+    { id: 'daysNoAccident', labelKey: 'safety.stats.daysWithoutAccident', value: 3, icon: 'check', unitKey: 'units.day', route: '/safety', query: { tab: 'certificates' } },
   ],
   charts: [
     {
@@ -91,19 +91,19 @@ export const SAFETY_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'sfa-1', messageKey: 'safety.alerts.certificateExpiring', params: ['CD-2025-882', 25], severity: 'warning', date: daysAgo(0) },
-    { id: 'sfa-2', messageKey: 'safety.alerts.insuranceExpired', params: ['EQP-2025-304'], severity: 'danger', date: daysAgo(0) },
+    { id: 'sfa-1', messageKey: 'safety.alerts.certificateExpiring', params: ['CD-2025-882', 25], severity: 'warning', date: daysAgo(0), route: '/safety', query: { tab: 'certificates', q: 'CD-2025-882' } },
+    { id: 'sfa-2', messageKey: 'safety.alerts.insuranceExpired', params: ['EQP-2025-304'], severity: 'danger', date: daysAgo(0), route: '/safety', query: { tab: 'insurance', q: 'EQP-2025-304' } },
   ],
 };
 
 export const CLINIC_DASHBOARD: DashboardData = {
   stats: [
-    { id: 'today', labelKey: 'clinic.stats.todayVisits', value: 1, icon: 'plus' },
-    { id: 'month', labelKey: 'clinic.stats.monthVisits', value: 14, icon: 'calendar' },
-    { id: 'referrals', labelKey: 'clinic.stats.hospitalReferrals', value: 1, icon: 'alert', toneToken: 'warning' },
-    { id: 'medicine', labelKey: 'clinic.stats.medicineCost', value: 3850, icon: 'money', unitKey: 'units.egp' },
-    { id: 'dispenses', labelKey: 'clinic.stats.monthDispenses', value: 23, icon: 'clinic' },
-    { id: 'lowStock', labelKey: 'clinic.stats.lowStockMedicines', value: 1, icon: 'alert', toneToken: 'danger' },
+    { id: 'today', labelKey: 'clinic.stats.todayVisits', value: 1, icon: 'plus', route: '/clinic', query: { tab: 'visits' } },
+    { id: 'month', labelKey: 'clinic.stats.monthVisits', value: 14, icon: 'calendar', route: '/clinic', query: { tab: 'visits' } },
+    { id: 'referrals', labelKey: 'clinic.stats.hospitalReferrals', value: 1, icon: 'alert', toneToken: 'warning', route: '/clinic', query: { tab: 'visits' } },
+    { id: 'medicine', labelKey: 'clinic.stats.medicineCost', value: 3850, icon: 'money', unitKey: 'units.egp', route: '/clinic', query: { tab: 'medicines' } },
+    { id: 'dispenses', labelKey: 'clinic.stats.monthDispenses', value: 23, icon: 'clinic', route: '/clinic', query: { tab: 'dispenses' } },
+    { id: 'lowStock', labelKey: 'clinic.stats.lowStockMedicines', value: 1, icon: 'alert', toneToken: 'danger', route: '/clinic', query: { tab: 'medicines' } },
   ],
   charts: [
     {
@@ -142,6 +142,6 @@ export const CLINIC_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'cla-1', messageKey: 'clinic.alerts.medicineLow', params: ['مضاد حيوي موضعي'], severity: 'warning', date: daysAgo(0) },
+    { id: 'cla-1', messageKey: 'clinic.alerts.medicineLow', params: ['مضاد حيوي موضعي'], severity: 'warning', date: daysAgo(0), route: '/clinic', query: { tab: 'medicines', q: 'مضاد حيوي موضعي' } },
   ],
 };
