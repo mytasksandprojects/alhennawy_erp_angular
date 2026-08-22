@@ -10,6 +10,7 @@ import {
   deletePurchaseRequest,
   listDeptRequests,
   upsertDeptRequest,
+  upsertPurchaseRequest,
 } from './data/purchasing.mock';
 import { listRoles, upsertRole } from './data/roles.mock';
 
@@ -63,6 +64,18 @@ export const ACCESS_ROUTES: MockRoute[] = [
   {
     method: 'DELETE',
     pattern: '/production/purchase-requests/:id',
+    handler: ({ path }) => deletePurchaseRequest(decodeURIComponent(path.split('/').pop() ?? '')),
+  },
+  { method: 'POST', pattern: '/purchasing/requests', handler: ({ body }) => upsertPurchaseRequest(body) },
+  {
+    method: 'PUT',
+    pattern: '/purchasing/requests/:id',
+    handler: ({ path, body }) =>
+      upsertPurchaseRequest({ ...(body as object), id: decodeURIComponent(path.split('/').pop() ?? '') }),
+  },
+  {
+    method: 'DELETE',
+    pattern: '/purchasing/requests/:id',
     handler: ({ path }) => deletePurchaseRequest(decodeURIComponent(path.split('/').pop() ?? '')),
   },
 ];

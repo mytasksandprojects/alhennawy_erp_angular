@@ -19,7 +19,6 @@ import { MOCK_BALANCE_SHEET, MOCK_EXPENSES, MOCK_PNL } from './data/finance-repo
 import {
   listPurchaseRequests,
   MOCK_PURCHASE_ORDERS,
-  MOCK_PURCHASE_REQUESTS,
   MOCK_QUOTATIONS,
   MOCK_SUPPLIERS,
 } from './data/purchasing.mock';
@@ -256,7 +255,6 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/finance/expenses', MOCK_EXPENSES),
   ...crudRoutes('/system/audit-logs', MOCK_AUDIT_LOGS),
   ...crudRoutes('/system/lookups', MOCK_LOOKUP_VALUES),
-  ...crudRoutes('/purchasing/requests', MOCK_PURCHASE_REQUESTS),
   ...crudRoutes('/purchasing/orders', MOCK_PURCHASE_ORDERS),
   ...crudRoutes('/purchasing/suppliers', MOCK_SUPPLIERS, 'code'),
   ...crudRoutes('/purchasing/quotations', MOCK_QUOTATIONS),

@@ -29,6 +29,8 @@ export interface PurchaseRequest {
   status: PurchaseRequestStatus;
   itemName?: string;
   quantity?: number;
+  /** Form draft of `lines` as JSON — not stored as its own column. */
+  linesJson?: string;
   lines: PurchaseRequestLine[];
 }
 

@@ -168,7 +168,10 @@ export function liveLookups(): LookupValue[] {
     ),
     ...MOCK_DOCTORS.map((d) => liveLk(`live-doctor-${d.id}`, 'doctors', d)),
     ...MOCK_EMPLOYEES.map((e) => liveLk(`live-emp-${e.id}`, 'employees', e)),
-    ...MOCK_STOCK_ITEMS.map((item) => liveLk(`live-item-${item.code}`, 'stockItems', item)),
+    ...MOCK_STOCK_ITEMS.map((item) => ({
+      ...liveLk(`live-item-${item.code}`, 'stockItems', item),
+      value: item.code,
+    })),
     ...MOCK_ROLES.map((role) =>
       lk(
         `live-role-${role.id}`,

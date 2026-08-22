@@ -18,6 +18,7 @@ import { AccessService } from '../../core/security/access.service';
 import { LookupService } from '../../core/services/lookup.service';
 import { Translated } from '../translated.base';
 import { UiImageInput } from './ui-image-input';
+import { UiRequestLines } from './ui-request-lines';
 
 type Draft = Record<string, string | number | boolean>;
 
@@ -25,11 +26,19 @@ type Draft = Record<string, string | number | boolean>;
 @Component({
   selector: 'ui-entity-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, UiImageInput],
+  imports: [FormsModule, UiImageInput, UiRequestLines],
   template: `
     <div class="ui-form-grid">
       @for (field of fields(); track field.key) {
-        @if (field.multilang) {
+        @if (field.type === 'lines') {
+          <div class="ui-field ui-field--wide">
+            <span class="ui-field__label">{{ t(field.labelKey) }}</span>
+            <ui-request-lines
+              [value]="asText(field.key)"
+              (valueChange)="set(field.key, $event)"
+            />
+          </div>
+        } @else if (field.multilang) {
           <!-- One input per configured language; new languages auto-appear -->
           @for (lang of langsFor(field); track lang.code) {
             <label class="ui-field">

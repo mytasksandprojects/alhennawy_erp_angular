@@ -145,7 +145,7 @@ export interface Localized {
 export interface FormField {
   key: string;
   labelKey: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'date' | 'time' | 'select' | 'textarea' | 'images' | 'files';
+  type?: 'text' | 'email' | 'password' | 'number' | 'date' | 'time' | 'select' | 'textarea' | 'images' | 'files' | 'lines';
   required?: boolean;
   /** Text field repeated once per configured language (see multilangKey). */
   multilang?: boolean;

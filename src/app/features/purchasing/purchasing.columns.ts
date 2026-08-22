@@ -68,8 +68,7 @@ export const QUOTATION_COLUMNS: TableColumn[] = [
 export const PURCHASE_REQUEST_FIELDS: FormField[] = [
   { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'PR' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
-  { key: 'itemName', labelKey: 'warehouse.tabs.items', type: 'select', lookup: 'stockItems', required: true },
-  { key: 'quantity', labelKey: 'common.quantity', type: 'number', required: true },
+  { key: 'linesJson', labelKey: 'warehouse.tabs.items', type: 'lines' },
   { key: 'requestingDepartmentKey', labelKey: 'purchasing.fields.department', type: 'select', lookup: 'departments' },
   { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('purchasing.requestStatus.', ['pending', 'approved', 'rejected', 'ordered']) },
 ];

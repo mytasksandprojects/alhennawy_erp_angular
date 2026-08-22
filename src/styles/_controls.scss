@@ -143,6 +143,50 @@ textarea.ui-control {
   gap: var(--space-md);
 }
 
+.ui-field--wide {
+  grid-column: 1 / -1;
+}
+
+.ui-request-lines__add {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-sm);
+  align-items: end;
+}
+
+.ui-request-lines__cart {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.ui-request-lines__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.ui-request-lines__row:last-child {
+  border-bottom: none;
+}
+
+.ui-request-lines__name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.ui-request-lines__qty {
+  width: calc(var(--space-xl) * 2.4);
+  flex: 0 0 auto;
+}
+
 .ui-tabs {
   display: flex;
   gap: var(--space-xs);

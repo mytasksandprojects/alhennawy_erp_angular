@@ -1,11 +1,14 @@
 import {
   PurchaseOrder,
   PurchaseRequest,
+  PurchaseRequestLine,
+  PurchaseRequestStatus,
   Supplier,
   SupplierQuotation,
 } from '../../core/models/purchasing.models';
 import { nextGenerated } from '../../shared/crud/serial';
 import { MockApiError } from '../mock-backend.interceptor';
+import { MOCK_STOCK_ITEMS } from './warehouse.mock';
 
 /** MOCK LAYER — purchasing cycle data (PR → quotations → PO). */
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
@@ -45,12 +48,62 @@ export const MOCK_PURCHASE_ORDERS: PurchaseOrder[] = [
   { id: 'po-4', number: 'PO-2026-0080', date: daysAgo(2), supplierCode: 'SUP-004', supplierName: 'Voith Paper GmbH', status: 'partially-received', currency: 'EUR', exchangeRate: 52.8, totalValue: 3150, expectedDelivery: daysAhead(10) },
 ];
 
+function resolveStock(name: string, code: string): { code: string; name: string; unitKey: string } {
+  const item = MOCK_STOCK_ITEMS.find(
+    (row) => row.code === code || row.name === name || row['name_en'] === name,
+  );
+  return item
+    ? { code: item.code, name: item.name, unitKey: item.unitKey }
+    : { code: code || '', name, unitKey: 'units.piece' };
+}
+
+function asLine(raw: Partial<PurchaseRequestLine>): PurchaseRequestLine | null {
+  const itemName = String(raw.itemName ?? '').trim();
+  const quantity = Number(raw.quantity ?? 0);
+  if (!itemName || quantity <= 0) return null;
+  const stock = resolveStock(itemName, String(raw.itemCode ?? ''));
+  const specification = String(raw.specification ?? '').trim();
+  return {
+    itemCode: stock.code,
+    itemName: stock.name || itemName,
+    quantity,
+    unitKey: raw.unitKey || stock.unitKey,
+    specification: specification || undefined,
+  };
+}
+
+function parseLines(body: Record<string, unknown>): PurchaseRequestLine[] {
+  const raw = body['linesJson'] ?? body['lines'];
+  let parsed: unknown = raw;
+  if (typeof raw === 'string' && raw.trim()) {
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      parsed = [];
+    }
+  }
+  if (Array.isArray(parsed) && parsed.length) {
+    return parsed
+      .map((line) => asLine(line as Partial<PurchaseRequestLine>))
+      .filter((line): line is PurchaseRequestLine => !!line);
+  }
+  const single = asLine({
+    itemName: String(body['itemName'] ?? ''),
+    quantity: Number(body['quantity'] ?? 0),
+  });
+  return single ? [single] : [];
+}
+
 function flattenRequest(row: PurchaseRequest): PurchaseRequest {
-  const line = row.lines?.[0];
+  const lines = row.lines ?? [];
+  const names = lines.map((line) =>
+    line.specification ? `${line.itemName} (${line.specification})` : line.itemName,
+  );
   return {
     ...row,
-    itemName: row.itemName || line?.itemName || '',
-    quantity: row.quantity ?? line?.quantity ?? 0,
+    itemName: names.join(' · ') || row.itemName || '',
+    quantity: lines.reduce((sum, line) => sum + Number(line.quantity || 0), 0) || row.quantity || 0,
+    linesJson: JSON.stringify(lines),
   };
 }
 
@@ -62,29 +115,31 @@ export function listDeptRequests(departmentKey: string): PurchaseRequest[] {
   return listPurchaseRequests().filter((row) => row.requestingDepartmentKey === departmentKey);
 }
 
-export function upsertDeptRequest(departmentKey: string, body: unknown): PurchaseRequest {
-  const incoming = body as PurchaseRequest;
-  const itemName = String(incoming.itemName ?? incoming.lines?.[0]?.itemName ?? '');
-  const quantity = Number(incoming.quantity ?? incoming.lines?.[0]?.quantity ?? 0);
+export function upsertPurchaseRequest(body: unknown, departmentKey?: string): PurchaseRequest {
+  const incoming = body as Record<string, unknown>;
+  const prev = incoming['id']
+    ? MOCK_PURCHASE_REQUESTS.find((row) => row.id === incoming['id'])
+    : undefined;
+  const lines = parseLines(incoming);
+  const status = (incoming['status'] as PurchaseRequestStatus | undefined) || prev?.status || 'pending';
   const row: PurchaseRequest = {
-    ...incoming,
-    id: incoming.id || `pr-${Date.now()}`,
-    number: incoming.number || nextGenerated(MOCK_PURCHASE_REQUESTS, 'number', 'PR'),
-    date: incoming.date || new Date().toISOString(),
-    requestingDepartmentKey: incoming.requestingDepartmentKey || departmentKey,
-    status: incoming.status || 'pending',
-    itemName,
-    quantity,
-    lines: incoming.lines?.length
-      ? incoming.lines
-      : itemName
-        ? [{ itemCode: '', itemName, quantity, unitKey: 'units.piece' }]
-        : [],
+    id: String(incoming['id'] || `pr-${Date.now()}`),
+    number: String(incoming['number'] || nextGenerated(MOCK_PURCHASE_REQUESTS, 'number', 'PR')),
+    date: String(incoming['date'] || new Date().toISOString()),
+    requestingDepartmentKey: String(
+      incoming['requestingDepartmentKey'] || departmentKey || prev?.requestingDepartmentKey || '',
+    ),
+    status,
+    lines,
   };
   const index = MOCK_PURCHASE_REQUESTS.findIndex((item) => item.id === row.id);
   if (index >= 0) MOCK_PURCHASE_REQUESTS[index] = row;
   else MOCK_PURCHASE_REQUESTS.unshift(row);
   return flattenRequest(row);
+}
+
+export function upsertDeptRequest(departmentKey: string, body: unknown): PurchaseRequest {
+  return upsertPurchaseRequest(body, departmentKey);
 }
 
 export function deletePurchaseRequest(id: string): PurchaseRequest {
