@@ -157,6 +157,8 @@ export interface FormField {
    * rate is copied into this draft key (the user may then override it).
    */
   rateKey?: string;
+  /** Lookup selects only: copy the chosen option label into this draft key. */
+  copyKey?: string;
   /** Issued by the system on create — hidden in the add form, read-only later. */
   generated?: boolean;
   generatedPrefix?: string;

@@ -195,6 +195,10 @@ export class UiEntityForm extends Translated {
   /** Select change; also applies the option's default rate (overridable). */
   protected setSelect(field: FormField, value: string): void {
     this.set(field.key, value);
+    if (field.copyKey) {
+      const option = this.optionsFor(field).find((row) => row.value === value);
+      if (option?.label) this.set(field.copyKey, option.label);
+    }
     if (!field.rateKey || !field.lookup) return;
     const rate = this.lookups.rateOf(field.lookup, value);
     if (rate !== null) this.set(field.rateKey, rate);

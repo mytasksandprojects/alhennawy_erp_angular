@@ -82,8 +82,8 @@ export const DEPT_PURCHASE_REQUEST_FIELDS: FormField[] = PURCHASE_REQUEST_FIELDS
 export const PURCHASE_ORDER_FIELDS: FormField[] = [
   { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'PO' },
   { key: 'date', labelKey: 'common.date', type: 'date' },
-  { key: 'supplierName', labelKey: 'purchasing.fields.supplier', multilang: true },
-  { key: 'requestId', labelKey: 'purchasing.fields.request' },
+  { key: 'supplierCode', labelKey: 'purchasing.fields.supplier', type: 'select', lookup: 'suppliers', copyKey: 'supplierName', required: true },
+  { key: 'requestId', labelKey: 'purchasing.fields.request', type: 'select', lookup: 'purchaseRequests' },
   { key: 'totalValue', labelKey: 'common.value', type: 'number' },
   { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies', rateKey: 'exchangeRate' },
   { key: 'exchangeRate', labelKey: 'finance.fields.rate', type: 'number' },
@@ -101,8 +101,8 @@ export const SUPPLIER_FIELDS: FormField[] = [
 ];
 
 export const QUOTATION_FIELDS: FormField[] = [
-  { key: 'requestId', labelKey: 'purchasing.fields.request' },
-  { key: 'supplierName', labelKey: 'purchasing.fields.supplier', multilang: true },
+  { key: 'requestId', labelKey: 'purchasing.fields.request', type: 'select', lookup: 'purchaseRequests', required: true },
+  { key: 'supplierCode', labelKey: 'purchasing.fields.supplier', type: 'select', lookup: 'suppliers', copyKey: 'supplierName', required: true },
   { key: 'totalValue', labelKey: 'common.value', type: 'number' },
   { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies', rateKey: 'exchangeRate' },
   { key: 'exchangeRate', labelKey: 'finance.fields.rate', type: 'number' },

@@ -1,5 +1,6 @@
 import { LookupValue } from '../../core/models/system.models';
 import { MOCK_EMPLOYEES } from './hr.mock';
+import { MOCK_PURCHASE_REQUESTS, MOCK_SUPPLIERS } from './purchasing.mock';
 import { MOCK_STOCK_ITEMS } from './warehouse.mock';
 import { MOCK_ROLES } from './roles.mock';
 import {
@@ -158,8 +159,8 @@ function liveLk(id: string, group: string, rec: object, rate?: number): LookupVa
 }
 
 /**
- * Lookup groups derived from live records, so newly added clinics and
- * doctors appear in the visit form immediately.
+ * Lookup groups derived from live records, so newly added clinics,
+ * suppliers and purchase requests appear in forms immediately.
  */
 export function liveLookups(): LookupValue[] {
   return [
@@ -172,6 +173,13 @@ export function liveLookups(): LookupValue[] {
       ...liveLk(`live-item-${item.code}`, 'stockItems', item),
       value: item.code,
     })),
+    ...MOCK_SUPPLIERS.map((supplier) => ({
+      ...liveLk(`live-sup-${supplier.code}`, 'suppliers', supplier),
+      value: supplier.code,
+    })),
+    ...MOCK_PURCHASE_REQUESTS.filter((row) => row.status !== 'rejected').map((row) =>
+      lk(`live-pr-${row.id}`, 'purchaseRequests', row.id, row.number, row.number),
+    ),
     ...MOCK_ROLES.map((role) =>
       lk(
         `live-role-${role.id}`,
