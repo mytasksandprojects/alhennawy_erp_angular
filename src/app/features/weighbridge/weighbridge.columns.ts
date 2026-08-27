@@ -11,6 +11,7 @@ export const WEIGHING_COLUMNS: TableColumn[] = [
     keyPrefix: 'weighbridge.types.',
     badgeToneMap: {
       'purchase': 'info',
+      'dasht-purchase': 'info',
       'sales': 'success',
       'purchase-return': 'warning',
       'sales-return': 'warning',

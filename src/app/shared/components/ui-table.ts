@@ -19,12 +19,14 @@ import { ImageViewerService } from '../../core/services/image-viewer.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { exportRowsToCsv } from '../crud/export-csv';
 import { attachLandscape } from '../crud/print-page';
-import { printTitleName, withReportWord } from '../crud/print-cell';
+import { printTitleName, sheetTitle } from '../crud/print-cell';
+import { StatusPick } from '../crud/status-flow';
 import { Translated } from '../translated.base';
 import { UiBadge } from './ui-badge';
 import { UiEmptyState } from './ui-empty-state';
 import { UiIcon } from './ui-icon';
 import { UiPrintDoc } from './ui-print-doc';
+import { UiStatusActions } from './ui-status-actions';
 
 type Row = Record<string, unknown>;
 
@@ -35,7 +37,7 @@ type Row = Record<string, unknown>;
 @Component({
   selector: 'ui-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiBadge, UiEmptyState, UiIcon, UiPrintDoc],
+  imports: [UiBadge, UiEmptyState, UiIcon, UiPrintDoc, UiStatusActions],
   template: `
     <div
       class="ui-table-wrap"
@@ -65,7 +67,7 @@ type Row = Record<string, unknown>;
             @for (col of columns(); track col.key) {
               <th [class]="cellClass(col)">{{ t(col.labelKey) }}</th>
             }
-            @if (rowExport()) {
+            @if (rowExport() || statusCol()) {
               <th class="ui-table__actions-col cell--center">{{ t('common.actions') }}</th>
             }
           </tr>
@@ -147,9 +149,16 @@ type Row = Record<string, unknown>;
                   }
                 </td>
               }
-              @if (rowExport()) {
+              @if (rowExport() || statusCol()) {
                 <td class="ui-table__actions-col" (click)="$event.stopPropagation()">
                   <div class="ui-table__actions">
+                    @if (statusCol(); as col) {
+                      <ui-status-actions
+                        [col]="col"
+                        [value]="asText(row[col.key])"
+                        (picked)="statusChange.emit({ row, key: col.key, status: $event })"
+                      />
+                    }
                     @if (allowPrint()) {
                       <button type="button" class="ui-table__action" [attr.aria-label]="t('common.print')" (click)="printRow(row, false)">
                         <ui-icon name="print" [size]="20" [brand]="true" />
@@ -192,7 +201,9 @@ export class UiTable extends Translated {
   readonly titleKey = input('');
   readonly printKind = input<'record' | 'invoice' | 'sheet'>('record');
   readonly printAsReport = input(false);
+  readonly statusCol = input<TableColumn | null>(null);
   readonly rowClick = output<Row>();
+  readonly statusChange = output<StatusPick>();
   protected readonly viewer = inject(ImageViewerService);
   private readonly document = inject(DOCUMENT);
   private readonly store = inject(RuntimeConfigStore);
@@ -202,23 +213,16 @@ export class UiTable extends Translated {
   private dropLandscape: (() => void) | null = null;
   protected readonly logoUrl = () => this.store.settings()?.company.logoUrl ?? '';
   protected readonly nameKey = () => this.store.settings()?.company.nameKey ?? 'company.name';
-  protected readonly addressKey = () =>
-    this.store.settings()?.company.addressKey ?? 'company.address';
+  protected readonly addressKey = () => this.store.settings()?.company.addressKey ?? 'company.address';
 
   protected printDocTitle(): string {
-    const name = this.t(this.titleKey());
-    if (!this.printAsReport() || this.solo()) return name;
-    return withReportWord(name, this.t('reports.word'), this.store.language());
+    return sheetTitle(this.t(this.titleKey()), this.t('reports.word'), this.store.language(), this.printAsReport() && !this.solo());
   }
 
   protected lineName(): string {
-    const row = this.line();
-    if (!row) return '';
-    return printTitleName(
-      row,
-      this.store.language(),
-      this.store.settings()?.defaultLanguage ?? 'ar',
-    );
+    return this.line()
+      ? printTitleName(this.line()!, this.store.language(), this.store.settings()?.defaultLanguage ?? 'ar')
+      : '';
   }
 
   constructor() {
@@ -283,14 +287,12 @@ export class UiTable extends Translated {
   }
 
   protected asText(value: unknown): string {
-    return value === undefined || value === null ? '' : String(value);
+    return value == null ? '' : String(value);
   }
 
   protected imageUrls(value: unknown): string[] {
     return splitImageList(this.asText(value));
   }
 
-  protected asNumber(value: unknown): number | null {
-    return typeof value === 'number' ? value : null;
-  }
+  protected asNumber(value: unknown): number | null { return typeof value === 'number' ? value : null; }
 }

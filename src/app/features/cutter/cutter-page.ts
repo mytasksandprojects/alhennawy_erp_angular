@@ -23,6 +23,7 @@ import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { Translated } from '../../shared/translated.base';
 import { CutterApiService } from './cutter-api.service';
 import { ROLL_COLUMNS, ROLL_FIELDS, SPEC_COLUMNS, SPEC_FIELDS } from './cutter.columns';
+import { TechSheetPrint } from '../quality/tech-sheet-print';
 import { RollLabel } from './roll-label';
 
 type Draft = Record<string, string | number | boolean>;
@@ -42,6 +43,7 @@ type Draft = Record<string, string | number | boolean>;
     UiTabs,
     CrudPanel,
     RollLabel,
+    TechSheetPrint,
   ],
   template: `
     <ui-page-header titleKey="cutter.title" subtitleKey="cutter.subtitle">
@@ -96,6 +98,7 @@ type Draft = Record<string, string | number | boolean>;
         <div class="stack" style="align-items: center">
           <div class="print-area">
             <app-roll-label [roll]="roll" />
+            <app-tech-sheet-print [specCode]="roll.specCode" />
           </div>
           <ui-entity-form [fields]="rollFields" [(draft)]="draft" />
           <div class="row">

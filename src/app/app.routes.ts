@@ -57,6 +57,13 @@ export const routes: Routes = [
           import('./features/quality/quality-page').then((m) => m.QualityPage),
       },
       {
+        path: 'maintenance',
+        canActivate: [permissionGuard],
+        data: { permission: 'maintenance.view' },
+        loadComponent: () =>
+          import('./features/maintenance/maintenance-page').then((m) => m.MaintenancePage),
+      },
+      {
         path: 'production',
         canActivate: [permissionGuard],
         data: { permission: 'production.view' },

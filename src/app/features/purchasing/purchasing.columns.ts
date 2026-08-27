@@ -13,6 +13,7 @@ export const PURCHASE_REQUEST_COLUMNS: TableColumn[] = [
     type: 'badge',
     keyPrefix: 'purchasing.requestStatus.',
     badgeToneMap: { pending: 'warning', approved: 'success', rejected: 'danger', ordered: 'info' },
+    statusFlow: ['pending', 'approved', 'ordered'],
   },
 ];
 
@@ -38,6 +39,7 @@ export const PURCHASE_ORDER_COLUMNS: TableColumn[] = [
       'late': 'danger',
       'closed': 'neutral',
     },
+    statusFlow: ['open', 'partially-received', 'received', 'closed'],
   },
 ];
 

@@ -19,6 +19,16 @@ import {
 } from './data/purchasing-workflow';
 import { advanceExportOrder, createExportQuotation } from './data/sales-workflow';
 import { listRoles, upsertRole } from './data/roles.mock';
+import {
+  MOCK_CHEM_ACCOUNTS,
+  MOCK_CHEM_CUSTOMERS,
+  MOCK_CHEM_JOURNAL,
+  MOCK_CHEM_MOVEMENTS,
+  MOCK_CHEM_WAREHOUSE,
+} from './data/chemicals.mock';
+import { MOCK_LEDGER, MOCK_TRIAL_BALANCE } from './data/finance-reports.mock';
+import { listMaintenance, prepareMaintenance } from './data/maintenance.mock';
+import { MOCK_MAINTENANCE, MOCK_TECH_SHEETS } from './data/quality.mock';
 
 export const ACCESS_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/roles', handler: () => listRoles() },
@@ -105,4 +115,22 @@ export const ACCESS_ROUTES: MockRoute[] = [
     pattern: '/sales/export-orders/:id/advance',
     handler: ({ path, body }) => advanceExportOrder(path.split('/').filter(Boolean)[2] ?? '', body),
   },
+  { method: 'GET', pattern: '/maintenance/jobs', handler: () => listMaintenance() },
+  ...crudRoutes('/maintenance/jobs', MOCK_MAINTENANCE, 'id', true, prepareMaintenance('quality')),
+  { method: 'GET', pattern: '/production/maintenance', handler: () => listMaintenance('production') },
+  ...crudRoutes('/production/maintenance', MOCK_MAINTENANCE, 'id', true, prepareMaintenance('production')),
+  { method: 'GET', pattern: '/quality/tech-sheets', handler: () => MOCK_TECH_SHEETS },
+  ...crudRoutes('/quality/tech-sheets', MOCK_TECH_SHEETS),
+  { method: 'GET', pattern: '/finance/ledger', handler: () => MOCK_LEDGER },
+  { method: 'GET', pattern: '/finance/trial-balance', handler: () => MOCK_TRIAL_BALANCE },
+  { method: 'GET', pattern: '/chemicals/raw-warehouse', handler: () => MOCK_CHEM_WAREHOUSE },
+  ...crudRoutes('/chemicals/raw-warehouse', MOCK_CHEM_WAREHOUSE, 'code'),
+  { method: 'GET', pattern: '/chemicals/customers', handler: () => MOCK_CHEM_CUSTOMERS },
+  ...crudRoutes('/chemicals/customers', MOCK_CHEM_CUSTOMERS, 'code'),
+  { method: 'GET', pattern: '/chemicals/movements', handler: () => MOCK_CHEM_MOVEMENTS },
+  ...crudRoutes('/chemicals/movements', MOCK_CHEM_MOVEMENTS),
+  { method: 'GET', pattern: '/chemicals/accounts', handler: () => MOCK_CHEM_ACCOUNTS },
+  ...crudRoutes('/chemicals/accounts', MOCK_CHEM_ACCOUNTS, 'code'),
+  { method: 'GET', pattern: '/chemicals/journal', handler: () => MOCK_CHEM_JOURNAL },
+  ...crudRoutes('/chemicals/journal', MOCK_CHEM_JOURNAL),
 ];

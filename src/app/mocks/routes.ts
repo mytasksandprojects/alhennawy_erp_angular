@@ -28,6 +28,7 @@ import {
   MOCK_INVOICES,
   MOCK_STATEMENTS,
   MOCK_WORK_ORDERS,
+  listWorkOrders,
 } from './data/sales.mock';
 import { MOCK_EXPORT_SHIPMENTS, MOCK_IMPORTS } from './data/logistics.mock';
 import {
@@ -39,7 +40,6 @@ import {
   MOCK_ZK_LOGS,
 } from './data/hr.mock';
 import {
-  CLINIC_DASHBOARD,
   MOCK_CLINIC_MEDICINES,
   MOCK_CLINICS,
   MOCK_CLINIC_VISITS,
@@ -48,7 +48,6 @@ import {
   MOCK_MEDICINE_DISPENSES,
   MOCK_PENALTIES,
   MOCK_SAFETY_CERTIFICATES,
-  SAFETY_DASHBOARD,
 } from './data/safety.mock';
 import {
   MOCK_COMPANY_DOCUMENTS,
@@ -64,24 +63,10 @@ import {
   MOCK_MATERIAL_INSPECTIONS,
   MOCK_PRODUCTION_ORDERS,
 } from './data/quality.mock';
-import {
-  ADMINISTRATION_DASHBOARD,
-  FINANCE_DASHBOARD,
-  HR_DASHBOARD,
-  LOGISTICS_DASHBOARD,
-} from './data/dashboards-biz.mock';
-import { purchasingDashboard } from './data/purchasing-workflow';
-import { salesDashboard } from './data/sales-workflow';
-import { SYSTEM_ALERTS } from './data/alerts.mock';
+import { listAlerts } from './data/alerts.mock';
 import { getFactoryProfile, saveFactoryProfile } from './data/factory.mock';
-import { HOME_DASHBOARD } from './data/dashboards-home.mock';
-import { REPORTS_DASHBOARD } from './data/dashboards-reports.mock';
-import {
-  PRODUCTION_DASHBOARD,
-  QUALITY_DASHBOARD,
-  WAREHOUSE_DASHBOARD,
-  WEIGHBRIDGE_DASHBOARD,
-} from './data/dashboards-ops.mock';
+import { DASHBOARDS } from './data/dashboards-map.mock';
+import { prepareMaintenance } from './data/maintenance.mock';
 import { MOCK_AUDIT_LOGS, listToggles, updateToggle } from './data/system.mock';
 import {
   addCurrency,
@@ -92,7 +77,6 @@ import {
   updateCurrency,
 } from './data/lookups.mock';
 import {
-  CHEMICALS_DASHBOARD,
   MOCK_CHEM_OP_PURCHASES,
   MOCK_CHEM_OUTPUT,
   MOCK_CHEM_RAW_PURCHASES,
@@ -110,26 +94,7 @@ import {
   saveBackupSchedule,
 } from './data/backup.mock';
 import { crudRoutes } from './data/crud.util';
-import { DashboardData } from '../core/models/common.models';
 import { MockApiError } from './mock-backend.interceptor';
-
-const DASHBOARDS: Record<string, DashboardData> = {
-  home: HOME_DASHBOARD,
-  finance: FINANCE_DASHBOARD,
-  get sales() { return salesDashboard(); },
-  get purchasing() { return purchasingDashboard(); },
-  logistics: LOGISTICS_DASHBOARD,
-  hr: HR_DASHBOARD,
-  administration: ADMINISTRATION_DASHBOARD,
-  safety: SAFETY_DASHBOARD,
-  clinic: CLINIC_DASHBOARD,
-  chemicals: CHEMICALS_DASHBOARD,
-  weighbridge: WEIGHBRIDGE_DASHBOARD,
-  warehouse: WAREHOUSE_DASHBOARD,
-  quality: QUALITY_DASHBOARD,
-  production: PRODUCTION_DASHBOARD,
-  reports: REPORTS_DASHBOARD,
-};
 
 /** MOCK LAYER — full route table mirroring `core/api/api-endpoints.ts`. */
 export const MOCK_ROUTES: MockRoute[] = [
@@ -151,7 +116,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'POST', pattern: '/config/languages', handler: ({ body }) => addLanguage(body) },
   { method: 'POST', pattern: '/auth/login', handler: ({ body }) => mockLogin(body) },
   { method: 'POST', pattern: '/auth/logout', handler: () => ({ ok: true }) },
-  { method: 'GET', pattern: '/alerts', handler: () => SYSTEM_ALERTS },
+  { method: 'GET', pattern: '/alerts', handler: () => listAlerts() },
   { method: 'GET', pattern: '/factory/profile', handler: () => getFactoryProfile() },
   { method: 'PUT', pattern: '/factory/profile', handler: ({ body }) => saveFactoryProfile(body) },
   { method: 'GET', pattern: '/dashboards/:id', handler: ({ path }) => {
@@ -190,7 +155,7 @@ export const MOCK_ROUTES: MockRoute[] = [
 
   { method: 'GET', pattern: '/sales/customers', handler: () => MOCK_CUSTOMERS },
   { method: 'GET', pattern: '/sales/customers/:code/statement', handler: ({ path }) => MOCK_STATEMENTS[path.split('/')[3] ?? ''] ?? [] },
-  { method: 'GET', pattern: '/sales/work-orders', handler: () => MOCK_WORK_ORDERS },
+  { method: 'GET', pattern: '/sales/work-orders', handler: () => listWorkOrders() },
   { method: 'GET', pattern: '/sales/export-orders', handler: () => MOCK_EXPORT_ORDERS },
   { method: 'GET', pattern: '/sales/invoices', handler: () => MOCK_INVOICES },
 
@@ -291,7 +256,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/quality/dasht-inspections', MOCK_DASHT_INSPECTIONS),
   ...crudRoutes('/quality/material-inspections', MOCK_MATERIAL_INSPECTIONS),
   ...crudRoutes('/quality/chemical-consumption', MOCK_CHEMICAL_CONSUMPTION),
-  ...crudRoutes('/quality/maintenance', MOCK_MAINTENANCE),
+  ...crudRoutes('/quality/maintenance', MOCK_MAINTENANCE, 'id', true, prepareMaintenance('quality')),
   ...crudRoutes('/production/orders', MOCK_PRODUCTION_ORDERS),
   ...ACCESS_ROUTES,
 ];

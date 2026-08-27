@@ -70,6 +70,31 @@ export const CHEMICALS_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'cha-1', messageKey: 'chemicals.alerts.rawLow', params: ['ملح صناعي'], severity: 'warning', date: daysAgo(0), route: '/chemicals', query: { tab: 'rawPurchases', q: 'ملح صناعي' } },
+    { id: 'cha-1', messageKey: 'chemicals.alerts.rawLow', params: ['ملح صناعي'], severity: 'warning', date: daysAgo(0), route: '/chemicals', query: { tab: 'rawWarehouse', q: 'ملح صناعي' } },
   ],
 };
+
+export const MOCK_CHEM_WAREHOUSE = [
+  { code: 'CHW-001', name: 'ملح صناعي', name_en: 'Industrial Salt', quantity: 18000, unitKey: 'units.kg', minimumStock: 8000, unitCost: 7.5, stockStatus: 'available' },
+  { code: 'CHW-002', name: 'حمض كبريتيك 98%', name_en: 'Sulphuric Acid 98%', quantity: 4200, unitKey: 'units.kg', minimumStock: 5000, unitCost: 21, stockStatus: 'below' },
+  { code: 'CHW-003', name: 'ألومنيوم هيدروكسيد', name_en: 'Aluminium Hydroxide', quantity: 0, unitKey: 'units.kg', minimumStock: 2000, unitCost: 33.5, stockStatus: 'out' },
+];
+
+export const MOCK_CHEM_CUSTOMERS = [
+  { code: 'CHC-001', name: 'شركة الحناوي للورق', name_en: 'Al Hennawy Paper', region: 'السادات', region_en: 'Sadat', currency: 'EGP', balance: 186000 },
+  { code: 'CHC-002', name: 'مصانع الدلتا للكيماويات', name_en: 'Delta Chemicals', region: 'الإسكندرية', region_en: 'Alexandria', currency: 'EGP', balance: 74200 },
+];
+
+export const MOCK_CHEM_MOVEMENTS = [
+  { id: 'cm-1', number: 'CHM-2026-011', date: daysAgo(1), type: 'receipt', itemName: 'ملح صناعي', quantity: 25000, unitKey: 'units.kg', reference: 'CRP-2026-01', byUser: 'ياسر فتحي' },
+  { id: 'cm-2', number: 'CHM-2026-012', date: daysAgo(0), type: 'issue', itemName: 'ملح صناعي', quantity: 7000, unitKey: 'units.kg', reference: 'CHB-2026-081', byUser: 'وليد جمعة' },
+];
+
+export const MOCK_CHEM_ACCOUNTS = [
+  { code: 'C-1101', name: 'خزينة الكيماويات', name_en: 'Chemicals Cash', level: 1, nature: 'debit', currency: 'EGP', isPostable: true, costCenterRequired: false },
+  { code: 'C-4101', name: 'إيراد مبيعات كيماويات', name_en: 'Chemicals Sales', level: 1, nature: 'credit', currency: 'EGP', isPostable: true, costCenterRequired: false },
+];
+
+export const MOCK_CHEM_JOURNAL = [
+  { id: 'cj-1', number: 1, date: daysAgo(0), currency: 'EGP', exchangeRate: 1, sourceKey: 'finance.sources.export', totalDebit: 186000, totalCredit: 186000, posted: true },
+];

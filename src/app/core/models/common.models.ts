@@ -29,6 +29,8 @@ export interface TableColumn<T = Record<string, unknown>> {
   keyPrefix?: string;
   /** For type=badge: maps a cell value to a badge tone. */
   badgeToneMap?: Record<string, 'success' | 'warning' | 'danger' | 'info' | 'neutral'>;
+  /** Ordered workflow for row status buttons. Danger tones stay as extras. */
+  statusFlow?: string[];
 }
 
 /** In-app destination used by clickable KPI cards and alert rows. */

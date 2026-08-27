@@ -8,6 +8,7 @@ import {
   DEPT_PURCHASE_REQUEST_FIELDS,
   PURCHASE_REQUEST_COLUMNS,
 } from '../purchasing/purchasing.columns';
+import { MAINTENANCE_COLUMNS, MAINTENANCE_REQUEST_FIELDS } from '../quality/quality.columns';
 import { PRODUCTION_ORDER_COLUMNS, PRODUCTION_ORDER_FIELDS } from './production.columns';
 
 /** الإنتاج — orders (incl. auto-created when stock can't cover a sale). */
@@ -39,6 +40,13 @@ export class ProductionPage {
       endpoint: API_ENDPOINTS.production.purchaseRequests,
       columns: PURCHASE_REQUEST_COLUMNS,
       fields: DEPT_PURCHASE_REQUEST_FIELDS,
+    },
+    {
+      id: 'maintenance',
+      labelKey: 'quality.tabs.maintenance',
+      endpoint: API_ENDPOINTS.production.maintenance,
+      columns: MAINTENANCE_COLUMNS,
+      fields: MAINTENANCE_REQUEST_FIELDS,
     },
   ];
 }

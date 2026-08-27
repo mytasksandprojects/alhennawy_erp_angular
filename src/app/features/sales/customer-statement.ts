@@ -17,7 +17,7 @@ import { Translated } from '../../shared/translated.base';
 const STATEMENT_COLUMNS: TableColumn[] = [
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'docKey', labelKey: 'sales.statement.document', type: 'key' },
-  { key: 'docNumber', labelKey: 'common.number' },
+  { key: 'reference', labelKey: 'sales.statement.reference' },
   { key: 'description', labelKey: 'finance.fields.description' },
   { key: 'debit', labelKey: 'finance.fields.debit', type: 'currency' },
   { key: 'credit', labelKey: 'finance.fields.credit', type: 'currency' },

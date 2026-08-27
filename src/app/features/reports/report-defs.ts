@@ -1,15 +1,15 @@
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { TableColumn } from '../../core/models/common.models';
 import { CUSTODY_COLUMNS, CONTRACT_COLUMNS, DOCUMENT_COLUMNS, FLEET_COLUMNS, PERMIT_COLUMNS } from '../administration/administration.columns';
-import { OUTPUT_COLUMNS, PURCHASE_COLUMNS, STAFF_COLUMNS } from '../chemicals/chemicals-page';
+import { OUTPUT_COLUMNS, PURCHASE_COLUMNS, STAFF_COLUMNS } from '../chemicals/chemicals.columns';
 import { DISPENSE_COLUMNS, MEDICINE_COLUMNS, VISIT_COLUMNS } from '../clinic/clinic-page';
 import { ROLL_COLUMNS } from '../cutter/cutter.columns';
-import { BANK_COLUMNS, EXPENSE_COLUMNS, JOURNAL_COLUMNS } from '../finance/finance.columns';
+import { ACCOUNT_COLUMNS, BANK_COLUMNS, EXPENSE_COLUMNS, JOURNAL_COLUMNS, LEDGER_COLUMNS, STATEMENT_COLUMNS, TRIAL_COLUMNS } from '../finance/finance.columns';
 import { ATTENDANCE_COLUMNS, EMPLOYEE_COLUMNS, LEAVE_COLUMNS, PENALTY_COLUMNS, reviewColumns } from '../hr/hr.columns';
 import { EXPORT_SHIPMENT_COLUMNS, IMPORT_COLUMNS } from '../logistics/logistics.columns';
 import { PRODUCTION_ORDER_COLUMNS } from '../production/production.columns';
 import { PURCHASE_ORDER_COLUMNS, PURCHASE_REQUEST_COLUMNS, QUOTATION_COLUMNS, SUPPLIER_COLUMNS } from '../purchasing/purchasing.columns';
-import { DASHT_INSPECTION_COLUMNS, MAINTENANCE_COLUMNS, MATERIAL_INSPECTION_COLUMNS } from '../quality/quality.columns';
+import { CHEMICAL_CONSUMPTION_COLUMNS, DASHT_INSPECTION_COLUMNS, MAINTENANCE_COLUMNS, MATERIAL_INSPECTION_COLUMNS, TECH_SHEET_COLUMNS } from '../quality/quality.columns';
 import { CUSTOMER_COLUMNS, EXPORT_ORDER_COLUMNS, INVOICE_COLUMNS, workOrderColumns } from '../sales/sales.columns';
 import { CERTIFICATE_COLUMNS, INSURANCE_COLUMNS } from '../safety/safety.columns';
 import { MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_ITEM_COLUMNS } from '../warehouse/warehouse.columns';
@@ -73,6 +73,14 @@ export const REPORT_ICONS: Record<string, string> = {
   chemStaff: 'hr',
   chemRaw: 'purchasing',
   chemOps: 'purchasing',
+  consumptions: 'flask',
+  techSheets: 'document',
+  ledger: 'finance',
+  trialBalance: 'finance',
+  income: 'finance',
+  balanceSheet: 'finance',
+  chemMovements: 'transfer',
+  chemAccounts: 'finance',
 };
 
 const API = API_ENDPOINTS;
@@ -110,6 +118,8 @@ export const REPORT_CATEGORIES: ReportCategory[] = [
       { id: 'dashtInspections', labelKey: 'quality.tabs.dasht', endpoint: API.quality.dashtInspections, columns: DASHT_INSPECTION_COLUMNS },
       { id: 'materialInspections', labelKey: 'quality.tabs.materials', endpoint: API.quality.materialInspections, columns: MATERIAL_INSPECTION_COLUMNS },
       { id: 'maintenance', labelKey: 'quality.tabs.maintenance', endpoint: API.quality.maintenance, columns: MAINTENANCE_COLUMNS },
+      { id: 'consumptions', labelKey: 'quality.tabs.consumptions', endpoint: API.quality.chemicalConsumption, columns: CHEMICAL_CONSUMPTION_COLUMNS },
+      { id: 'techSheets', labelKey: 'quality.tabs.techSheets', endpoint: API.quality.techSheets, columns: TECH_SHEET_COLUMNS },
     ],
   },
   {
@@ -118,6 +128,10 @@ export const REPORT_CATEGORIES: ReportCategory[] = [
     icon: 'finance',
     reports: [
       { id: 'journal', labelKey: 'finance.tabs.journal', endpoint: API.finance.journalEntries, columns: JOURNAL_COLUMNS },
+      { id: 'ledger', labelKey: 'finance.tabs.ledger', endpoint: API.finance.ledger, columns: LEDGER_COLUMNS },
+      { id: 'trialBalance', labelKey: 'finance.tabs.trialBalance', endpoint: API.finance.trialBalance, columns: TRIAL_COLUMNS },
+      { id: 'income', labelKey: 'finance.tabs.income', endpoint: API.finance.profitLoss, columns: STATEMENT_COLUMNS },
+      { id: 'balanceSheet', labelKey: 'finance.tabs.balanceSheet', endpoint: API.finance.balanceSheet, columns: STATEMENT_COLUMNS },
       { id: 'expenses', labelKey: 'finance.tabs.expenses', endpoint: API.finance.expenses, columns: EXPENSE_COLUMNS },
       { id: 'banks', labelKey: 'finance.tabs.banks', endpoint: API.finance.banks, columns: BANK_COLUMNS },
     ],
@@ -161,6 +175,8 @@ export const REPORT_CATEGORIES: ReportCategory[] = [
       { id: 'chemStaff', labelKey: 'chemicals.tabs.staff', endpoint: API.chemicals.staff, columns: STAFF_COLUMNS },
       { id: 'chemRaw', labelKey: 'chemicals.tabs.rawPurchases', endpoint: API.chemicals.rawPurchases, columns: PURCHASE_COLUMNS },
       { id: 'chemOps', labelKey: 'chemicals.tabs.opPurchases', endpoint: API.chemicals.operationalPurchases, columns: PURCHASE_COLUMNS },
+      { id: 'chemMovements', labelKey: 'chemicals.tabs.movements', endpoint: API.chemicals.movements, columns: MOVEMENT_COLUMNS },
+      { id: 'chemAccounts', labelKey: 'chemicals.tabs.accounts', endpoint: API.chemicals.accounts, columns: ACCOUNT_COLUMNS },
     ],
   },
 ];

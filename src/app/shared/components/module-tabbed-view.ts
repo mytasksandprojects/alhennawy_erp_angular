@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, WritableSignal } from '@angular/core';
 import { FormField, TableColumn } from '../../core/models/common.models';
 import { AccessService } from '../../core/security/access.service';
 import { routedTab, tabNavigator } from '../tab-route';
@@ -65,10 +65,16 @@ export class ModuleTabbedView extends Translated {
   readonly titleKey = input.required<string>();
   readonly subtitleKey = input<string | null>(null);
   readonly listTabs = input.required<ListTabConfig[]>();
+  readonly startTab = input('dashboard');
   private readonly access = inject(AccessService);
 
-  protected readonly active = routedTab('dashboard');
+  protected readonly active: WritableSignal<string>;
   private readonly navigateToTab = tabNavigator();
+
+  constructor() {
+    super();
+    this.active = routedTab(this.startTab());
+  }
 
   protected visibleTabs(): ListTabConfig[] {
     return this.listTabs().filter((tab) => this.access.canTab(this.moduleId(), tab.id));

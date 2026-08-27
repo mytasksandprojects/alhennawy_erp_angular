@@ -24,7 +24,7 @@ import { WeighingCompleteModal } from './weighing-complete-modal';
 
 type Draft = Record<string, string | number | boolean>;
 
-const TYPE_FILTERS = ['purchase', 'sales', 'returns', 'purchase-return', 'sales-return', 'internal-transfer'];
+const TYPE_FILTERS = ['purchase', 'dasht-purchase', 'sales', 'returns', 'purchase-return', 'sales-return', 'internal-transfer'];
 
 /** الميزان — dashboard + serial-numbered tickets with two-weighing flow. */
 @Component({

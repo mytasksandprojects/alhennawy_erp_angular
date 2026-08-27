@@ -43,7 +43,21 @@ export interface MaintenanceRecord {
   typeKey: string;
   description: string;
   downtimeHours: number;
-  status: 'scheduled' | 'in-progress' | 'done';
+  status: 'pending' | 'scheduled' | 'in-progress' | 'done';
+  source?: 'quality' | 'production';
+  scheduledAt?: string;
+}
+
+export interface TechDataSheet {
+  id: string;
+  specCode: string;
+  specName: string;
+  gsm: number;
+  moisturePercent: number;
+  brightnessPercent: number;
+  burst: number;
+  tensile: number;
+  notes?: string;
 }
 
 export interface ProductionOrder {

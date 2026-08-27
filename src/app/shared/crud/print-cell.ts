@@ -52,3 +52,7 @@ export function withReportWord(name: string, word: string, lang: string): string
   if (!name || !word) return name;
   return lang === 'ar' ? `${word} ${name}` : `${name} ${word}`;
 }
+
+export function sheetTitle(name: string, word: string, lang: string, asReport: boolean): string {
+  return asReport ? withReportWord(name, word, lang) : name;
+}

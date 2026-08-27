@@ -13,9 +13,10 @@ import {
   DASHT_INSPECTION_COLUMNS,
   MAINTENANCE_COLUMNS,
   MATERIAL_INSPECTION_COLUMNS,
+  TECH_SHEET_COLUMNS,
 } from '../../features/quality/quality.columns';
 import { PRODUCTION_ORDER_COLUMNS } from '../../features/production/production.columns';
-import { OUTPUT_COLUMNS, PURCHASE_COLUMNS, STAFF_COLUMNS } from '../../features/chemicals/chemicals-page';
+import { OUTPUT_COLUMNS, PURCHASE_COLUMNS, STAFF_COLUMNS } from '../../features/chemicals/chemicals.columns';
 import {
   CUSTOMER_COLUMNS,
   EXPORT_ORDER_COLUMNS,
@@ -35,6 +36,8 @@ import {
   CURRENCY_COLUMNS,
   EXPENSE_COLUMNS,
   JOURNAL_COLUMNS,
+  LEDGER_COLUMNS,
+  TRIAL_COLUMNS,
 } from '../../features/finance/finance.columns';
 import {
   ATTENDANCE_COLUMNS,
@@ -113,7 +116,8 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       dash(),
       tab('dasht', 'quality.tabs.dasht', DASHT_INSPECTION_COLUMNS),
       tab('materials', 'quality.tabs.materials', MATERIAL_INSPECTION_COLUMNS),
-      tab('chemicals', 'quality.tabs.chemicals', CHEMICAL_CONSUMPTION_COLUMNS),
+      tab('chemicals', 'quality.tabs.consumptions', CHEMICAL_CONSUMPTION_COLUMNS),
+      tab('techSheets', 'quality.tabs.techSheets', TECH_SHEET_COLUMNS),
       tab('maintenance', 'quality.tabs.maintenance', MAINTENANCE_COLUMNS),
     ],
   },
@@ -124,7 +128,13 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       dash(),
       tab('orders', 'production.tabs.orders', PRODUCTION_ORDER_COLUMNS),
       tab('purchaseRequests', 'purchasing.tabs.requests', PURCHASE_REQUEST_COLUMNS),
+      tab('maintenance', 'quality.tabs.maintenance', MAINTENANCE_COLUMNS),
     ],
+  },
+  {
+    id: 'maintenance',
+    labelKey: 'menu.maintenance',
+    tabs: [dash(), tab('jobs', 'maintenance.tabs.jobs', MAINTENANCE_COLUMNS)],
   },
   {
     id: 'chemicals',
@@ -135,6 +145,11 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       tab('staff', 'chemicals.tabs.staff', STAFF_COLUMNS),
       tab('rawPurchases', 'chemicals.tabs.rawPurchases', PURCHASE_COLUMNS),
       tab('opPurchases', 'chemicals.tabs.opPurchases', PURCHASE_COLUMNS),
+      tab('rawWarehouse', 'chemicals.tabs.rawWarehouse', STOCK_ITEM_COLUMNS),
+      tab('customers', 'chemicals.tabs.customers', CUSTOMER_COLUMNS),
+      tab('movements', 'chemicals.tabs.movements', MOVEMENT_COLUMNS),
+      tab('accounts', 'chemicals.tabs.accounts', ACCOUNT_COLUMNS),
+      tab('journal', 'chemicals.tabs.journal', JOURNAL_COLUMNS),
     ],
   },
   {
@@ -177,8 +192,10 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       tab('accounts', 'finance.tabs.accounts', ACCOUNT_COLUMNS),
       tab('journal', 'finance.tabs.journal', JOURNAL_COLUMNS),
       tab('banks', 'finance.tabs.banks', BANK_COLUMNS),
-      tab('pnl', 'finance.tabs.pnl', []),
+      tab('pnl', 'finance.tabs.income', []),
       tab('balanceSheet', 'finance.tabs.balanceSheet', []),
+      tab('ledger', 'finance.tabs.ledger', LEDGER_COLUMNS),
+      tab('trialBalance', 'finance.tabs.trialBalance', TRIAL_COLUMNS),
       tab('expenses', 'finance.tabs.expenses', EXPENSE_COLUMNS),
       tab('currencies', 'finance.tabs.currencies', CURRENCY_COLUMNS),
     ],

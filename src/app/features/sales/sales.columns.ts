@@ -46,6 +46,7 @@ export function workOrderColumns(showPrices: boolean): TableColumn[] {
         'invoiced': 'success',
         'closed': 'neutral',
       },
+      statusFlow: ['new', 'warehouse-check', 'partially-fulfilled', 'in-production', 'ready', 'invoiced', 'closed'],
     },
   );
   return columns;
@@ -112,9 +113,7 @@ export const WORK_ORDER_FIELDS: FormField[] = [
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'channel', labelKey: 'sales.fields.channel', type: 'select', options: keysToOptions('sales.channels.', ['local', 'export']) },
   { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
-  { key: 'itemName', labelKey: 'weighbridge.fields.item', multilang: true },
-  { key: 'quantityKg', labelKey: 'common.quantity', type: 'number' },
-  { key: 'sizeMm', labelKey: 'sales.fields.size', type: 'number' },
+  { key: 'linesJson', labelKey: 'warehouse.tabs.items', type: 'lines' },
   { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies', rateKey: 'exchangeRate' },
   { key: 'exchangeRate', labelKey: 'finance.fields.rate', type: 'number' },
   { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('sales.status.', ['new', 'warehouse-check', 'partially-fulfilled', 'in-production', 'ready', 'late', 'invoiced', 'closed']) },

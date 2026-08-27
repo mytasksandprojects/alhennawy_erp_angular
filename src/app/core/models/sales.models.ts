@@ -44,6 +44,8 @@ export interface SalesWorkOrder {
   itemName: string;
   quantityKg: number;
   sizeMm: number;
+  /** JSON cart of extra item codes — same shape as purchase request lines. */
+  linesJson?: string;
   status: WorkOrderStatus;
   currency?: string;
   /** Rate to EGP — prefilled from the currency default, editable per order. */
@@ -81,6 +83,8 @@ export interface StatementLine {
   /** Document type (sales invoice / bank transaction / opening balance). */
   docKey: string;
   docNumber: string;
+  /** Invoice / customer invoice number shown as the statement reference. */
+  reference?: string;
   description: string;
   debit: number;
   credit: number;

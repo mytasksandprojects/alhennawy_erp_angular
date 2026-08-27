@@ -14,6 +14,7 @@ import {
   WAREHOUSE_DASHBOARD,
   WEIGHBRIDGE_DASHBOARD,
 } from './dashboards-ops.mock';
+import { MAINTENANCE_ALERTS } from './maintenance.mock';
 import { CLINIC_DASHBOARD, SAFETY_DASHBOARD } from './safety.mock';
 
 /** Tag a module's own alerts so the inbox can group and filter them. */
@@ -38,4 +39,12 @@ export const SYSTEM_ALERTS: AlertItem[] = [
   ...tag('menu.administration', ADMINISTRATION_DASHBOARD.alerts),
   ...tag('menu.safety', SAFETY_DASHBOARD.alerts),
   ...tag('menu.clinic', CLINIC_DASHBOARD.alerts),
+  ...tag('menu.maintenance', MAINTENANCE_ALERTS),
 ].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+export function listAlerts(): AlertItem[] {
+  return [
+    ...SYSTEM_ALERTS.filter((row) => row.moduleKey !== 'menu.maintenance'),
+    ...tag('menu.maintenance', MAINTENANCE_ALERTS),
+  ].sort((a, b) => (a.date < b.date ? 1 : -1));
+}

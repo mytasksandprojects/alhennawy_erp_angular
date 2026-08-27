@@ -9,6 +9,7 @@ export function crudRoutes(
   items: object[],
   idKey = 'id',
   includeCreate = true,
+  prepare?: (row: Row) => Row,
 ): MockRoute[] {
   const rows = items as Row[];
   const routes: MockRoute[] = [];
@@ -17,7 +18,7 @@ export function crudRoutes(
       method: 'POST',
       pattern: base,
       handler: ({ body }) => {
-        const row: Row = { ...(body as Row) };
+        const row: Row = prepare ? prepare({ ...(body as Row) }) : { ...(body as Row) };
         if (!row[idKey]) row[idKey] = `${idKey}-${Date.now()}`;
         rows.unshift(row);
         return row;
@@ -32,7 +33,8 @@ export function crudRoutes(
         const id = decodeURIComponent(path.split('/').pop() ?? '');
         const index = rows.findIndex((item) => String(item[idKey]) === id);
         if (index < 0) throw new MockApiError(404, 'not-found');
-        rows[index] = { ...rows[index], ...(body as Row), [idKey]: rows[index][idKey] };
+        const merged = { ...rows[index], ...(body as Row), [idKey]: rows[index][idKey] };
+        rows[index] = prepare ? prepare(merged) : merged;
         return rows[index];
       },
     },

@@ -83,6 +83,13 @@ export const MOCK_MENU: MenuItem[] = [
     permission: 'quality.view',
   },
   {
+    id: 'maintenance',
+    labelKey: 'menu.maintenance',
+    icon: 'wrench',
+    route: '/maintenance',
+    permission: 'maintenance.view',
+  },
+  {
     id: 'production',
     labelKey: 'menu.production',
     icon: 'production',

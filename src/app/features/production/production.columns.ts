@@ -23,6 +23,7 @@ export const PRODUCTION_ORDER_COLUMNS: TableColumn[] = [
     key: 'status',
     labelKey: 'common.status',
     type: 'badge',
+    statusFlow: ['open', 'in-progress', 'completed'],
     keyPrefix: 'production.status.',
     badgeToneMap: {
       'open': 'info',

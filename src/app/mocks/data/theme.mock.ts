@@ -99,7 +99,7 @@ const LIGHT_TOKENS: Record<string, string> = {
     'header-height': '64px',
     'control-height': '42px',
     'table-row-height': '46px',
-    'content-max-width': '1440px',
+    'content-max-width': '1920px',
     'sidebar-logo-height': '120px',
     'login-logo-width': '220px',
     'topbar-logo-height': '44px',

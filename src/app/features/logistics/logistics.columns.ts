@@ -68,7 +68,7 @@ export const EXPORT_SHIPMENT_COLUMNS: TableColumn[] = [
 
 export const IMPORT_FIELDS: FormField[] = [
   { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'IMP' },
-  { key: 'supplierName', labelKey: 'purchasing.fields.supplier', multilang: true },
+  { key: 'supplierCode', labelKey: 'purchasing.fields.supplier', type: 'select', lookup: 'suppliers', copyKey: 'supplierName', required: true },
   { key: 'stage', labelKey: 'logistics.fields.stage', type: 'select', options: keysToOptions('logistics.importStages.', ['rfq', 'proforma', 'acid', 'cargox', 'form4', 'customs', 'warehouse-receipt', 'finance-costing', 'closed']) },
   { key: 'acidNo', labelKey: 'logistics.fields.acid' },
   { key: 'originPort', labelKey: 'logistics.fields.originPort', multilang: true },

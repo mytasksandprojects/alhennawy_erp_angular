@@ -27,6 +27,8 @@ export const API_ENDPOINTS = {
     banks: '/finance/banks',
     profitLoss: '/finance/profit-loss',
     balanceSheet: '/finance/balance-sheet',
+    ledger: '/finance/ledger',
+    trialBalance: '/finance/trial-balance',
     expenses: '/finance/expenses',
     currencies: '/finance/currencies',
   },
@@ -62,6 +64,11 @@ export const API_ENDPOINTS = {
     staff: '/chemicals/staff',
     rawPurchases: '/chemicals/raw-purchases',
     operationalPurchases: '/chemicals/operational-purchases',
+    rawWarehouse: '/chemicals/raw-warehouse',
+    customers: '/chemicals/customers',
+    movements: '/chemicals/movements',
+    accounts: '/chemicals/accounts',
+    journal: '/chemicals/journal',
   },
   hr: {
     employees: '/hr/employees',
@@ -92,10 +99,15 @@ export const API_ENDPOINTS = {
     materialInspections: '/quality/material-inspections',
     chemicalConsumption: '/quality/chemical-consumption',
     maintenance: '/quality/maintenance',
+    techSheets: '/quality/tech-sheets',
   },
   production: {
     orders: '/production/orders',
     purchaseRequests: '/production/purchase-requests',
+    maintenance: '/production/maintenance',
+  },
+  maintenance: {
+    jobs: '/maintenance/jobs',
   },
   sales: {
     customers: '/sales/customers',

@@ -44,7 +44,8 @@
 }
 
 .ui-table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
 }
@@ -92,13 +93,21 @@
 }
 
 .ui-table__actions-col {
-  width: calc(var(--sidebar-icon-plate) * 3.4);
+  width: 1%;
+  min-width: max-content;
+  white-space: nowrap;
 }
 
 .ui-table__actions {
   display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
   gap: var(--space-xs);
-  justify-content: center;
+}
+
+ui-status-actions {
+  display: contents;
 }
 
 .ui-table__action {
@@ -117,6 +126,18 @@
 .ui-table__action:focus-visible {
   background: var(--color-primary-soft);
   outline: none;
+}
+
+.ui-table__action--status {
+  width: auto;
+  padding-inline: var(--space-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.ui-table__action--danger {
+  color: var(--color-danger);
 }
 
 .stat-grid {

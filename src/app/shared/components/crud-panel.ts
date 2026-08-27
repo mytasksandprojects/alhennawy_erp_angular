@@ -14,6 +14,7 @@ import { AccessService } from '../../core/security/access.service';
 import { exportRowsToCsv } from '../crud/export-csv';
 import { deleteRow, persistRow } from '../crud/crud-write';
 import { emptyDraft, shownColumns, shownFields } from '../crud/form-draft';
+import { coerceStatus, isStatusKey, StatusPick } from '../crud/status-flow';
 import { withGenerated } from '../crud/serial';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { printWide } from '../crud/print-page';
@@ -83,7 +84,7 @@ type Draft = Record<string, string | number | boolean>;
           </button>
         }
         @if (allow('pdf')) {
-          <button type="button" class="ui-btn ui-btn--ghost" (click)="exportPdf()">
+          <button type="button" class="ui-btn ui-btn--ghost" (click)="print(true)">
             <ui-icon name="pdf" [size]="16" />
             {{ t('common.exportPdf') }}
           </button>
@@ -114,7 +115,9 @@ type Draft = Record<string, string | number | boolean>;
         [titleKey]="titleKey()"
         [printKind]="printKind()"
         [printAsReport]="moduleId() === 'reports'"
+        [statusCol]="!readOnly() && allow('edit') ? statusCol() ?? null : null"
         (rowClick)="openEdit($event)"
+        (statusChange)="applyStatus($event)"
       />
     </div>
 
@@ -172,7 +175,7 @@ export class CrudPanel extends Translated {
     this.columns().some((col) => col.key === 'stockStatus'),
   );
   protected readonly statusCol = computed(() =>
-    this.columns().find((col) => col.type === 'badge' && (col.key === 'status' || col.key === 'stage')),
+    this.columns().find((col) => col.type === 'badge' && isStatusKey(col.key)),
   );
   protected readonly dateKey = computed(
     () => this.columns().find((col) => col.type === 'date' || col.type === 'datetime')?.key ?? '',
@@ -206,7 +209,8 @@ export class CrudPanel extends Translated {
     });
   }
 
-  protected print(): void {
+  protected print(asPdf = false): void {
+    if (asPdf) this.notifications.info('common.pdfHint');
     printWide();
   }
 
@@ -220,12 +224,15 @@ export class CrudPanel extends Translated {
 
   protected shownFields(): FormField[] {
     const fields = shownFields(this.fields(), this.columns(), this.shownColumns(), this.moduleId(), this.tabId(), this.access);
-    return this.editingId() ? fields : fields.filter((field) => !field.generated);
+    return this.editingId() ? fields.filter((field) => !isStatusKey(field.key)) : fields;
   }
 
-  protected exportPdf(): void {
-    this.notifications.info('common.pdfHint');
-    printWide();
+  protected applyStatus(event: StatusPick): void {
+    persistRow(
+      this.api, this.notifications, this.endpoint(), String(event.row[this.idKey()]),
+      { ...event.row, [event.key]: coerceStatus(event.status) } as Draft,
+      () => this.reload(), () => {},
+    );
   }
 
   protected exportExcel(): void {
@@ -240,7 +247,7 @@ export class CrudPanel extends Translated {
 
   protected openCreate(): void {
     this.editingId.set(null);
-    this.draft.set(emptyDraft(this.shownFields()));
+    this.draft.set(withGenerated(this.fields(), emptyDraft(this.shownFields()), this.rows()));
     this.open.set(true);
   }
 
@@ -289,5 +296,4 @@ export class CrudPanel extends Translated {
   private reload(): void {
     this.api.get<Row[]>(this.endpoint()).subscribe((data) => this.rows.set(data));
   }
-
 }

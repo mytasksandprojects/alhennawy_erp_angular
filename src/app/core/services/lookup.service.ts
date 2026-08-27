@@ -42,6 +42,12 @@ export class LookupService {
     return row?.rate ?? null;
   }
 
+  /** Label of one lookup value in a language (active language when omitted). */
+  labelFor(group: string, value: string, lang?: string): string {
+    const row = this.values().find((item) => item.group === group && item.value === value);
+    return row ? labelOf(row, lang ?? this.store.language()) : '';
+  }
+
   /** Options of one group, labeled in the active language. */
   options(group: string): SelectOption[] {
     const lang = this.store.language();

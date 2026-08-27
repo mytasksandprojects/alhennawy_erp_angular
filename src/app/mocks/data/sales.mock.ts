@@ -43,11 +43,13 @@ const line = (
   debit: number,
   credit: number,
   balance: number,
+  reference?: string,
 ): StatementLine => ({
   id,
   date: daysAgo(daysBack),
   docKey,
   docNumber,
+  reference: reference ?? (docKey === 'sales.docs.invoice' ? docNumber : ''),
   description,
   debit,
   credit,
@@ -59,17 +61,17 @@ export const MOCK_STATEMENTS: Record<string, StatementLine[]> = {
   'CUS-014': [
     line('st-14-1', 40, 'sales.docs.opening', '—', 'رصيد أول المدة', 0, 0, 312625),
     line('st-14-2', 1, 'sales.docs.invoice', 'INV-2026-0455', 'سوبر مكس مطبخ ط ٢ ج ٢٢', 398750, 0, 711375),
-    line('st-14-3', 0, 'sales.docs.bank', '25369', 'تحويل بنكي — البنك الأهلي', 0, 199375, 512000),
+    line('st-14-3', 0, 'sales.docs.bank', '25369', 'تحويل بنكي — البنك الأهلي', 0, 199375, 512000, 'INV-2026-0455'),
   ],
   'CUS-009': [
     line('st-09-1', 40, 'sales.docs.opening', '—', 'رصيد أول المدة', 0, 0, 185000),
     line('st-09-2', 6, 'sales.docs.invoice', 'INV-2026-0448', 'تواليت فاخر ج ٢٥', 400000, 0, 585000),
-    line('st-09-3', 2, 'sales.docs.bank', '25858', 'دفعة مقدمة — أمر شغل SO-2026-0119', 0, 200000, 385000),
+    line('st-09-3', 2, 'sales.docs.bank', '25858', 'دفعة مقدمة — أمر شغل SO-2026-0119', 0, 200000, 385000, 'INV-2026-0448'),
   ],
   'CUS-EXP-03': [
     line('st-e3-1', 40, 'sales.docs.opening', '—', 'Opening balance', 0, 0, 84200),
     line('st-e3-2', 9, 'sales.docs.invoice', 'CI-2026-0031', 'Commercial Invoice — 2 containers', 39875, 0, 124075),
-    line('st-e3-3', 5, 'sales.docs.bank', '26219', 'Swift transfer — Banca di Napoli', 0, 39875, 84200),
+    line('st-e3-3', 5, 'sales.docs.bank', '26219', 'Swift transfer — Banca di Napoli', 0, 39875, 84200, 'CI-2026-0031'),
   ],
 };
 
@@ -78,3 +80,38 @@ export const MOCK_INVOICES: Invoice[] = [
   { id: 'inv-2', number: 'CI-2026-0031', kind: 'commercial', date: daysAgo(9), customerCode: 'CUS-EXP-03', customerName: 'Napoli Tissue S.r.l.', currency: 'USD', exchangeRate: 48.5, total: 39875, eInvoiceUid: 'EG-EINV-88412', collected: 39875 },
   { id: 'inv-3', number: 'PL-2026-0031', kind: 'packing-list', date: daysAgo(9), customerCode: 'CUS-EXP-03', customerName: 'Napoli Tissue S.r.l.', currency: 'USD', exchangeRate: 48.5, total: 0, collected: 0 },
 ];
+
+type Line = { itemCode?: string; itemName?: string; quantity?: number; specification?: string };
+
+function parseLines(raw: unknown): Line[] {
+  if (Array.isArray(raw)) return raw as Line[];
+  if (typeof raw !== 'string' || !raw.trim()) return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed) ? (parsed as Line[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Join extra item codes so the work-order list still shows one row. */
+export function listWorkOrders(): SalesWorkOrder[] {
+  return MOCK_WORK_ORDERS.map((row) => {
+    const lines = parseLines(row.linesJson);
+    if (!lines.length) {
+      return {
+        ...row,
+        linesJson: JSON.stringify([
+          { itemCode: row.itemCode, itemName: row.itemName, quantity: row.quantityKg, specification: String(row.sizeMm || '') },
+        ]),
+      };
+    }
+    return {
+      ...row,
+      itemName: lines.map((line) => line.itemName || line.itemCode).filter(Boolean).join(' · '),
+      itemCode: lines.map((line) => line.itemCode).filter(Boolean).join(', '),
+      quantityKg: lines.reduce((sum, line) => sum + Number(line.quantity || 0), 0) || row.quantityKg,
+      sizeMm: Number(lines[0]?.specification) || row.sizeMm,
+    };
+  });
+}

@@ -74,3 +74,20 @@ export const MOCK_EXPENSES: ExpenseRecord[] = [
   { id: 'exp-7', date: daysAgo(5), categoryKey: 'finance.expenseCategories.rawMaterials', costCenter: 'CC-PROD', description: 'كيماويات معالجة المياه', amount: 495000, currency: 'EGP', exchangeRate: 1 },
   { id: 'exp-8', date: daysAgo(6), categoryKey: 'finance.expenseCategories.logistics', costCenter: 'CC-IMP', description: 'رسوم جمركية — لب ورق مستورد', amount: 243600, currency: 'EGP', exchangeRate: 1 },
 ];
+
+export const MOCK_LEDGER = [
+  { id: 'gl-1', date: daysAgo(1), accountCode: '4101', accountName: 'مبيعات محلية', reference: 'INV-2026-0455', debit: 0, credit: 398750, balance: 398750 },
+  { id: 'gl-2', date: daysAgo(1), accountCode: '1201', accountName: 'عملاء', reference: 'INV-2026-0455', debit: 398750, credit: 0, balance: 398750 },
+  { id: 'gl-3', date: daysAgo(0), accountCode: '1201', accountName: 'عملاء', reference: 'INV-2026-0455', debit: 0, credit: 199375, balance: 199375 },
+  { id: 'gl-4', date: daysAgo(0), accountCode: '1102', accountName: 'بنك أهلي — جنيه', reference: 'INV-2026-0455', debit: 199375, credit: 0, balance: 199375 },
+  { id: 'gl-5', date: daysAgo(9), accountCode: '4102', accountName: 'مبيعات تصدير', reference: 'CI-2026-0031', debit: 0, credit: 39875, balance: 39875 },
+];
+
+export const MOCK_TRIAL_BALANCE = [
+  { id: 'tb-1', accountCode: '1101', accountName: 'نقدية', debit: 2290000, credit: 0 },
+  { id: 'tb-2', accountCode: '1102', accountName: 'بنوك', debit: 4820000, credit: 0 },
+  { id: 'tb-3', accountCode: '1201', accountName: 'عملاء', debit: 1166700, credit: 0 },
+  { id: 'tb-4', accountCode: '2101', accountName: 'موردون', debit: 0, credit: 862500 },
+  { id: 'tb-5', accountCode: '4101', accountName: 'مبيعات محلية', debit: 0, credit: 11350000 },
+  { id: 'tb-6', accountCode: '5101', accountName: 'خامات', debit: 6200000, credit: 0 },
+];

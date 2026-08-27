@@ -52,6 +52,6 @@ export function matchesStock(
 /** KPI cards pass `?status=` — matches `status` or export `stage`. */
 export function matchesStatus(row: Record<string, unknown>, status: string): boolean {
   if (!status) return true;
-  const value = String(row['status'] ?? row['stage'] ?? '');
+  const value = String(row['status'] ?? row['stage'] ?? row['result'] ?? row['accepted'] ?? '');
   return status.split(',').includes(value);
 }

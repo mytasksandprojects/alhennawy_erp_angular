@@ -29,6 +29,8 @@ import {
   EXPENSE_FIELDS,
   JOURNAL_COLUMNS,
   JOURNAL_FIELDS,
+  LEDGER_COLUMNS,
+  TRIAL_COLUMNS,
 } from './finance.columns';
 
 function nestAccounts(flat: Account[]): Account[] {
@@ -106,12 +108,32 @@ function nestAccounts(flat: Account[]): Account[] {
         />
       }
       @case ('pnl') {
-        <app-statement-view titleKey="finance.tabs.pnl" [rows]="pnl()" />
+        <app-statement-view titleKey="finance.tabs.income" [rows]="pnl()" />
       }
       @case ('balanceSheet') {
         <app-statement-view
           titleKey="finance.tabs.balanceSheet"
           [rows]="balanceSheet()"
+        />
+      }
+      @case ('ledger') {
+        <crud-panel
+          moduleId="finance"
+          tabId="ledger"
+          [endpoint]="ledgerUrl"
+          [columns]="ledgerColumns"
+          [readOnly]="true"
+          titleKey="finance.tabs.ledger"
+        />
+      }
+      @case ('trialBalance') {
+        <crud-panel
+          moduleId="finance"
+          tabId="trialBalance"
+          [endpoint]="trialUrl"
+          [columns]="trialColumns"
+          [readOnly]="true"
+          titleKey="finance.tabs.trialBalance"
         />
       }
       @case ('expenses') {
@@ -147,6 +169,10 @@ export class FinancePage extends Translated {
   protected readonly journalUrl = API_ENDPOINTS.finance.journalEntries;
   protected readonly banksUrl = API_ENDPOINTS.finance.banks;
   protected readonly expensesUrl = API_ENDPOINTS.finance.expenses;
+  protected readonly ledgerUrl = API_ENDPOINTS.finance.ledger;
+  protected readonly trialUrl = API_ENDPOINTS.finance.trialBalance;
+  protected readonly ledgerColumns = LEDGER_COLUMNS;
+  protected readonly trialColumns = TRIAL_COLUMNS;
   protected readonly accountColumns = ACCOUNT_COLUMNS;
   protected readonly accountFields = ACCOUNT_FIELDS;
   protected readonly journalColumns = JOURNAL_COLUMNS;
@@ -167,8 +193,10 @@ export class FinancePage extends Translated {
     { id: 'accounts', labelKey: 'finance.tabs.accounts' },
     { id: 'journal', labelKey: 'finance.tabs.journal' },
     { id: 'banks', labelKey: 'finance.tabs.banks' },
-    { id: 'pnl', labelKey: 'finance.tabs.pnl' },
+    { id: 'pnl', labelKey: 'finance.tabs.income' },
     { id: 'balanceSheet', labelKey: 'finance.tabs.balanceSheet' },
+    { id: 'ledger', labelKey: 'finance.tabs.ledger' },
+    { id: 'trialBalance', labelKey: 'finance.tabs.trialBalance' },
     { id: 'expenses', labelKey: 'finance.tabs.expenses' },
     { id: 'currencies', labelKey: 'finance.tabs.currencies' },
   ];

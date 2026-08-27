@@ -34,7 +34,7 @@ for (const file of files) {
 const maps = {};
 for (const lang of ['ar', 'en']) {
   maps[lang] = new Set();
-  for (const part of ['core', 'operations', 'business', 'people']) {
+  for (const part of ['core', 'operations', 'business', 'people', 'factory']) {
     const source = readFileSync(
       join(SRC, `app/mocks/data/i18n/${lang}-${part}.ts`),
       'utf8',

@@ -25,6 +25,7 @@ import { WeighbridgeApiService } from './weighbridge-api.service';
  */
 const DIRECTION_BY_TYPE: Record<WeighingType, WeighingDirection> = {
   'purchase': 'inbound',
+  'dasht-purchase': 'inbound',
   'sales-return': 'inbound',
   'sales': 'outbound',
   'purchase-return': 'outbound',
@@ -72,7 +73,7 @@ const DIRECTION_BY_TYPE: Record<WeighingType, WeighingDirection> = {
           <input class="ui-control" name="item" [(ngModel)]="itemCode" />
         </label>
 
-        @if (type() === 'purchase') {
+        @if (type() === 'purchase' || type() === 'dasht-purchase') {
           <label class="ui-field">
             <span class="ui-field__label">{{ t('weighbridge.fields.uncodedItem') }}</span>
             <input class="ui-control" name="uncoded" [(ngModel)]="uncodedItemDescription" />
@@ -151,6 +152,7 @@ export class WeighingCreatePage extends Translated {
 
   protected readonly typeOptions: WeighingType[] = [
     'purchase',
+    'dasht-purchase',
     'sales',
     'purchase-return',
     'sales-return',

@@ -10,9 +10,11 @@ import {
   DASHT_INSPECTION_COLUMNS,
   DASHT_INSPECTION_FIELDS,
   MAINTENANCE_COLUMNS,
-  MAINTENANCE_FIELDS,
+  MAINTENANCE_REQUEST_FIELDS,
   MATERIAL_INSPECTION_COLUMNS,
   MATERIAL_INSPECTION_FIELDS,
+  TECH_SHEET_COLUMNS,
+  TECH_SHEET_FIELDS,
 } from './quality.columns';
 
 /**
@@ -51,17 +53,24 @@ export class QualityPage {
     },
     {
       id: 'chemicals',
-      labelKey: 'quality.tabs.chemicals',
+      labelKey: 'quality.tabs.consumptions',
       endpoint: API_ENDPOINTS.quality.chemicalConsumption,
       columns: CHEMICAL_CONSUMPTION_COLUMNS,
       fields: CHEMICAL_CONSUMPTION_FIELDS,
+    },
+    {
+      id: 'techSheets',
+      labelKey: 'quality.tabs.techSheets',
+      endpoint: API_ENDPOINTS.quality.techSheets,
+      columns: TECH_SHEET_COLUMNS,
+      fields: TECH_SHEET_FIELDS,
     },
     {
       id: 'maintenance',
       labelKey: 'quality.tabs.maintenance',
       endpoint: API_ENDPOINTS.quality.maintenance,
       columns: MAINTENANCE_COLUMNS,
-      fields: MAINTENANCE_FIELDS,
+      fields: MAINTENANCE_REQUEST_FIELDS,
     },
   ];
 }

@@ -4,6 +4,7 @@ import {
   MaintenanceRecord,
   MaterialInspection,
   ProductionOrder,
+  TechDataSheet,
 } from '../../core/models/quality.models';
 
 /** MOCK LAYER — quality inspections and production orders. */
@@ -29,9 +30,15 @@ export const MOCK_CHEMICAL_CONSUMPTION: ChemicalBatchConsumption[] = [
 ];
 
 export const MOCK_MAINTENANCE: MaintenanceRecord[] = [
-  { id: 'mn-1', machineNameKey: 'quality.machines.paperMachine', date: daysAhead(2), typeKey: 'quality.maintenanceTypes.preventive', description: 'تغيير سيور القسم الجاف', downtimeHours: 6, status: 'scheduled' },
-  { id: 'mn-2', machineNameKey: 'quality.machines.rewinder', date: daysAgo(1), typeKey: 'quality.maintenanceTypes.corrective', description: 'ضبط سكاكين المقص', downtimeHours: 3, status: 'done' },
-  { id: 'mn-3', machineNameKey: 'quality.machines.boiler', date: daysAgo(0), typeKey: 'quality.maintenanceTypes.inspection', description: 'فحص دوري للغلاية', downtimeHours: 1, status: 'in-progress' },
+  { id: 'mn-4', machineNameKey: 'quality.machines.paperMachine', date: daysAgo(0), typeKey: 'quality.maintenanceTypes.corrective', description: 'اهتزاز غير طبيعي في القسم الرطب', downtimeHours: 0, status: 'pending', source: 'production' },
+  { id: 'mn-1', machineNameKey: 'quality.machines.paperMachine', date: daysAhead(2), typeKey: 'quality.maintenanceTypes.preventive', description: 'تغيير سيور القسم الجاف', downtimeHours: 6, status: 'scheduled', source: 'quality', scheduledAt: daysAhead(2) },
+  { id: 'mn-2', machineNameKey: 'quality.machines.rewinder', date: daysAgo(1), typeKey: 'quality.maintenanceTypes.corrective', description: 'ضبط سكاكين المقص', downtimeHours: 3, status: 'done', source: 'quality' },
+  { id: 'mn-3', machineNameKey: 'quality.machines.boiler', date: daysAgo(0), typeKey: 'quality.maintenanceTypes.inspection', description: 'فحص دوري للغلاية', downtimeHours: 1, status: 'in-progress', source: 'quality', scheduledAt: daysAgo(0) },
+];
+
+export const MOCK_TECH_SHEETS: TechDataSheet[] = [
+  { id: 'tds-1', specCode: 'SMP-22', specName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', gsm: 22, moisturePercent: 6.2, brightnessPercent: 82, burst: 1.8, tensile: 12.4, notes: 'مطابق لمواصفة العميل' },
+  { id: 'tds-2', specCode: 'TWL-25', specName: 'تواليت فاخر ج ٢٥', gsm: 25, moisturePercent: 5.8, brightnessPercent: 84, burst: 2.1, tensile: 13.1 },
 ];
 
 export const MOCK_PRODUCTION_ORDERS: ProductionOrder[] = [

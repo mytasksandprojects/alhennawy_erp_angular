@@ -10,6 +10,7 @@
 
 export type WeighingType =
   | 'purchase'
+  | 'dasht-purchase'
   | 'sales'
   | 'purchase-return'
   | 'sales-return'

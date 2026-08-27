@@ -103,6 +103,28 @@ export const CURRENCY_COLUMNS: TableColumn[] = [
 ];
 
 /** One label input per configured language (new languages auto-appear). */
+export const LEDGER_COLUMNS: TableColumn[] = [
+  { key: 'date', labelKey: 'common.date', type: 'date' },
+  { key: 'accountCode', labelKey: 'common.code' },
+  { key: 'accountName', labelKey: 'common.name' },
+  { key: 'reference', labelKey: 'sales.statement.reference' },
+  { key: 'debit', labelKey: 'finance.fields.debit', type: 'currency' },
+  { key: 'credit', labelKey: 'finance.fields.credit', type: 'currency' },
+  { key: 'balance', labelKey: 'common.balance', type: 'currency' },
+];
+
+export const TRIAL_COLUMNS: TableColumn[] = [
+  { key: 'accountCode', labelKey: 'common.code' },
+  { key: 'accountName', labelKey: 'common.name' },
+  { key: 'debit', labelKey: 'finance.fields.debit', type: 'currency' },
+  { key: 'credit', labelKey: 'finance.fields.credit', type: 'currency' },
+];
+
+export const STATEMENT_COLUMNS: TableColumn[] = [
+  { key: 'labelKey', labelKey: 'finance.fields.description', type: 'key' },
+  { key: 'amount', labelKey: 'common.value', type: 'currency' },
+];
+
 export function currencyFields(languages: LanguageOption[]): FormField[] {
   return [
     { key: 'value', labelKey: 'finance.fields.currencyCode', required: true },

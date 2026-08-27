@@ -1,90 +1,22 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
-import { FormField, TableColumn } from '../../core/models/common.models';
-import { keysToOptions } from '../../shared/crud/options';
 import {
   ListTabConfig,
   ModuleTabbedView,
 } from '../../shared/components/module-tabbed-view';
+import { ACCOUNT_COLUMNS, ACCOUNT_FIELDS, JOURNAL_COLUMNS, JOURNAL_FIELDS } from '../finance/finance.columns';
+import { CUSTOMER_COLUMNS, CUSTOMER_FIELDS } from '../sales/sales.columns';
+import { MOVEMENT_COLUMNS, MOVEMENT_FIELDS, STOCK_ITEM_COLUMNS, STOCK_ITEM_FIELDS } from '../warehouse/warehouse.columns';
+import {
+  OUTPUT_COLUMNS,
+  OUTPUT_FIELDS,
+  PURCHASE_COLUMNS,
+  PURCHASE_FIELDS,
+  STAFF_COLUMNS,
+  STAFF_FIELDS,
+} from './chemicals.columns';
 
-export const OUTPUT_COLUMNS: TableColumn[] = [
-  { key: 'date', labelKey: 'common.date', type: 'date' },
-  { key: 'product', labelKey: 'chemicals.fields.product', multilang: true },
-  { key: 'batchNumber', labelKey: 'chemicals.fields.batch' },
-  { key: 'quantityKg', labelKey: 'chemicals.fields.quantityKg', type: 'number', align: 'center' },
-  { key: 'notes', labelKey: 'common.notes', multilang: true },
-];
-
-const OUTPUT_FIELDS: FormField[] = [
-  { key: 'date', labelKey: 'common.date', type: 'date', required: true },
-  { key: 'product', labelKey: 'chemicals.fields.product', required: true, multilang: true },
-  { key: 'batchNumber', labelKey: 'chemicals.fields.batch' },
-  { key: 'quantityKg', labelKey: 'chemicals.fields.quantityKg', type: 'number', required: true },
-  { key: 'notes', labelKey: 'common.notes', type: 'textarea', multilang: true },
-];
-
-export const STAFF_COLUMNS: TableColumn[] = [
-  { key: 'photoUrl', labelKey: 'hr.fields.photo', type: 'image' },
-  { key: 'code', labelKey: 'common.code' },
-  { key: 'name', labelKey: 'common.name', multilang: true },
-  { key: 'role', labelKey: 'chemicals.fields.role', multilang: true },
-  { key: 'phone', labelKey: 'clinic.fields.phone' },
-  { key: 'salary', labelKey: 'hr.fields.salary', type: 'currency' },
-  {
-    key: 'status',
-    labelKey: 'common.status',
-    type: 'badge',
-    keyPrefix: 'hr.status.',
-    badgeToneMap: {
-      'active': 'success',
-      'on-leave': 'info',
-      'terminated': 'danger',
-      'probation': 'warning',
-    },
-  },
-];
-
-const STAFF_FIELDS: FormField[] = [
-  { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'CHM' },
-  { key: 'name', labelKey: 'common.name', required: true, multilang: true },
-  { key: 'role', labelKey: 'chemicals.fields.role', multilang: true },
-  { key: 'phone', labelKey: 'clinic.fields.phone' },
-  { key: 'salary', labelKey: 'hr.fields.salary', type: 'number' },
-  { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('hr.status.', ['active', 'on-leave', 'terminated', 'probation']) },
-  { key: 'photoUrl', labelKey: 'hr.fields.photo', type: 'images' },
-];
-
-export const PURCHASE_COLUMNS: TableColumn[] = [
-  { key: 'date', labelKey: 'common.date', type: 'date' },
-  { key: 'item', labelKey: 'chemicals.fields.item', multilang: true },
-  { key: 'supplier', labelKey: 'purchasing.fields.supplier', multilang: true },
-  { key: 'quantity', labelKey: 'chemicals.fields.quantity', type: 'number', align: 'center' },
-  { key: 'unit', labelKey: 'chemicals.fields.unit' },
-  { key: 'total', labelKey: 'chemicals.fields.total', type: 'currency' },
-  { key: 'currency', labelKey: 'common.currency' },
-  { key: 'exchangeRate', labelKey: 'finance.fields.rate', type: 'number', align: 'center' },
-  {
-    key: 'status',
-    labelKey: 'common.status',
-    type: 'badge',
-    keyPrefix: 'chemicals.purchaseStatus.',
-    badgeToneMap: { ordered: 'info', received: 'success', paid: 'neutral' },
-  },
-];
-
-const PURCHASE_FIELDS: FormField[] = [
-  { key: 'date', labelKey: 'common.date', type: 'date', required: true },
-  { key: 'item', labelKey: 'chemicals.fields.item', required: true, multilang: true },
-  { key: 'supplier', labelKey: 'purchasing.fields.supplier', multilang: true },
-  { key: 'quantity', labelKey: 'chemicals.fields.quantity', type: 'number' },
-  { key: 'unit', labelKey: 'chemicals.fields.unit' },
-  { key: 'total', labelKey: 'chemicals.fields.total', type: 'number', required: true },
-  { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies', rateKey: 'exchangeRate' },
-  { key: 'exchangeRate', labelKey: 'finance.fields.rate', type: 'number' },
-  { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('chemicals.purchaseStatus.', ['ordered', 'received', 'paid']) },
-];
-
-/** مصنع الكيماويات — output quantities, staff, raw & operational purchases. */
+/** مصنع الكيماويات — إنتاج، مخزن خامات، عملاء، إضافة/صرف، وحسابات. */
 @Component({
   selector: 'app-chemicals-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,33 +32,14 @@ const PURCHASE_FIELDS: FormField[] = [
 })
 export class ChemicalsPage {
   protected readonly tabs: ListTabConfig[] = [
-    {
-      id: 'output',
-      labelKey: 'chemicals.tabs.output',
-      endpoint: API_ENDPOINTS.chemicals.output,
-      columns: OUTPUT_COLUMNS,
-      fields: OUTPUT_FIELDS,
-    },
-    {
-      id: 'staff',
-      labelKey: 'chemicals.tabs.staff',
-      endpoint: API_ENDPOINTS.chemicals.staff,
-      columns: STAFF_COLUMNS,
-      fields: STAFF_FIELDS,
-    },
-    {
-      id: 'rawPurchases',
-      labelKey: 'chemicals.tabs.rawPurchases',
-      endpoint: API_ENDPOINTS.chemicals.rawPurchases,
-      columns: PURCHASE_COLUMNS,
-      fields: PURCHASE_FIELDS,
-    },
-    {
-      id: 'opPurchases',
-      labelKey: 'chemicals.tabs.opPurchases',
-      endpoint: API_ENDPOINTS.chemicals.operationalPurchases,
-      columns: PURCHASE_COLUMNS,
-      fields: PURCHASE_FIELDS,
-    },
+    { id: 'output', labelKey: 'chemicals.tabs.output', endpoint: API_ENDPOINTS.chemicals.output, columns: OUTPUT_COLUMNS, fields: OUTPUT_FIELDS },
+    { id: 'staff', labelKey: 'chemicals.tabs.staff', endpoint: API_ENDPOINTS.chemicals.staff, columns: STAFF_COLUMNS, fields: STAFF_FIELDS },
+    { id: 'rawPurchases', labelKey: 'chemicals.tabs.rawPurchases', endpoint: API_ENDPOINTS.chemicals.rawPurchases, columns: PURCHASE_COLUMNS, fields: PURCHASE_FIELDS },
+    { id: 'opPurchases', labelKey: 'chemicals.tabs.opPurchases', endpoint: API_ENDPOINTS.chemicals.operationalPurchases, columns: PURCHASE_COLUMNS, fields: PURCHASE_FIELDS },
+    { id: 'rawWarehouse', labelKey: 'chemicals.tabs.rawWarehouse', endpoint: API_ENDPOINTS.chemicals.rawWarehouse, columns: STOCK_ITEM_COLUMNS, fields: STOCK_ITEM_FIELDS, idKey: 'code' },
+    { id: 'customers', labelKey: 'chemicals.tabs.customers', endpoint: API_ENDPOINTS.chemicals.customers, columns: CUSTOMER_COLUMNS, fields: CUSTOMER_FIELDS, idKey: 'code' },
+    { id: 'movements', labelKey: 'chemicals.tabs.movements', endpoint: API_ENDPOINTS.chemicals.movements, columns: MOVEMENT_COLUMNS, fields: MOVEMENT_FIELDS },
+    { id: 'accounts', labelKey: 'chemicals.tabs.accounts', endpoint: API_ENDPOINTS.chemicals.accounts, columns: ACCOUNT_COLUMNS, fields: ACCOUNT_FIELDS, idKey: 'code' },
+    { id: 'journal', labelKey: 'chemicals.tabs.journal', endpoint: API_ENDPOINTS.chemicals.journal, columns: JOURNAL_COLUMNS, fields: JOURNAL_FIELDS },
   ];
 }
