@@ -42,6 +42,7 @@ export function workOrderColumns(showPrices: boolean): TableColumn[] {
         'partially-fulfilled': 'warning',
         'in-production': 'info',
         'ready': 'success',
+        'late': 'danger',
         'invoiced': 'success',
         'closed': 'neutral',
       },
@@ -60,7 +61,9 @@ export const CUSTOMER_COLUMNS: TableColumn[] = [
 
 export const EXPORT_ORDER_COLUMNS: TableColumn[] = [
   { key: 'number', labelKey: 'common.number' },
+  { key: 'customerCode', labelKey: 'common.code' },
   { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
+  { key: 'itemName', labelKey: 'weighbridge.fields.item', multilang: true },
   {
     key: 'stage',
     labelKey: 'logistics.fields.stage',
@@ -114,7 +117,7 @@ export const WORK_ORDER_FIELDS: FormField[] = [
   { key: 'sizeMm', labelKey: 'sales.fields.size', type: 'number' },
   { key: 'currency', labelKey: 'common.currency', type: 'select', lookup: 'currencies', rateKey: 'exchangeRate' },
   { key: 'exchangeRate', labelKey: 'finance.fields.rate', type: 'number' },
-  { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('sales.status.', ['new', 'warehouse-check', 'partially-fulfilled', 'in-production', 'ready', 'invoiced', 'closed']) },
+  { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('sales.status.', ['new', 'warehouse-check', 'partially-fulfilled', 'in-production', 'ready', 'late', 'invoiced', 'closed']) },
 ];
 
 export const CUSTOMER_FIELDS: FormField[] = [
@@ -127,7 +130,10 @@ export const CUSTOMER_FIELDS: FormField[] = [
 
 export const EXPORT_ORDER_FIELDS: FormField[] = [
   { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'EO' },
+  { key: 'customerCode', labelKey: 'common.code' },
   { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
+  { key: 'itemName', labelKey: 'weighbridge.fields.item', multilang: true },
+  { key: 'quantityKg', labelKey: 'common.quantity', type: 'number' },
   { key: 'stage', labelKey: 'logistics.fields.stage', type: 'select', options: keysToOptions('sales.stages.', ['quotation', 'internal-approval', 'proforma', 'supply-order', 'warehouse', 'production-scheduled', 'logistics', 'production', 'issued', 'invoiced']) },
   { key: 'rollsCount', labelKey: 'sales.fields.rolls', type: 'number' },
   { key: 'containersCount', labelKey: 'logistics.fields.containers', type: 'number' },

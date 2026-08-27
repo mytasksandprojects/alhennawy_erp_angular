@@ -9,11 +9,10 @@ import { UiPageHeader } from '../../shared/components/ui-page-header';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
 import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { CustomerStatement } from './customer-statement';
+import { SalesExportBoard } from './sales-export-board';
 import {
   CUSTOMER_COLUMNS,
   CUSTOMER_FIELDS,
-  EXPORT_ORDER_COLUMNS,
-  EXPORT_ORDER_FIELDS,
   INVOICE_COLUMNS,
   INVOICE_FIELDS,
   WORK_ORDER_FIELDS,
@@ -28,7 +27,7 @@ import {
 @Component({
   selector: 'app-sales-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ModuleDashboard, UiPageHeader, UiTabs, CrudPanel, CustomerStatement],
+  imports: [ModuleDashboard, UiPageHeader, UiTabs, CrudPanel, CustomerStatement, SalesExportBoard],
   template: `
     <ui-page-header titleKey="sales.title" subtitleKey="sales.subtitle" />
 
@@ -45,6 +44,9 @@ import {
       @case ('statement') {
         <app-customer-statement />
       }
+      @case ('exportOrders') {
+        <app-sales-export-board />
+      }
       @default {
         @for (tab of crudTabs; track tab.id) {
           @if (tab.id === active()) {
@@ -55,6 +57,8 @@ import {
               [columns]="tab.columns!"
               [fields]="tab.fields ?? []"
               [idKey]="tab.idKey ?? 'id'"
+              [titleKey]="tab.labelKey"
+              [printKind]="tab.id === 'invoices' ? 'invoice' : 'record'"
             />
           }
         }
@@ -83,13 +87,6 @@ export class SalesPage {
       fields: WORK_ORDER_FIELDS,
     },
     {
-      id: 'exportOrders',
-      labelKey: 'sales.tabs.exportOrders',
-      endpoint: API_ENDPOINTS.sales.exportOrders,
-      columns: EXPORT_ORDER_COLUMNS,
-      fields: EXPORT_ORDER_FIELDS,
-    },
-    {
       id: 'invoices',
       labelKey: 'sales.tabs.invoices',
       endpoint: API_ENDPOINTS.sales.invoices,
@@ -107,12 +104,13 @@ export class SalesPage {
   ];
 
   protected tabItems(): TabItem[] {
-    const tabs = this.crudTabs
-      .filter((tab) => this.access.canTab('sales', tab.id))
-      .map((tab) => ({ id: tab.id, labelKey: tab.labelKey }));
-    if (this.access.canTab('sales', 'statement')) {
-      tabs.push({ id: 'statement', labelKey: 'sales.tabs.statement' });
-    }
+    const tabs: TabItem[] = [
+      { id: 'workOrders', labelKey: 'sales.tabs.workOrders' },
+      { id: 'exportOrders', labelKey: 'sales.tabs.exportOrders' },
+      { id: 'invoices', labelKey: 'sales.tabs.invoices' },
+      { id: 'customers', labelKey: 'sales.tabs.customers' },
+      { id: 'statement', labelKey: 'sales.tabs.statement' },
+    ].filter((tab) => this.access.canTab('sales', tab.id));
     if (this.access.canTab('sales', 'dashboard')) {
       tabs.unshift({ id: 'dashboard', labelKey: 'common.dashboardTab' });
     }

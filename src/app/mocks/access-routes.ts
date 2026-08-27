@@ -12,6 +12,12 @@ import {
   upsertDeptRequest,
   upsertPurchaseRequest,
 } from './data/purchasing.mock';
+import {
+  approvePurchaseRequest,
+  issuePurchaseOrder,
+  selectQuotation,
+} from './data/purchasing-workflow';
+import { advanceExportOrder, createExportQuotation } from './data/sales-workflow';
 import { listRoles, upsertRole } from './data/roles.mock';
 
 export const ACCESS_ROUTES: MockRoute[] = [
@@ -77,5 +83,26 @@ export const ACCESS_ROUTES: MockRoute[] = [
     method: 'DELETE',
     pattern: '/purchasing/requests/:id',
     handler: ({ path }) => deletePurchaseRequest(decodeURIComponent(path.split('/').pop() ?? '')),
+  },
+  {
+    method: 'POST',
+    pattern: '/purchasing/requests/:id/approve',
+    handler: ({ path }) => approvePurchaseRequest(path.split('/').filter(Boolean)[2] ?? ''),
+  },
+  {
+    method: 'POST',
+    pattern: '/purchasing/requests/:id/order',
+    handler: ({ path }) => issuePurchaseOrder(path.split('/').filter(Boolean)[2] ?? ''),
+  },
+  {
+    method: 'POST',
+    pattern: '/purchasing/quotations/:id/select',
+    handler: ({ path }) => selectQuotation(path.split('/').filter(Boolean)[2] ?? ''),
+  },
+  { method: 'POST', pattern: '/sales/export-orders', handler: ({ body }) => createExportQuotation(body) },
+  {
+    method: 'POST',
+    pattern: '/sales/export-orders/:id/advance',
+    handler: ({ path, body }) => advanceExportOrder(path.split('/').filter(Boolean)[2] ?? '', body),
   },
 ];

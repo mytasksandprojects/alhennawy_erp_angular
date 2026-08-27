@@ -18,10 +18,13 @@ import {
 import { ImageViewerService } from '../../core/services/image-viewer.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { exportRowsToCsv } from '../crud/export-csv';
+import { attachLandscape } from '../crud/print-page';
+import { printTitleName, withReportWord } from '../crud/print-cell';
 import { Translated } from '../translated.base';
 import { UiBadge } from './ui-badge';
 import { UiEmptyState } from './ui-empty-state';
 import { UiIcon } from './ui-icon';
+import { UiPrintDoc } from './ui-print-doc';
 
 type Row = Record<string, unknown>;
 
@@ -32,38 +35,30 @@ type Row = Record<string, unknown>;
 @Component({
   selector: 'ui-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiBadge, UiEmptyState, UiIcon],
+  imports: [UiBadge, UiEmptyState, UiIcon, UiPrintDoc],
   template: `
     <div
       class="ui-table-wrap"
-      [class.print-sheet]="!!solo()"
       [class.ui-table-wrap--solo]="!!solo()"
+      [class.print-sheet]="!!solo()"
     >
-      @if (!solo()) {
-        <header class="print-sheet__head print-only print-nested-hide">
-          <img class="print-sheet__logo" [src]="logoUrl()" [alt]="t(nameKey())" />
-          <h1 class="print-sheet__title">{{ t(nameKey()) }}</h1>
-        </header>
+      @if (solo(); as doc) {
+        <ui-print-doc [row]="doc" [columns]="columns()" [titleKey]="titleKey()" />
       }
-      @if (solo(); as rec) {
-        <header class="print-sheet__head print-only">
-          <img class="print-sheet__logo" [src]="logoUrl()" [alt]="t(nameKey())" />
-          <h1 class="print-sheet__title">{{ t(nameKey()) }}</h1>
-        </header>
-        <dl class="print-record print-only">
-          @for (col of columns(); track col.key) {
-            @if (col.type !== 'image' && col.type !== 'files') {
-              <div class="print-record__row">
-                <dt>{{ t(col.labelKey) }}</dt>
-                <dd>{{ printValue(rec, col) }}</dd>
-              </div>
+      <header class="print-sheet__head print-only print-nested-hide">
+        <img class="print-sheet__logo" [src]="logoUrl()" [alt]="t(nameKey())" />
+        <h1 class="print-sheet__title">{{ t(nameKey()) }}</h1>
+        @if (titleKey() || lineName()) {
+          <p class="print-sheet__doc">
+            @if (titleKey()) {
+              {{ printDocTitle() }}
             }
-          }
-        </dl>
-        <footer class="print-sheet__foot print-only">
-          <div>{{ t(addressKey()) }}</div>
-        </footer>
-      }
+            @if (lineName()) {
+              — {{ lineName() }}
+            }
+          </p>
+        }
+      </header>
       <table class="ui-table" [class.ui-table--clickable]="clickable()">
         <thead>
           <tr>
@@ -78,7 +73,7 @@ type Row = Record<string, unknown>;
         <tbody>
           @for (row of rows(); track $index) {
             <tr
-              [class.ui-table__row--solo]="solo() === row"
+              [class.ui-table__row--line]="line() === row"
               (click)="clickable() && rowClick.emit(row)"
             >
               @for (col of columns(); track col.key) {
@@ -177,11 +172,9 @@ type Row = Record<string, unknown>;
           }
         </tbody>
       </table>
-      @if (!solo()) {
-        <footer class="print-sheet__foot print-only print-nested-hide">
-          <div>{{ t(addressKey()) }}</div>
-        </footer>
-      }
+      <footer class="print-sheet__foot print-only print-nested-hide">
+        <div>{{ t(addressKey()) }}</div>
+      </footer>
       @if (!rows().length) {
         <ui-empty-state />
       }
@@ -196,46 +189,62 @@ export class UiTable extends Translated {
   readonly allowPrint = input(true);
   readonly allowPdf = input(true);
   readonly allowExcel = input(true);
+  readonly titleKey = input('');
+  readonly printKind = input<'record' | 'invoice' | 'sheet'>('record');
+  readonly printAsReport = input(false);
   readonly rowClick = output<Row>();
   protected readonly viewer = inject(ImageViewerService);
   private readonly document = inject(DOCUMENT);
   private readonly store = inject(RuntimeConfigStore);
   private readonly notifications = inject(NotificationService);
+  protected readonly line = signal<Row | null>(null);
   protected readonly solo = signal<Row | null>(null);
+  private dropLandscape: (() => void) | null = null;
   protected readonly logoUrl = () => this.store.settings()?.company.logoUrl ?? '';
   protected readonly nameKey = () => this.store.settings()?.company.nameKey ?? 'company.name';
   protected readonly addressKey = () =>
     this.store.settings()?.company.addressKey ?? 'company.address';
 
+  protected printDocTitle(): string {
+    const name = this.t(this.titleKey());
+    if (!this.printAsReport() || this.solo()) return name;
+    return withReportWord(name, this.t('reports.word'), this.store.language());
+  }
+
+  protected lineName(): string {
+    const row = this.line();
+    if (!row) return '';
+    return printTitleName(
+      row,
+      this.store.language(),
+      this.store.settings()?.defaultLanguage ?? 'ar',
+    );
+  }
+
   constructor() {
     super();
     this.document.defaultView?.addEventListener('afterprint', () => {
+      this.line.set(null);
       this.solo.set(null);
-      this.document.body.classList.remove('is-print-row');
+      this.dropLandscape?.();
+      this.dropLandscape = null;
+      this.document.body.classList.remove('is-print-line', 'is-print-row');
     });
   }
 
   protected printRow(row: Row, asPdf: boolean): void {
     if (asPdf) this.notifications.info('common.pdfHint');
-    this.document.body.classList.add('is-print-row');
-    this.solo.set(row);
+    if (this.printKind() === 'invoice') {
+      this.solo.set(row);
+      this.document.body.classList.add('is-print-row');
+    } else {
+      this.line.set(row);
+      this.document.body.classList.add('is-print-line');
+      if (this.columns().length > 8) this.dropLandscape = attachLandscape();
+    }
     requestAnimationFrame(() =>
       requestAnimationFrame(() => this.document.defaultView?.print()),
     );
-  }
-
-  protected printValue(row: Row, col: TableColumn): string {
-    const raw = row[col.key];
-    if (raw === undefined || raw === null || raw === '') return '';
-    if (col.type === 'number' || col.type === 'currency') {
-      return typeof raw === 'number' ? this.fmtNum(raw) : String(raw);
-    }
-    if (col.type === 'date' || col.type === 'datetime') return this.fmtDate(String(raw));
-    if (col.type === 'key') return this.t(String(raw)) || String(raw);
-    if (col.type === 'badge') {
-      return this.t((col.keyPrefix ?? '') + String(raw)) || String(raw);
-    }
-    return this.cellText(row, col);
   }
 
   protected excelRow(row: Row): void {

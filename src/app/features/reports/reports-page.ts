@@ -1,67 +1,77 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { CrudPanel } from '../../shared/components/crud-panel';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
+import { withReportWord } from '../../shared/crud/print-cell';
 import { routedTab, tabNavigator } from '../../shared/tab-route';
-import { REPORT_CATEGORIES, ReportDef } from './report-defs';
+import { REPORT_CATEGORIES, REPORT_ICONS, ReportDef } from './report-defs';
+import { ReportsHub } from './reports-hub';
 import { Translated } from '../../shared/translated.base';
 
 /**
- * مركز التقارير — a report catalog (cards grouped by factory area),
- * not another tabbed module. Opening a card shows the read-only report
- * with search, from/to date filters, print, PDF and Excel export.
+ * مركز التقارير — studio charts (wave + waffle) then module launchpads.
  */
 @Component({
   selector: 'app-reports-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiPageHeader, UiIcon, CrudPanel],
+  imports: [ReportsHub, UiPageHeader, UiIcon, CrudPanel],
   template: `
     <ui-page-header titleKey="reports.title" subtitleKey="reports.subtitle" />
 
     @if (!selected()) {
-      @for (category of categories; track category.id) {
-        <section class="report-section">
-          <h2 class="report-section__title">
-            <span class="report-section__icon">
-              <ui-icon [name]="category.icon" [size]="18" />
-            </span>
-            {{ t(category.labelKey) }}
-          </h2>
-          <div class="report-grid">
-            @for (report of category.reports; track report.id) {
-              <button type="button" class="report-card" (click)="open(report)">
-                <span class="report-card__name">{{ t(report.labelKey) }}</span>
-                <span class="report-card__meta">
-                  <ui-icon name="document" [size]="13" />
-                  {{ t(category.labelKey) }}
-                </span>
-              </button>
-            }
-          </div>
-        </section>
-      }
+      <app-reports-hub />
+      <div class="report-mods">
+        @for (category of categories; track category.id) {
+          <section class="ui-card report-mod" [id]="'report-' + category.id">
+            <header class="report-mod__head">
+              <span class="stat-card__icon">
+                <ui-icon [name]="category.icon" [size]="22" />
+              </span>
+              <div>
+                <h2 class="ui-card__title">{{ t(category.labelKey) }}</h2>
+                <p class="stat-card__label mono">{{ fmtNum(category.reports.length) }}</p>
+              </div>
+            </header>
+            <div class="report-mod__grid">
+              @for (report of category.reports; track report.id) {
+                <button type="button" class="report-tile" (click)="open(report)">
+                  <span class="report-tile__mark">
+                    <ui-icon [name]="iconOf(report.id)" [size]="20" />
+                  </span>
+                  <span class="report-tile__name">{{ t(report.labelKey) }}</span>
+                </button>
+              }
+            </div>
+          </section>
+        }
+      </div>
     } @else {
       <div class="report-view__bar">
         <button type="button" class="ui-btn ui-btn--ghost" (click)="back()">
           <ui-icon name="return" [size]="16" />
           {{ t('common.back') }}
         </button>
-        <h2 class="report-view__title">{{ t(selected()!.labelKey) }}</h2>
+        <h2 class="report-view__title">{{ reportHeading(selected()!.labelKey) }}</h2>
         <span class="report-view__crumb">{{ t(categoryOf(selected()!.id).labelKey) }}</span>
       </div>
-      <crud-panel
-        moduleId="reports"
-        [tabId]="selected()!.id"
-        [endpoint]="selected()!.endpoint"
-        [columns]="selected()!.columns"
-        [readOnly]="true"
-      />
+      <div class="report-workbook">
+        <crud-panel
+          moduleId="reports"
+          [tabId]="selected()!.id"
+          [endpoint]="selected()!.endpoint"
+          [columns]="selected()!.columns"
+          [readOnly]="true"
+          [titleKey]="selected()!.labelKey"
+          [printKind]="selected()!.id === 'invoices' ? 'invoice' : 'record'"
+        />
+      </div>
     }
   `,
 })
 export class ReportsPage extends Translated {
+  private readonly store = inject(RuntimeConfigStore);
   protected readonly categories = REPORT_CATEGORIES;
-  /** `?tab=` holds either a report id (open view) or a category (catalog). */
   protected readonly activeId = routedTab('');
   private readonly navigateToTab = tabNavigator();
 
@@ -73,6 +83,14 @@ export class ReportsPage extends Translated {
     }
     return null;
   });
+
+  protected reportHeading(labelKey: string): string {
+    return withReportWord(this.t(labelKey), this.t('reports.word'), this.store.language());
+  }
+
+  protected iconOf(id: string): string {
+    return REPORT_ICONS[id] ?? 'document';
+  }
 
   protected categoryOf(reportId: string) {
     return (

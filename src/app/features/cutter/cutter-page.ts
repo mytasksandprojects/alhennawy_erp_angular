@@ -81,6 +81,7 @@ type Draft = Record<string, string | number | boolean>;
           [columns]="columns"
           [rows]="$any(rolls())"
           [clickable]="true"
+          titleKey="cutter.tabs.rolls"
           (rowClick)="openRoll($any($event))"
         />
         <p class="ui-field__hint" style="margin-top: var(--space-sm)">

@@ -35,6 +35,9 @@ export const API_ENDPOINTS = {
     orders: '/purchasing/orders',
     suppliers: '/purchasing/suppliers',
     quotations: '/purchasing/quotations',
+    approveRequest: (id: string) => `/purchasing/requests/${id}/approve`,
+    selectQuotation: (id: string) => `/purchasing/quotations/${id}/select`,
+    issueOrder: (id: string) => `/purchasing/requests/${id}/order`,
   },
   administration: {
     fleet: '/administration/fleet',
@@ -98,6 +101,7 @@ export const API_ENDPOINTS = {
     customers: '/sales/customers',
     workOrders: '/sales/work-orders',
     exportOrders: '/sales/export-orders',
+    advanceExport: (id: string) => `/sales/export-orders/${id}/advance`,
     invoices: '/sales/invoices',
     customerStatement: (code: string) => `/sales/customers/${code}/statement`,
   },

@@ -1,0 +1,235 @@
+/* Print documents — letterhead invoice, wrap cells, hide single-row totals. */
+ui-print-doc,
+.ui-print-doc {
+  display: block;
+}
+
+.print-invoice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding-block-start: var(--space-sm);
+  border-block-start: var(--border-width-strong) solid var(--color-primary);
+}
+
+.print-invoice__banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-lg);
+}
+
+.print-invoice__brand {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.print-invoice__logo {
+  height: var(--print-sheet-logo-height);
+  width: auto;
+  object-fit: contain;
+}
+
+.print-invoice__brand strong,
+.print-invoice__bill strong {
+  display: block;
+  font-size: var(--font-size-lg);
+}
+
+.print-invoice__brand span,
+.print-invoice__bill span {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+.print-invoice__kind {
+  margin: 0;
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-bold);
+  text-align: end;
+  line-height: var(--print-cell-leading);
+}
+
+.print-invoice__no {
+  margin: var(--space-xs) 0 0;
+  font-size: var(--font-size-xl);
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.print-invoice__parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.print-invoice__bill {
+  padding: var(--space-md);
+  background: var(--color-surface-alt);
+  border-inline-start: var(--border-width-strong) solid var(--color-primary);
+}
+
+.print-invoice__label,
+.print-invoice__facts dt {
+  display: block;
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-soft);
+}
+
+.print-invoice__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm) var(--space-md);
+  margin: 0;
+}
+
+.print-invoice__facts dd {
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.print-invoice__lines {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.print-invoice__lines th {
+  text-align: start;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-soft);
+  border-bottom: var(--border-width-strong) solid var(--color-text);
+  padding: var(--space-sm) 0;
+}
+
+.print-invoice__lines td {
+  padding: var(--space-md) 0;
+  border-bottom: var(--border-width) solid var(--color-border);
+  line-height: var(--print-cell-leading);
+}
+
+.print-invoice__lines th:last-child,
+.print-invoice__lines td:last-child {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.print-invoice__math {
+  width: var(--print-invoice-totals);
+  margin-inline-start: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.print-invoice__math-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+.print-invoice__due {
+  padding-block-start: var(--space-sm);
+  border-block-start: var(--border-width-strong) solid var(--color-text);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+@media print {
+  body.is-print-line tbody tr:not(.ui-table__row--line) {
+    display: none;
+  }
+
+  body.is-print-line .statement-summary {
+    display: none;
+  }
+
+  body.is-print-line .ui-table-wrap,
+  body.is-print-line .ui-table-wrap * {
+    visibility: visible;
+  }
+
+  .print-area .ui-table th,
+  .print-sheet .ui-table th,
+  body.is-print-line .ui-table th {
+    background: var(--color-surface-alt);
+    font-weight: var(--font-weight-bold);
+  }
+
+  module-dashboard,
+  ui-page-header,
+  .checkin-hero,
+  .checkin-metrics,
+  .checkin-actions,
+  .report-view__bar,
+  .report-hub,
+  .report-studio,
+  .report-mods {
+    display: none;
+  }
+
+  .print-sheet ui-print-doc,
+  .print-sheet ui-print-doc *,
+  .print-area ui-print-doc,
+  .print-area ui-print-doc * {
+    visibility: visible;
+  }
+
+  ui-print-doc .print-only {
+    display: flex;
+  }
+
+  ui-print-doc .print-invoice__lines {
+    display: table;
+  }
+
+  ui-print-doc .print-invoice__math {
+    display: flex;
+  }
+
+  body.is-print-row .ui-table-wrap--solo.print-sheet,
+  body.is-print-list .print-area {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-block-start: var(--space-sm);
+  }
+
+  .print-area .ui-table,
+  .print-sheet .ui-table {
+    table-layout: auto;
+    font-size: var(--font-size-xs);
+  }
+
+  .print-area .ui-table th,
+  .print-area .ui-table td,
+  .print-sheet .ui-table th,
+  .print-sheet .ui-table td {
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: var(--print-cell-leading);
+    padding: var(--space-sm);
+    height: auto;
+    vertical-align: top;
+  }
+
+  .print-sheet__logo {
+    height: var(--print-sheet-logo-height);
+  }
+
+  .print-sheet__head {
+    margin-bottom: var(--space-sm);
+  }
+
+  .print-sheet__foot {
+    margin-top: var(--space-md);
+  }
+}

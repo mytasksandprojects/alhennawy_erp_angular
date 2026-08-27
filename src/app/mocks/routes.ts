@@ -69,12 +69,13 @@ import {
   FINANCE_DASHBOARD,
   HR_DASHBOARD,
   LOGISTICS_DASHBOARD,
-  PURCHASING_DASHBOARD,
-  SALES_DASHBOARD,
 } from './data/dashboards-biz.mock';
+import { purchasingDashboard } from './data/purchasing-workflow';
+import { salesDashboard } from './data/sales-workflow';
 import { SYSTEM_ALERTS } from './data/alerts.mock';
 import { getFactoryProfile, saveFactoryProfile } from './data/factory.mock';
 import { HOME_DASHBOARD } from './data/dashboards-home.mock';
+import { REPORTS_DASHBOARD } from './data/dashboards-reports.mock';
 import {
   PRODUCTION_DASHBOARD,
   QUALITY_DASHBOARD,
@@ -115,8 +116,8 @@ import { MockApiError } from './mock-backend.interceptor';
 const DASHBOARDS: Record<string, DashboardData> = {
   home: HOME_DASHBOARD,
   finance: FINANCE_DASHBOARD,
-  sales: SALES_DASHBOARD,
-  purchasing: PURCHASING_DASHBOARD,
+  get sales() { return salesDashboard(); },
+  get purchasing() { return purchasingDashboard(); },
   logistics: LOGISTICS_DASHBOARD,
   hr: HR_DASHBOARD,
   administration: ADMINISTRATION_DASHBOARD,
@@ -127,6 +128,7 @@ const DASHBOARDS: Record<string, DashboardData> = {
   warehouse: WAREHOUSE_DASHBOARD,
   quality: QUALITY_DASHBOARD,
   production: PRODUCTION_DASHBOARD,
+  reports: REPORTS_DASHBOARD,
 };
 
 /** MOCK LAYER — full route table mirroring `core/api/api-endpoints.ts`. */
@@ -260,7 +262,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/purchasing/quotations', MOCK_QUOTATIONS),
   ...crudRoutes('/sales/customers', MOCK_CUSTOMERS, 'code'),
   ...crudRoutes('/sales/work-orders', MOCK_WORK_ORDERS),
-  ...crudRoutes('/sales/export-orders', MOCK_EXPORT_ORDERS),
+  ...crudRoutes('/sales/export-orders', MOCK_EXPORT_ORDERS, 'id', false),
   ...crudRoutes('/sales/invoices', MOCK_INVOICES),
   ...crudRoutes('/logistics/imports', MOCK_IMPORTS),
   ...crudRoutes('/logistics/exports', MOCK_EXPORT_SHIPMENTS),

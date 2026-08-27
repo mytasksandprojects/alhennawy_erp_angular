@@ -30,6 +30,51 @@ export interface ReportCategory {
   reports: ReportDef[];
 }
 
+export const REPORT_ICONS: Record<string, string> = {
+  invoices: 'invoice',
+  customers: 'customers',
+  workOrders: 'sales',
+  exportOrders: 'outbox',
+  purchaseOrders: 'purchasing',
+  purchaseRequests: 'inbox',
+  quotations: 'document',
+  suppliers: 'purchasing',
+  weighings: 'scale',
+  productionOrders: 'production',
+  rolls: 'cutter',
+  stockItems: 'items',
+  movements: 'transfer',
+  receipts: 'inbox',
+  imports: 'logistics',
+  exports: 'outbox',
+  dashtInspections: 'quality',
+  materialInspections: 'quality',
+  maintenance: 'wrench',
+  employees: 'hr',
+  attendance: 'clock',
+  leaves: 'calendar',
+  penalties: 'alert',
+  performance: 'grade',
+  managerReviews: 'grade',
+  journal: 'finance',
+  expenses: 'expense',
+  banks: 'bank',
+  documents: 'document',
+  fleet: 'fleet',
+  custody: 'items',
+  contracts: 'document',
+  permits: 'certificate',
+  certificates: 'certificate',
+  insurance: 'shield',
+  clinicVisits: 'clinic',
+  medicines: 'clinic',
+  dispenses: 'clinic',
+  chemOutput: 'flask',
+  chemStaff: 'hr',
+  chemRaw: 'purchasing',
+  chemOps: 'purchasing',
+};
+
 const API = API_ENDPOINTS;
 
 /** التقارير — every dataset in the factory, grouped by area. */

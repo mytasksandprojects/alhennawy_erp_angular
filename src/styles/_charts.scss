@@ -113,3 +113,98 @@
 .donut-chart__dot--4 { background: var(--chart-color-4); }
 .donut-chart__dot--5 { background: var(--chart-color-5); }
 .donut-chart__dot--6 { background: var(--chart-color-6); }
+
+/* Area wave (reports studio) */
+.area-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.area-chart__svg {
+  width: 100%;
+  height: var(--chart-column-height);
+}
+
+.area-chart__fill {
+  fill: var(--color-primary-soft);
+}
+
+.area-chart__line {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 0.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.area-chart__axis {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.area-chart__label {
+  font-size: var(--font-size-xs);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Waffle unit grid */
+.waffle-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.waffle-chart__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.waffle-chart__cell {
+  width: var(--space-lg);
+  height: var(--space-lg);
+  border-radius: var(--radius-sm);
+}
+
+.waffle-chart__legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.waffle-chart__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+
+.waffle-chart__item .text-soft {
+  flex: 1;
+  min-width: 0;
+}
+
+.waffle-chart__swatch {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.waffle-chart__cell--1,
+.waffle-chart__swatch--1 { background: var(--chart-color-1); }
+.waffle-chart__cell--2,
+.waffle-chart__swatch--2 { background: var(--chart-color-2); }
+.waffle-chart__cell--3,
+.waffle-chart__swatch--3 { background: var(--chart-color-3); }
+.waffle-chart__cell--4,
+.waffle-chart__swatch--4 { background: var(--chart-color-4); }
+.waffle-chart__cell--5,
+.waffle-chart__swatch--5 { background: var(--chart-color-5); }
+.waffle-chart__cell--6,
+.waffle-chart__swatch--6 { background: var(--chart-color-6); }

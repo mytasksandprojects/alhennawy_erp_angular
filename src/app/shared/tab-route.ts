@@ -32,7 +32,7 @@ export function tabNavigator(): (tabId: string) => void {
   return (tabId) =>
     void router.navigate([], {
       relativeTo: route,
-      queryParams: { tab: tabId },
+      queryParams: { tab: tabId, q: null, status: null },
       queryParamsHandling: 'merge',
     });
 }

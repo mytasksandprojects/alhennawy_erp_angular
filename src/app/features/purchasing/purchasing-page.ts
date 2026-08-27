@@ -4,11 +4,10 @@ import {
   ListTabConfig,
   ModuleTabbedView,
 } from '../../shared/components/module-tabbed-view';
+import { PurchasingRequestBoard } from './purchasing-request-board';
 import {
   PURCHASE_ORDER_COLUMNS,
   PURCHASE_ORDER_FIELDS,
-  PURCHASE_REQUEST_COLUMNS,
-  PURCHASE_REQUEST_FIELDS,
   QUOTATION_COLUMNS,
   QUOTATION_FIELDS,
   SUPPLIER_COLUMNS,
@@ -19,14 +18,16 @@ import {
 @Component({
   selector: 'app-purchasing-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ModuleTabbedView],
+  imports: [ModuleTabbedView, PurchasingRequestBoard],
   template: `
     <module-tabbed-view
       moduleId="purchasing"
       titleKey="purchasing.title"
       subtitleKey="purchasing.subtitle"
       [listTabs]="tabs"
-    />
+    >
+      <app-purchasing-request-board />
+    </module-tabbed-view>
   `,
 })
 export class PurchasingPage {
@@ -34,9 +35,7 @@ export class PurchasingPage {
     {
       id: 'requests',
       labelKey: 'purchasing.tabs.requests',
-      endpoint: API_ENDPOINTS.purchasing.requests,
-      columns: PURCHASE_REQUEST_COLUMNS,
-      fields: PURCHASE_REQUEST_FIELDS,
+      custom: true,
     },
     {
       id: 'quotations',

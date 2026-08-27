@@ -93,7 +93,12 @@ const STATEMENT_COLUMNS: TableColumn[] = [
               <strong class="mono">{{ fmtNum(finalBalance()) }}</strong>
             </span>
           </div>
-          <ui-table [columns]="columns" [rows]="$any(lines())" />
+          <ui-table
+            [columns]="columns"
+            [rows]="$any(lines())"
+            titleKey="sales.statement.printTitle"
+            printKind="sheet"
+          />
           <footer class="print-sheet__foot print-only">
             <div>{{ t(addressKey()) }}</div>
             <div>

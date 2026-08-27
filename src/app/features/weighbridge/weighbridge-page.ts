@@ -85,6 +85,7 @@ const TYPE_FILTERS = ['purchase', 'sales', 'returns', 'purchase-return', 'sales-
         [columns]="columns"
         [rows]="$any(tickets())"
         [clickable]="true"
+        titleKey="weighbridge.ticketsTitle"
         (rowClick)="openTicket($any($event))"
       />
       <p class="ui-field__hint" style="margin-top: var(--space-sm)">

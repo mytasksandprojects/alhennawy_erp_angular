@@ -29,7 +29,7 @@ export interface ListTabConfig {
   imports: [ModuleDashboard, UiPageHeader, UiTabs, CrudPanel],
   template: `
     <ui-page-header [titleKey]="titleKey()" [subtitleKey]="subtitleKey()">
-      <ng-content />
+      <ng-content select="[headerActions]" />
     </ui-page-header>
 
     <ui-tabs
@@ -52,6 +52,8 @@ export interface ListTabConfig {
             [columns]="tab.columns"
             [fields]="tab.fields ?? []"
             [idKey]="tab.idKey ?? 'id'"
+            [titleKey]="tab.labelKey"
+            [printKind]="tab.id === 'invoices' ? 'invoice' : 'record'"
           />
         }
       }

@@ -89,7 +89,11 @@ import { ATTENDANCE_COLUMNS } from '../hr/hr.columns';
       </div>
       <section class="checkin-history">
         <h2 class="ui-card__title">{{ t('checkin.history') }}</h2>
-        <ui-table [columns]="columns" [rows]="$any(mine())" />
+        <ui-table
+          [columns]="columns"
+          [rows]="$any(mine())"
+          titleKey="checkin.history"
+        />
       </section>
     </div>
   `,

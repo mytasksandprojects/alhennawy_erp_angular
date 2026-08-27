@@ -136,6 +136,7 @@ const BACKUP_COLUMNS: TableColumn[] = [
         [columns]="columns"
         [rows]="$any(backups())"
         [clickable]="true"
+        titleKey="backup.history.title"
         (rowClick)="download($any($event))"
       />
     </section>

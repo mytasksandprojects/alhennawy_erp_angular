@@ -8,6 +8,7 @@ export type WorkOrderStatus =
   | 'partially-fulfilled'
   | 'in-production'
   | 'ready'
+  | 'late'
   | 'invoiced'
   | 'closed';
 
@@ -62,6 +63,9 @@ export interface ExportOrder {
   customerCode: string;
   customerName: string;
   stage: ExportDocStage;
+  itemCode?: string;
+  itemName?: string;
+  quantityKg?: number;
   rollsCount: number;
   containersCount: number;
   productionDeadline?: string;

@@ -27,11 +27,21 @@ export const MOCK_PURCHASE_REQUESTS: PurchaseRequest[] = [
     { itemCode: 'SPR-318', itemName: 'سير ناقل حركة B-52', quantity: 6, unitKey: 'units.piece' },
     { itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 20, unitKey: 'units.piece' },
   ]},
-  { id: 'pr-2', number: 'PR-2026-0300', date: daysAgo(3), requestingDepartmentKey: 'departments.quality', status: 'approved', lines: [
+  { id: 'pr-2', number: 'PR-2026-0300', date: daysAgo(3), requestingDepartmentKey: 'departments.quality', status: 'ordered', lines: [
     { itemCode: 'CHM-011', itemName: 'كيماوي نشا كاتيوني', quantity: 3000, unitKey: 'units.kg', specification: 'كثافة 1.06 - 1.09' },
   ]},
   { id: 'pr-3', number: 'PR-2026-0298', date: daysAgo(6), requestingDepartmentKey: 'departments.warehouse', status: 'ordered', lines: [
     { itemCode: 'STR-005', itemName: 'استرتش تغليف 50 سم', quantity: 800, unitKey: 'units.kg' },
+  ]},
+  { id: 'pr-4', number: 'PR-2026-0304', date: daysAgo(0), requestingDepartmentKey: 'departments.warehouse', status: 'pending', lines: [
+    { itemCode: 'DSH-002', itemName: 'ورق دشت درجة ثانية', quantity: 15000, unitKey: 'units.kg', specification: 'رطوبة أقل من 12%' },
+  ]},
+  { id: 'pr-5', number: 'PR-2026-0303', date: daysAgo(1), requestingDepartmentKey: 'departments.warehouse', status: 'pending', lines: [
+    { itemCode: 'SPR-409', itemName: 'فلتر هواء MP-1', quantity: 12, unitKey: 'units.piece' },
+    { itemCode: 'CHM-020', itemName: 'مضاد رغوة سيليكون', quantity: 80, unitKey: 'units.liter' },
+  ]},
+  { id: 'pr-6', number: 'PR-2026-0302', date: daysAgo(2), requestingDepartmentKey: 'departments.warehouse', status: 'approved', lines: [
+    { itemCode: 'CHM-011', itemName: 'كيماوي نشا كاتيوني', quantity: 2000, unitKey: 'units.kg', specification: 'تحت حد إعادة الطلب' },
   ]},
 ];
 
@@ -39,6 +49,8 @@ export const MOCK_QUOTATIONS: SupplierQuotation[] = [
   { id: 'q-1', requestId: 'pr-2', supplierCode: 'SUP-002', supplierName: 'شركة الكيماويات المتحدة', totalValue: 126000, currency: 'EGP', exchangeRate: 1, deliveryDays: 7, technicalScore: 95, selected: true },
   { id: 'q-2', requestId: 'pr-2', supplierCode: 'SUP-005', supplierName: 'Shandong Pulp Co.', totalValue: 2480, currency: 'USD', exchangeRate: 48.5, deliveryDays: 45, technicalScore: 90, selected: false },
   { id: 'q-3', requestId: 'pr-1', supplierCode: 'SUP-004', supplierName: 'Voith Paper GmbH', totalValue: 3150, currency: 'EUR', exchangeRate: 52.8, deliveryDays: 21, technicalScore: 98, selected: false },
+  { id: 'q-4', requestId: 'pr-6', supplierCode: 'SUP-002', supplierName: 'شركة الكيماويات المتحدة', totalValue: 84000, currency: 'EGP', exchangeRate: 1, deliveryDays: 5, technicalScore: 92, selected: false },
+  { id: 'q-5', requestId: 'pr-6', supplierCode: 'SUP-003', supplierName: 'مورد خامات السادات', totalValue: 79000, currency: 'EGP', exchangeRate: 1, deliveryDays: 8, technicalScore: 80, selected: false },
 ];
 
 export const MOCK_PURCHASE_ORDERS: PurchaseOrder[] = [

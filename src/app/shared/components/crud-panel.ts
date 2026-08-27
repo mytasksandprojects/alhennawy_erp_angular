@@ -13,11 +13,11 @@ import { NotificationService } from '../../core/services/notification.service';
 import { AccessService } from '../../core/security/access.service';
 import { exportRowsToCsv } from '../crud/export-csv';
 import { deleteRow, persistRow } from '../crud/crud-write';
-import { emptyDraft, rowMatches, shownColumns, shownFields } from '../crud/form-draft';
+import { emptyDraft, shownColumns, shownFields } from '../crud/form-draft';
 import { withGenerated } from '../crud/serial';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { printWide } from '../crud/print-page';
-import { matchesStock, stockStatusOf } from '../crud/stock-filter';
+import { filterCrudRows } from '../crud/stock-filter';
 import { Translated } from '../translated.base';
 import { UiEntityForm } from './ui-entity-form';
 import { UiIcon } from './ui-icon';
@@ -41,14 +41,18 @@ type Draft = Record<string, string | number | boolean>;
         (input)="search.set($any($event.target).value)"
       />
       @if (hasStockFilter()) {
-        <select
-          class="ui-control"
-          [value]="stock()"
-          (change)="setStock($any($event.target).value)"
-        >
+        <select class="ui-control" [value]="stock()" (change)="setParam('stock', $any($event.target).value)">
           <option value="">{{ t('common.all') }}</option>
           <option value="below">{{ t('warehouse.stats.belowMinimum') }}</option>
           <option value="out">{{ t('warehouse.stats.outOfStock') }}</option>
+        </select>
+      }
+      @if (statusCol(); as col) {
+        <select class="ui-control" [value]="status()" (change)="setParam('status', $any($event.target).value)">
+          <option value="">{{ t('common.all') }}</option>
+          @for (key of statusKeys(col); track key) {
+            <option [value]="key">{{ t((col.keyPrefix ?? '') + key) }}</option>
+          }
         </select>
       }
       @if (dateKey()) {
@@ -107,6 +111,9 @@ type Draft = Record<string, string | number | boolean>;
         [allowPrint]="allow('print')"
         [allowPdf]="allow('pdf')"
         [allowExcel]="allow('excel')"
+        [titleKey]="titleKey()"
+        [printKind]="printKind()"
+        [printAsReport]="moduleId() === 'reports'"
         (rowClick)="openEdit($event)"
       />
     </div>
@@ -141,6 +148,8 @@ export class CrudPanel extends Translated {
   readonly moduleId = input('');
   readonly tabId = input('');
   readonly readOnly = input(false);
+  readonly titleKey = input('');
+  readonly printKind = input<'record' | 'invoice' | 'sheet'>('record');
 
   private readonly api = inject(ApiClientService);
   private readonly access = inject(AccessService);
@@ -158,50 +167,41 @@ export class CrudPanel extends Translated {
   protected readonly toDate = signal('');
   protected readonly search = signal('');
   protected readonly stock = signal('');
+  protected readonly status = signal('');
   protected readonly hasStockFilter = computed(() =>
     this.columns().some((col) => col.key === 'stockStatus'),
   );
-
-  protected readonly dateKey = computed(
-    () =>
-      this.columns().find((col) => col.type === 'date' || col.type === 'datetime')
-        ?.key ?? '',
+  protected readonly statusCol = computed(() =>
+    this.columns().find((col) => col.type === 'badge' && (col.key === 'status' || col.key === 'stage')),
   );
-
-  protected readonly filtered = computed(() => {
-    const key = this.dateKey();
-    const from = this.fromDate();
-    const to = this.toDate();
-    const term = this.search().trim().toLowerCase();
-    const stock = this.stock();
-    return this.rows()
-      .filter((row) => {
-        if (key && (from || to)) {
-          const value = String(row[key] ?? '').slice(0, 10);
-          if (!value) return false;
-          if ((from && value < from) || (to && value > to)) return false;
-        }
-        if (!matchesStock(row, stock)) return false;
-        return !term || rowMatches(row, this.columns(), term, this.t);
-      })
-      .map((row) =>
-        this.hasStockFilter() ? { ...row, stockStatus: stockStatusOf(row) } : row,
-      );
-  });
+  protected readonly dateKey = computed(
+    () => this.columns().find((col) => col.type === 'date' || col.type === 'datetime')?.key ?? '',
+  );
+  protected readonly filtered = computed(() =>
+    filterCrudRows(
+      this.rows(), this.dateKey(), this.fromDate(), this.toDate(),
+      this.stock(), this.status(), this.search(), this.columns(), this.t, this.hasStockFilter(),
+    ),
+  );
 
   constructor() {
     super();
     this.route.queryParamMap.subscribe((params) => {
       this.stock.set(params.get('stock') ?? '');
+      this.status.set(params.get('status') ?? '');
       this.search.set(params.get('q') ?? '');
     });
     queueMicrotask(() => this.reload());
   }
 
-  protected setStock(value: string): void {
+  protected statusKeys(col: TableColumn): string[] {
+    return Object.keys(col.badgeToneMap ?? {});
+  }
+
+  protected setParam(key: string, value: string): void {
     void this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { stock: value || null },
+      queryParams: { [key]: value || null },
       queryParamsHandling: 'merge',
     });
   }
