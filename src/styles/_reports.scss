@@ -229,3 +229,22 @@
 .report-workbook .ui-table tbody tr:last-child td {
   border-bottom: var(--border-width) solid var(--color-border);
 }
+
+.report-totals {
+  margin-block-end: var(--space-md);
+  gap: var(--space-md);
+}
+
+.report-totals .report-pills {
+  pointer-events: none;
+}
+
+.report-totals .column-chart__fill {
+  display: block;
+  width: 100%;
+}
+
+.report-totals__table {
+  margin-block-start: var(--space-sm);
+  width: 100%;
+}

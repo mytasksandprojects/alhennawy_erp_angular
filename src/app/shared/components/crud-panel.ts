@@ -202,11 +202,7 @@ export class CrudPanel extends Translated {
   }
 
   protected setParam(key: string, value: string): void {
-    void this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { [key]: value || null },
-      queryParamsHandling: 'merge',
-    });
+    void this.router.navigate([], { relativeTo: this.route, queryParams: { [key]: value || null }, queryParamsHandling: 'merge' });
   }
 
   protected print(asPdf = false): void {
@@ -236,13 +232,7 @@ export class CrudPanel extends Translated {
   }
 
   protected exportExcel(): void {
-    exportRowsToCsv(
-      this.shownColumns(),
-      this.filtered(),
-      this.endpoint(),
-      this.t,
-      this.i18n.formatNumber,
-    );
+    exportRowsToCsv(this.shownColumns(), this.filtered(), this.endpoint(), this.t, this.i18n.formatNumber);
   }
 
   protected openCreate(): void {

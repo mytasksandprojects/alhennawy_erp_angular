@@ -28,4 +28,8 @@ export const EN_FACTORY: Record<string, string> = {
   'chemicals.tabs.movements': 'Receipts & Issues',
   'chemicals.tabs.accounts': 'Factory Accounts',
   'chemicals.tabs.journal': 'Chemicals Journal',
+  'reports.totals': 'Totals',
+  'reports.records': 'Records',
+  'reports.charts.trend': 'Trend',
+  'reports.charts.other': 'Other',
 };

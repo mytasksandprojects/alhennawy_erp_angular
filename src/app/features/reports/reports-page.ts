@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RuntimeConfigStore } from '../../core/config/runtime-config.store';
 import { CrudPanel } from '../../shared/components/crud-panel';
+import { ModuleDashboard } from '../../shared/components/module-dashboard';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
 import { withReportWord } from '../../shared/crud/print-cell';
 import { routedTab, tabNavigator } from '../../shared/tab-route';
-import { REPORT_CATEGORIES, REPORT_ICONS, ReportDef } from './report-defs';
+import { REPORT_CATEGORIES, REPORT_DASHBOARD, REPORT_ICONS, ReportDef } from './report-defs';
 import { ReportsHub } from './reports-hub';
 import { Translated } from '../../shared/translated.base';
 
@@ -15,7 +16,7 @@ import { Translated } from '../../shared/translated.base';
 @Component({
   selector: 'app-reports-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReportsHub, UiPageHeader, UiIcon, CrudPanel],
+  imports: [ReportsHub, ModuleDashboard, UiPageHeader, UiIcon, CrudPanel],
   template: `
     <ui-page-header titleKey="reports.title" subtitleKey="reports.subtitle" />
 
@@ -56,6 +57,9 @@ import { Translated } from '../../shared/translated.base';
         <span class="report-view__crumb">{{ t(categoryOf(selected()!.id).labelKey) }}</span>
       </div>
       <div class="report-workbook">
+        @for (id of [dashId()]; track id) {
+          <module-dashboard [moduleId]="id" />
+        }
         <crud-panel
           moduleId="reports"
           [tabId]="selected()!.id"
@@ -86,6 +90,10 @@ export class ReportsPage extends Translated {
 
   protected reportHeading(labelKey: string): string {
     return withReportWord(this.t(labelKey), this.t('reports.word'), this.store.language());
+  }
+
+  protected dashId(): string {
+    return REPORT_DASHBOARD[this.selected()!.id] ?? 'sales';
   }
 
   protected iconOf(id: string): string {

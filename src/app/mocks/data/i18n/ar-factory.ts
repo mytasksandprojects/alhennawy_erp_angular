@@ -28,4 +28,8 @@ export const AR_FACTORY: Record<string, string> = {
   'chemicals.tabs.movements': 'إضافة وصرف',
   'chemicals.tabs.accounts': 'حسابات المصنع',
   'chemicals.tabs.journal': 'قيود مصنع الكيماويات',
+  'reports.totals': 'الإجماليات',
+  'reports.records': 'السجلات',
+  'reports.charts.trend': 'الاتجاه',
+  'reports.charts.other': 'أخرى',
 };

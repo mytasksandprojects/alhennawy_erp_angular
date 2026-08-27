@@ -232,4 +232,9 @@ ui-print-doc,
   .print-sheet__foot {
     margin-top: var(--space-md);
   }
+
+  .report-workbook module-dashboard,
+  .report-totals {
+    display: none;
+  }
 }
