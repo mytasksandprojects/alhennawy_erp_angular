@@ -15,6 +15,7 @@ export const AUDIT_COLUMNS: TableColumn[] = [
     type: 'badge',
     keyPrefix: 'system.results.',
     badgeToneMap: { success: 'success', denied: 'warning', failed: 'danger' },
+    statusFlow: [],
   },
 ];
 

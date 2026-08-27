@@ -81,6 +81,7 @@ import {
           [endpoint]="auditUrl"
           [columns]="auditColumns"
           [fields]="auditFields"
+          [readOnly]="true"
         />
       }
     }
