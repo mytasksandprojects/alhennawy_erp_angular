@@ -94,7 +94,27 @@ function parseLines(raw: unknown): Line[] {
   }
 }
 
-/** Join extra item codes so the work-order list still shows one row. */
+/** Join extra item codes so the work-order / export list still shows one row. */
+export function listExportOrders(): ExportOrder[] {
+  return MOCK_EXPORT_ORDERS.map((row) => {
+    const lines = parseLines(row.linesJson);
+    if (!lines.length) {
+      return {
+        ...row,
+        linesJson: row.itemName
+          ? JSON.stringify([{ itemCode: row.itemCode, itemName: row.itemName, quantity: row.quantityKg }])
+          : row.linesJson,
+      };
+    }
+    return {
+      ...row,
+      itemName: lines.map((line) => line.itemName || line.itemCode).filter(Boolean).join(' · '),
+      itemCode: lines.map((line) => line.itemCode).filter(Boolean).join(', '),
+      quantityKg: lines.reduce((sum, line) => sum + Number(line.quantity || 0), 0) || row.quantityKg,
+    };
+  });
+}
+
 export function listWorkOrders(): SalesWorkOrder[] {
   return MOCK_WORK_ORDERS.map((row) => {
     const lines = parseLines(row.linesJson);

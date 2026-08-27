@@ -1,6 +1,7 @@
 import { LookupValue } from '../../core/models/system.models';
 import { MOCK_EMPLOYEES } from './hr.mock';
 import { MOCK_PURCHASE_REQUESTS, MOCK_SUPPLIERS } from './purchasing.mock';
+import { MOCK_CUSTOMERS } from './sales.mock';
 import { MOCK_STOCK_ITEMS } from './warehouse.mock';
 import { MOCK_ROLES } from './roles.mock';
 import {
@@ -176,6 +177,10 @@ export function liveLookups(): LookupValue[] {
     ...MOCK_SUPPLIERS.map((supplier) => ({
       ...liveLk(`live-sup-${supplier.code}`, 'suppliers', supplier),
       value: supplier.code,
+    })),
+    ...MOCK_CUSTOMERS.map((customer) => ({
+      ...liveLk(`live-cus-${customer.code}`, 'customers', customer),
+      value: customer.code,
     })),
     ...MOCK_PURCHASE_REQUESTS.filter((row) => row.status !== 'rejected').map((row) =>
       lk(`live-pr-${row.id}`, 'purchaseRequests', row.id, row.number, row.number),

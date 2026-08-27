@@ -22,7 +22,7 @@ const TOGGLES: SystemToggle[] = [
   { id: 'weighbridge-alerts', labelKey: 'system.toggles.weighbridgeAlerts', descriptionKey: 'system.toggles.weighbridgeAlertsDesc', enabled: true, updatedAt: '2026-08-01T10:15:00', updatedBy: 'admin' },
   { id: 'cargox-integration', labelKey: 'system.toggles.cargox', descriptionKey: 'system.toggles.cargoxDesc', enabled: false, updatedAt: '2026-07-22T14:30:00', updatedBy: 'admin' },
   { id: 'price-visibility-enforcement', labelKey: 'system.toggles.priceGuard', descriptionKey: 'system.toggles.priceGuardDesc', enabled: true, updatedAt: '2026-06-30T09:00:00', updatedBy: 'admin' },
-  { id: 'auto-production-orders', labelKey: 'system.toggles.autoProduction', descriptionKey: 'system.toggles.autoProductionDesc', enabled: false, updatedAt: '2026-06-12T11:45:00', updatedBy: 'admin' },
+  { id: 'auto-production-orders', labelKey: 'system.toggles.autoProduction', descriptionKey: 'system.toggles.autoProductionDesc', enabled: true, updatedAt: '2026-06-12T11:45:00', updatedBy: 'admin' },
 ];
 
 export function listToggles(): SystemToggle[] {

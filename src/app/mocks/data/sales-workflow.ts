@@ -3,8 +3,8 @@ import { ExportDocStage, ExportOrder, Invoice } from '../../core/models/sales.mo
 import { nextGenerated } from '../../shared/crud/serial';
 import { MockApiError } from '../mock-backend.interceptor';
 import { MOCK_EXPORT_SHIPMENTS } from './logistics.mock';
-import { MOCK_PRODUCTION_ORDERS } from './quality.mock';
 import { MOCK_CUSTOMERS, MOCK_EXPORT_ORDERS, MOCK_INVOICES, MOCK_WORK_ORDERS } from './sales.mock';
+import { applyStockPlan, planStock, spawnShortage, statusFromPlan } from './stock-alloc';
 import { MOCK_MOVEMENTS } from './warehouse.mock';
 
 const TARGET_EGP = 6000000;
@@ -61,22 +61,7 @@ export function advanceExportOrder(id: string, body: unknown): ExportOrder {
   if (next === 'production-scheduled') {
     row.productionDeadline = String(patch.productionDeadline || '');
     if (!row.productionDeadline) throw new MockApiError(400, 'invalid-request');
-    MOCK_PRODUCTION_ORDERS.unshift({
-      id: `prd-${Date.now()}`,
-      number: nextGenerated(MOCK_PRODUCTION_ORDERS, 'number', 'PRD'),
-      date: new Date().toISOString(),
-      workOrderNumber: row.number,
-      specCode: row.itemCode || '',
-      specName: row.itemName || '',
-      quantityKg: row.quantityKg || 0,
-      producedKg: 0,
-      wastePercent: 0,
-      rollsTarget: row.rollsCount,
-      rollsProduced: 0,
-      status: 'open',
-      expectedFinish: row.productionDeadline,
-      autoCreated: true,
-    });
+    spawnShortage(row.number, planStock(row as unknown as Record<string, unknown>).parts);
   }
   if (next === 'logistics') {
     row.loadingDate = String(patch.loadingDate || '');
@@ -132,22 +117,58 @@ export function advanceExportOrder(id: string, body: unknown): ExportOrder {
 export function createExportQuotation(body: unknown): ExportOrder {
   const incoming = body as Partial<ExportOrder>;
   const customer = MOCK_CUSTOMERS.find((row) => row.code === incoming.customerCode);
-  if (!customer || !incoming.itemName) throw new MockApiError(400, 'invalid-request');
+  const linesJson = String(incoming.linesJson || '');
+  if (!customer || (!incoming.itemName && (!linesJson || linesJson === '[]'))) {
+    throw new MockApiError(400, 'invalid-request');
+  }
+  const planned = applyStockPlan(
+    {
+      number: nextGenerated(MOCK_EXPORT_ORDERS, 'number', 'EXP'),
+      itemCode: incoming.itemCode || '',
+      itemName: incoming.itemName,
+      quantityKg: Number(incoming.quantityKg || 0),
+      linesJson,
+    },
+    true,
+  );
   const row: ExportOrder = {
     id: `eo-${Date.now()}`,
-    number: nextGenerated(MOCK_EXPORT_ORDERS, 'number', 'EXP'),
+    number: String(planned['number']),
     customerCode: customer.code,
     customerName: customer.name,
     stage: 'supply-order',
-    itemCode: incoming.itemCode || '',
-    itemName: incoming.itemName,
-    quantityKg: Number(incoming.quantityKg || 0),
+    itemCode: String(planned['itemCode'] || ''),
+    itemName: String(planned['itemName'] || incoming.itemName),
+    quantityKg: Number(planned['quantityKg'] || 0),
+    availableFromStockKg: Number(planned['availableFromStockKg'] || 0),
+    toProduceKg: Number(planned['toProduceKg'] || 0),
+    linesJson: String(planned['linesJson'] || linesJson || '') || undefined,
     rollsCount: 0,
     containersCount: 0,
     totalUsd: Number(incoming.totalUsd || 0),
   };
   MOCK_EXPORT_ORDERS.unshift(row);
   return row;
+}
+
+export function prepareExportOrder(row: Record<string, unknown>): Record<string, unknown> {
+  const customer = MOCK_CUSTOMERS.find((item) => item.code === row['customerCode']);
+  const planned = applyStockPlan(row, false);
+  if (customer) {
+    planned['customerCode'] = customer.code;
+    planned['customerName'] = customer.name;
+  }
+  return planned;
+}
+
+/** Local work order — cover from stock first, then raise production for the rest. */
+export function prepareWorkOrder(row: Record<string, unknown>): Record<string, unknown> {
+  const next = applyStockPlan(row, !row['id']);
+  if (!row['id']) {
+    next['status'] = statusFromPlan(Number(next['availableFromStockKg']), Number(next['toProduceKg']));
+  }
+  if (!next['date']) next['date'] = new Date().toISOString();
+  return next;
 }
 
 export function salesDashboard(): DashboardData {

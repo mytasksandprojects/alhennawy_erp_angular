@@ -6,6 +6,7 @@ export interface StatusPick {
   row: Record<string, unknown>;
   key: string;
   status: string;
+  extra?: Record<string, string>;
 }
 
 export function isStatusKey(key: string): boolean {

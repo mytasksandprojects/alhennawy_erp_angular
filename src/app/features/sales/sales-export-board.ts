@@ -12,56 +12,19 @@ import { Translated } from '../../shared/translated.base';
 import { UiBadge } from '../../shared/components/ui-badge';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiModal } from '../../shared/components/ui-modal';
-
-const NEXT: Record<ExportDocStage, ExportDocStage | null> = {
-  quotation: 'proforma',
-  'internal-approval': 'proforma',
-  proforma: 'supply-order',
-  'supply-order': 'warehouse',
-  warehouse: 'production-scheduled',
-  'production-scheduled': 'logistics',
-  logistics: 'production',
-  production: 'issued',
-  issued: 'invoiced',
-  invoiced: null,
-};
-
-const TONE: Record<ExportDocStage, 'neutral' | 'info' | 'warning' | 'success'> = {
-  quotation: 'neutral',
-  'internal-approval': 'info',
-  proforma: 'info',
-  'supply-order': 'info',
-  warehouse: 'warning',
-  'production-scheduled': 'warning',
-  logistics: 'warning',
-  production: 'warning',
-  issued: 'success',
-  invoiced: 'success',
-};
-
-const RANK: Record<ExportDocStage, number> = {
-  quotation: 0,
-  'internal-approval': 1,
-  proforma: 2,
-  'supply-order': 3,
-  warehouse: 4,
-  'production-scheduled': 5,
-  logistics: 6,
-  production: 7,
-  issued: 8,
-  invoiced: 9,
-};
+import { UiRequestLines } from '../../shared/components/ui-request-lines';
+import { EXPORT_NEXT, EXPORT_RANK, EXPORT_TONE, exportLines } from './sales-export.meta';
 
 /** Export pipeline: quotation → proforma → supply order → warehouse → production → logistics → issue → invoices. */
 @Component({
   selector: 'app-sales-export-board',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiBadge, UiIcon, UiModal],
+  imports: [UiBadge, UiIcon, UiModal, UiRequestLines],
   template: `
     <div class="row token-toolbar">
       <div class="row token-toolbar__actions">
         @if (access.canAction('sales', 'exportOrders', 'create')) {
-          <button type="button" class="ui-btn ui-btn--primary" (click)="open.set(true)">
+          <button type="button" class="ui-btn ui-btn--primary" (click)="openCreate()">
             <ui-icon name="plus" [size]="16" />
             {{ t('common.create') }}
           </button>
@@ -92,10 +55,20 @@ const RANK: Record<ExportDocStage, number> = {
           <section class="ui-card stack">
             <div class="row row--between">
               <h2 class="ui-card__title">{{ row.number }}</h2>
-              <ui-badge [labelKey]="'sales.stages.' + row.stage" [tone]="TONE[row.stage]" />
+              <div class="row">
+                @if (access.canAction('sales', 'exportOrders', 'update')) {
+                  <button type="button" class="ui-btn ui-btn--ghost" (click)="openEdit(row)">{{ t('common.edit') }}</button>
+                }
+                <ui-badge [labelKey]="'sales.stages.' + row.stage" [tone]="TONE[row.stage]" />
+              </div>
             </div>
             <p class="text-faint">{{ row.customerCode }} · {{ row.customerName }}</p>
-            <p>{{ row.itemName }} · {{ fmtNum(row.quantityKg) }} {{ t('units.kg') }}</p>
+            @for (line of linesOf(row); track $index) {
+              <p>{{ line.name }} · {{ fmtNum(line.qty) }} {{ t('units.kg') }}</p>
+            }
+            @if (row.toProduceKg != null) {
+              <p>{{ t('sales.fields.available') }}: {{ fmtNum(row.availableFromStockKg || 0) }} · {{ t('sales.fields.toProduce') }}: {{ fmtNum(row.toProduceKg) }}</p>
+            }
             @if (showPrice(row)) {
               <p>{{ t('sales.fields.price') }}: {{ fmtNum(row.totalUsd) }}</p>
             }
@@ -143,7 +116,7 @@ const RANK: Record<ExportDocStage, number> = {
       }
     </div>
     @if (open()) {
-      <ui-modal titleKey="common.create" (closed)="open.set(false)">
+      <ui-modal [titleKey]="editingId() ? 'common.edit' : 'common.create'" (closed)="closeForm()">
         <div class="stack">
           <label class="ui-field">
             <span class="ui-field__label">{{ t('sales.fields.customer') }}</span>
@@ -154,14 +127,7 @@ const RANK: Record<ExportDocStage, number> = {
               }
             </select>
           </label>
-          <label class="ui-field">
-            <span class="ui-field__label">{{ t('weighbridge.fields.item') }}</span>
-            <input class="ui-control" [value]="newItem()" (input)="newItem.set($any($event.target).value)" />
-          </label>
-          <label class="ui-field">
-            <span class="ui-field__label">{{ t('common.quantity') }}</span>
-            <input class="ui-control" type="number" [value]="newQty()" (input)="newQty.set(num($event))" />
-          </label>
+          <ui-request-lines [value]="newLines()" unitKey="units.kg" (valueChange)="newLines.set($event)" />
           @if (canPrice()) {
             <label class="ui-field">
               <span class="ui-field__label">{{ t('sales.fields.price') }}</span>
@@ -169,8 +135,8 @@ const RANK: Record<ExportDocStage, number> = {
             </label>
           }
           <div class="row">
-            <button type="button" class="ui-btn ui-btn--primary" (click)="createOrder()">{{ t('common.save') }}</button>
-            <button type="button" class="ui-btn ui-btn--ghost" (click)="open.set(false)">{{ t('common.cancel') }}</button>
+            <button type="button" class="ui-btn ui-btn--primary" (click)="saveOrder()">{{ t('common.save') }}</button>
+            <button type="button" class="ui-btn ui-btn--ghost" (click)="closeForm()">{{ t('common.cancel') }}</button>
           </div>
         </div>
       </ui-modal>
@@ -185,8 +151,9 @@ export class SalesExportBoard extends Translated {
   private readonly notify = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
 
-  protected readonly TONE = TONE;
+  protected readonly TONE = EXPORT_TONE;
   protected readonly open = signal(false);
+  protected readonly editingId = signal('');
   protected readonly rows = signal<ExportOrder[]>([]);
   protected readonly customers = signal<Customer[]>([]);
   protected readonly selectedId = signal('');
@@ -196,15 +163,14 @@ export class SalesExportBoard extends Translated {
   protected readonly deadline = signal('');
   protected readonly loading = signal('');
   protected readonly newCustomer = signal('');
-  protected readonly newItem = signal('');
-  protected readonly newQty = signal(0);
+  protected readonly newLines = signal('');
   protected readonly newPrice = signal(0);
 
   protected readonly queue = computed(() => {
     const stage = this.stageFilter();
     return [...this.rows()]
       .filter((row) => !stage || row.stage === stage)
-      .sort((a, b) => RANK[a.stage] - RANK[b.stage]);
+      .sort((a, b) => EXPORT_RANK[a.stage] - EXPORT_RANK[b.stage]);
   });
   protected readonly current = computed(() => this.rows().find((row) => row.id === this.selectedId()) ?? null);
 
@@ -223,7 +189,35 @@ export class SalesExportBoard extends Translated {
   }
 
   protected nextOf(row: ExportOrder): ExportDocStage | null {
-    return NEXT[row.stage];
+    return EXPORT_NEXT[row.stage];
+  }
+
+  protected linesOf(row: ExportOrder): { name: string; qty: number }[] {
+    return exportLines(row);
+  }
+
+  protected openCreate(): void {
+    this.editingId.set('');
+    this.newCustomer.set('');
+    this.newLines.set('');
+    this.newPrice.set(0);
+    this.open.set(true);
+  }
+
+  protected openEdit(row: ExportOrder): void {
+    this.editingId.set(row.id);
+    this.newCustomer.set(row.customerCode);
+    this.newLines.set(row.linesJson || '');
+    this.newPrice.set(row.totalUsd || 0);
+    this.open.set(true);
+  }
+
+  protected closeForm(): void {
+    this.open.set(false);
+    this.editingId.set('');
+    this.newCustomer.set('');
+    this.newLines.set('');
+    this.newPrice.set(0);
   }
 
   protected num(event: Event): number {
@@ -247,22 +241,20 @@ export class SalesExportBoard extends Translated {
       });
   }
 
-  protected async createOrder(): Promise<void> {
-    if (!this.newCustomer() || !this.newItem() || this.newQty() <= 0) return;
+  protected async saveOrder(): Promise<void> {
+    if (!this.newCustomer() || !this.newLines() || this.newLines() === '[]') return;
     if (!(await this.confirm.askSave())) return;
-    this.api
-      .post<ExportOrder>(API_ENDPOINTS.sales.exportOrders, {
-        customerCode: this.newCustomer(),
-        itemName: this.newItem(),
-        quantityKg: this.newQty(),
-        totalUsd: this.newPrice(),
-      })
-      .subscribe((row) => {
-        this.notify.success('common.created');
-        this.open.set(false);
-        this.selectedId.set(row.id);
-        this.reload();
-      });
+    const id = this.editingId();
+    const body = { customerCode: this.newCustomer(), linesJson: this.newLines(), totalUsd: this.newPrice() };
+    const req = id
+      ? this.api.put<ExportOrder>(`${API_ENDPOINTS.sales.exportOrders}/${id}`, body)
+      : this.api.post<ExportOrder>(API_ENDPOINTS.sales.exportOrders, body);
+    req.subscribe((row) => {
+      this.notify.success(id ? 'common.updated' : 'common.created');
+      this.closeForm();
+      this.selectedId.set(row.id);
+      this.reload();
+    });
   }
 
   private reload(): void {
@@ -270,8 +262,8 @@ export class SalesExportBoard extends Translated {
       rows: this.api.get<ExportOrder[]>(API_ENDPOINTS.sales.exportOrders),
       customers: this.api.get<Customer[]>(API_ENDPOINTS.sales.customers),
     }).subscribe((pack) => {
-      this.rows.set(pack.rows);
-      this.customers.set(pack.customers);
+      this.rows.set(pack.rows.map((row) => ({ ...row })));
+      this.customers.set(pack.customers.map((row) => ({ ...row })));
       const first = this.queue()[0];
       if (first && !this.queue().some((row) => row.id === this.selectedId())) this.selectedId.set(first.id);
     });

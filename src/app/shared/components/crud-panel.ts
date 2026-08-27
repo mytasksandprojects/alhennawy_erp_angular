@@ -230,7 +230,7 @@ export class CrudPanel extends Translated {
   protected applyStatus(event: StatusPick): void {
     persistRow(
       this.api, this.notifications, this.endpoint(), String(event.row[this.idKey()]),
-      { ...event.row, [event.key]: coerceStatus(event.status) } as Draft,
+      { ...event.row, ...event.extra, [event.key]: coerceStatus(event.status) } as Draft,
       () => this.reload(), () => {},
     );
   }
@@ -294,6 +294,6 @@ export class CrudPanel extends Translated {
   }
 
   private reload(): void {
-    this.api.get<Row[]>(this.endpoint()).subscribe((data) => this.rows.set(data));
+    this.api.get<Row[]>(this.endpoint()).subscribe((data) => this.rows.set(data.map((row) => ({ ...row }))));
   }
 }

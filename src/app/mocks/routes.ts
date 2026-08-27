@@ -28,8 +28,10 @@ import {
   MOCK_INVOICES,
   MOCK_STATEMENTS,
   MOCK_WORK_ORDERS,
+  listExportOrders,
   listWorkOrders,
 } from './data/sales.mock';
+import { prepareExportOrder, prepareWorkOrder } from './data/sales-workflow';
 import { MOCK_EXPORT_SHIPMENTS, MOCK_IMPORTS } from './data/logistics.mock';
 import {
   listEmployees,
@@ -156,7 +158,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/sales/customers', handler: () => MOCK_CUSTOMERS },
   { method: 'GET', pattern: '/sales/customers/:code/statement', handler: ({ path }) => MOCK_STATEMENTS[path.split('/')[3] ?? ''] ?? [] },
   { method: 'GET', pattern: '/sales/work-orders', handler: () => listWorkOrders() },
-  { method: 'GET', pattern: '/sales/export-orders', handler: () => MOCK_EXPORT_ORDERS },
+  { method: 'GET', pattern: '/sales/export-orders', handler: () => listExportOrders() },
   { method: 'GET', pattern: '/sales/invoices', handler: () => MOCK_INVOICES },
 
   { method: 'GET', pattern: '/logistics/imports', handler: () => MOCK_IMPORTS },
@@ -226,8 +228,8 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/purchasing/suppliers', MOCK_SUPPLIERS, 'code'),
   ...crudRoutes('/purchasing/quotations', MOCK_QUOTATIONS),
   ...crudRoutes('/sales/customers', MOCK_CUSTOMERS, 'code'),
-  ...crudRoutes('/sales/work-orders', MOCK_WORK_ORDERS),
-  ...crudRoutes('/sales/export-orders', MOCK_EXPORT_ORDERS, 'id', false),
+  ...crudRoutes('/sales/work-orders', MOCK_WORK_ORDERS, 'id', true, prepareWorkOrder),
+  ...crudRoutes('/sales/export-orders', MOCK_EXPORT_ORDERS, 'id', false, prepareExportOrder),
   ...crudRoutes('/sales/invoices', MOCK_INVOICES),
   ...crudRoutes('/logistics/imports', MOCK_IMPORTS),
   ...crudRoutes('/logistics/exports', MOCK_EXPORT_SHIPMENTS),

@@ -68,6 +68,10 @@ export interface ExportOrder {
   itemCode?: string;
   itemName?: string;
   quantityKg?: number;
+  /** JSON cart — same shape as work-order / purchase-request lines. */
+  linesJson?: string;
+  availableFromStockKg?: number;
+  toProduceKg?: number;
   rollsCount: number;
   containersCount: number;
   productionDeadline?: string;

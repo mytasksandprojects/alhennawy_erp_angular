@@ -78,7 +78,7 @@ export const IMPORT_FIELDS: FormField[] = [
 
 export const EXPORT_SHIPMENT_FIELDS: FormField[] = [
   { key: 'number', labelKey: 'common.number', generated: true, generatedPrefix: 'EXP' },
-  { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
+  { key: 'customerCode', labelKey: 'sales.fields.customer', type: 'select', lookup: 'customers', copyKey: 'customerName', required: true },
   { key: 'stage', labelKey: 'logistics.fields.stage', type: 'select', options: keysToOptions('logistics.exportStages.', ['booking', 'loading', 'shipped', 'documents', 'delivered', 'closed']) },
   { key: 'containersCount', labelKey: 'logistics.fields.containers', type: 'number' },
   { key: 'vessel', labelKey: 'logistics.fields.vessel', multilang: true },

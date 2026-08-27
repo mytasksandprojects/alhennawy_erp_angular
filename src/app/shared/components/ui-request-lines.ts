@@ -22,17 +22,16 @@ import { UiIcon } from './ui-icon';
       <div class="ui-request-lines__add">
         <label class="ui-field">
           <span class="ui-field__label">{{ t('warehouse.tabs.items') }}</span>
-          <input
+          <select
             class="ui-control"
-            [attr.list]="listId"
             [value]="name()"
-            (input)="name.set($any($event.target).value)"
-          />
-          <datalist [id]="listId">
+            (change)="name.set($any($event.target).value)"
+          >
+            <option value="">{{ t('common.search') }}</option>
             @for (option of items(); track option.value) {
-              <option [value]="option.label ?? option.value"></option>
+              <option [value]="option.value">{{ option.label ?? option.value }}</option>
             }
-          </datalist>
+          </select>
         </label>
         <label class="ui-field">
           <span class="ui-field__label">{{ t('common.quantity') }}</span>
@@ -86,10 +85,10 @@ import { UiIcon } from './ui-icon';
 })
 export class UiRequestLines extends Translated {
   readonly value = input('');
+  readonly unitKey = input('units.piece');
   readonly valueChange = output<string>();
 
   private readonly lookups = inject(LookupService);
-  protected readonly listId = `pr-stock-${Math.random().toString(36).slice(2, 8)}`;
   protected readonly name = signal('');
   protected readonly note = signal('');
   protected readonly qty = signal(1);
@@ -112,14 +111,12 @@ export class UiRequestLines extends Translated {
     const name = this.name().trim();
     const quantity = this.qty();
     if (!name || quantity <= 0) return;
-    const match = this.items().find(
-      (option) => option.value === name || (option.label ?? '') === name,
-    );
+    const match = this.items().find((option) => option.value === name);
     const next: PurchaseRequestLine = {
       itemCode: match?.value ?? '',
       itemName: match?.label ?? name,
       quantity,
-      unitKey: 'units.piece',
+      unitKey: this.unitKey(),
       specification: this.note().trim() || undefined,
     };
     const lines = [...this.lines()];

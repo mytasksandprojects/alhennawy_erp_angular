@@ -63,6 +63,7 @@ export const MAINTENANCE_COLUMNS: TableColumn[] = [
     keyPrefix: 'quality.maintenanceStatus.',
     badgeToneMap: { pending: 'warning', scheduled: 'info', 'in-progress': 'warning', done: 'success' },
     statusFlow: ['pending', 'scheduled', 'in-progress', 'done'],
+    statusNeed: { scheduled: { key: 'scheduledAt', labelKey: 'maintenance.fields.scheduledAt' } },
   },
 ];
 

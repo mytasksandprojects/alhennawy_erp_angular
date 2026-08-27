@@ -1,4 +1,5 @@
 import { AlertItem, DashboardData } from '../../core/models/common.models';
+import { MockApiError } from '../mock-backend.interceptor';
 import { MOCK_MAINTENANCE } from './quality.mock';
 
 type Row = Record<string, unknown>;
@@ -44,6 +45,7 @@ export function prepareMaintenance(source: string) {
       status: row['status'] || 'pending',
       date: row['date'] || new Date().toISOString(),
     };
+    if (next['status'] === 'scheduled' && !next['scheduledAt']) throw new MockApiError(400, 'invalid-request');
     if (next['scheduledAt'] && next['status'] === 'pending') next['status'] = 'scheduled';
     if (isNew) notify(next);
     return next;

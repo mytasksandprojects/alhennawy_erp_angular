@@ -31,6 +31,8 @@ export interface TableColumn<T = Record<string, unknown>> {
   badgeToneMap?: Record<string, 'success' | 'warning' | 'danger' | 'info' | 'neutral'>;
   /** Ordered workflow for row status buttons. Danger tones stay as extras. */
   statusFlow?: string[];
+  /** Extra field the user must fill before that status is saved. */
+  statusNeed?: Record<string, { key: string; labelKey: string }>;
 }
 
 /** In-app destination used by clickable KPI cards and alert rows. */

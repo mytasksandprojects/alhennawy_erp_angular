@@ -156,7 +156,7 @@ type Row = Record<string, unknown>;
                       <ui-status-actions
                         [col]="col"
                         [value]="asText(row[col.key])"
-                        (picked)="statusChange.emit({ row, key: col.key, status: $event })"
+                        (picked)="statusChange.emit({ row, key: col.key, ...$event })"
                       />
                     }
                     @if (allowPrint()) {
