@@ -21,17 +21,7 @@ const PARENTS: [string, string, string][] = [
   ['coloredMg', 'إم جي ملون', 'Colored MG'],
 ];
 
-const PLY: [string, string[]][] = [
-  ['facial', ['2', '3', '4']],
-  ['toilet', ['1', '2', '3']],
-  ['maxiRoll', ['1']],
-  ['kitchenTowel', ['1', '2', '3']],
-  ['towel', ['1', '2', '3']],
-  ['napkin', ['1']],
-  ['coloredNapkin', ['1', '2']],
-  ['mg', ['1']],
-  ['coloredMg', ['1']],
-];
+const PLIES = ['1', '2', '3', '4'];
 
 const COLORS: [string, string, string][] = [
   ['white', 'أبيض', 'White'],
@@ -52,8 +42,6 @@ export const QC_LOOKUPS: LookupValue[] = [
   lk('lv-mix-1', 'qcMix', 'qc.mix.mixed', 'مخلوط', 'Mixed'),
   lk('lv-mix-2', 'qcMix', 'qc.mix.pure', 'نقي', 'Pure'),
   ...PARENTS.map(([id, ar, en]) => lk(`lv-par-${id}`, 'qcParents', `qc.parents.${id}`, ar, en)),
-  ...PLY.flatMap(([id, plies]) =>
-    plies.map((ply) => lk(`lv-ply-${id}-${ply}`, 'qcPly', ply, ply, ply, `qc.parents.${id}`)),
-  ),
+  ...PLIES.map((ply) => lk(`lv-ply-${ply}`, 'qcPly', ply, ply, ply)),
   ...COLORS.map(([id, ar, en]) => lk(`lv-col-${id}`, 'qcColors', `qc.colors.${id}`, ar, en)),
 ];

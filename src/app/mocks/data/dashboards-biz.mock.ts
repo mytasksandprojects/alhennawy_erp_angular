@@ -201,7 +201,7 @@ export const HR_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'ha-1', messageKey: 'hr.alerts.contractExpiring', params: ['hen281'], severity: 'warning', date: daysAgo(0), route: '/hr', query: { tab: 'employees', q: 'hen281' } },
+    { id: 'ha-1', messageKey: 'hr.alerts.contractExpiring', params: ['HASSAN MOHAMED EMP281'], severity: 'warning', date: daysAgo(0), route: '/hr', query: { tab: 'employees', q: 'EMP281' } },
     { id: 'ha-2', messageKey: 'hr.alerts.deviceSyncFailed', params: ['ZK-WH-3'], severity: 'danger', date: daysAgo(1), route: '/hr', query: { tab: 'zk', q: 'ZK-WH-3' } },
   ],
 };

@@ -32,6 +32,7 @@ import {
   listWorkOrders,
 } from './data/sales.mock';
 import { prepareExportOrder, prepareWorkOrder } from './data/sales-workflow';
+import { syncQcParent } from './data/stock-alloc';
 import { MOCK_EXPORT_SHIPMENTS, MOCK_IMPORTS } from './data/logistics.mock';
 import {
   listEmployees,
@@ -277,6 +278,6 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/quality/material-inspections', MOCK_MATERIAL_INSPECTIONS),
   ...crudRoutes('/quality/chemical-consumption', MOCK_CHEMICAL_CONSUMPTION),
   ...crudRoutes('/quality/maintenance', MOCK_MAINTENANCE, 'id', true, prepareMaintenance('quality')),
-  ...crudRoutes('/production/orders', MOCK_PRODUCTION_ORDERS),
+  ...crudRoutes('/production/orders', MOCK_PRODUCTION_ORDERS, 'id', true, syncQcParent),
   ...ACCESS_ROUTES,
 ];

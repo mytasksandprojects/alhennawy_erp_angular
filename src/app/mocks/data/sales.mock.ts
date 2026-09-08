@@ -16,14 +16,13 @@ export const MOCK_CUSTOMERS: Customer[] = SEED_CUSTOMERS;
 const qc = (
   mix: 'mixed' | 'pure',
   product: string,
-  parent: string,
   ply: string,
   gsm: number,
   width: number,
 ) => ({
   mixType: `qc.mix.${mix}`,
   productName: product,
-  parentFamily: `qc.parents.${parent}`,
+  parentFamily: product,
   ply,
   color: 'qc.colors.white',
   gsm,
@@ -32,10 +31,10 @@ const qc = (
 });
 
 export const MOCK_WORK_ORDERS: SalesWorkOrder[] = [
-  { id: 'wo-1', number: 'SO-2026-0118', date: daysAgo(1), channel: 'local', customerCode: 'CUS-001', customerName: 'العالمية للورق الصحي', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantityKg: 14500, status: 'invoiced', availableFromStockKg: 14500, toProduceKg: 0, currency: 'EGP', exchangeRate: 1, agreedPrice: 27.5, collectionStatusKey: 'sales.collection.partial', collectionPercent: 50, ...qc('mixed', 'سوبر مكس مطبخ', 'kitchenTowel', '2', 22, 160) },
-  { id: 'wo-2', number: 'SO-2026-0119', date: daysAgo(0), channel: 'local', customerCode: 'CUS-002', customerName: 'مؤسسة مسك للتجارة والتوريدات', itemCode: 'FIN-TWL-25', itemName: 'تواليت فاخر ج ٢٥', quantityKg: 22000, status: 'in-production', availableFromStockKg: 8250, toProduceKg: 13750, currency: 'EGP', exchangeRate: 1, agreedPrice: 31, collectionStatusKey: 'sales.collection.deposit', collectionAmount: 200000, ...qc('pure', 'تواليت فاخر', 'toilet', '2', 25, 113) },
-  { id: 'wo-3', number: 'SO-2026-0120', date: daysAgo(0), channel: 'local', customerCode: 'CUS-003', customerName: 'شركة الربيع لمنتجات الورق', itemCode: 'FIN-NPK-18', itemName: 'نابكن سادة ج ١٨', quantityKg: 9000, status: 'late', availableFromStockKg: 0, toProduceKg: 9000, currency: 'EGP', exchangeRate: 1, agreedPrice: 29.25, collectionStatusKey: 'sales.collection.pending', ...qc('pure', 'نابكن سادة', 'napkin', '1', 18, 250) },
-  { id: 'wo-4', number: 'SO-2026-0117', date: daysAgo(4), channel: 'export', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantityKg: 44000, status: 'ready', availableFromStockKg: 44000, toProduceKg: 0, currency: 'USD', exchangeRate: 48.5, agreedPrice: 0.92, collectionStatusKey: 'sales.collection.paid', ...qc('mixed', 'Kitchen Super Mix', 'kitchenTowel', '2', 22, 160) },
+  { id: 'wo-1', number: 'SO-2026-0118', date: daysAgo(1), channel: 'local', customerCode: 'CUS-001', customerName: 'العالمية للورق الصحي', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantityKg: 14500, status: 'invoiced', availableFromStockKg: 14500, toProduceKg: 0, currency: 'EGP', exchangeRate: 1, agreedPrice: 27.5, collectionStatusKey: 'sales.collection.partial', collectionPercent: 50, ...qc('mixed', 'سوبر مكس مطبخ', '2', 22, 160) },
+  { id: 'wo-2', number: 'SO-2026-0119', date: daysAgo(0), channel: 'local', customerCode: 'CUS-002', customerName: 'مؤسسة مسك للتجارة والتوريدات', itemCode: 'FIN-TWL-25', itemName: 'تواليت فاخر ج ٢٥', quantityKg: 22000, status: 'in-production', availableFromStockKg: 8250, toProduceKg: 13750, currency: 'EGP', exchangeRate: 1, agreedPrice: 31, collectionStatusKey: 'sales.collection.deposit', collectionAmount: 200000, ...qc('pure', 'تواليت فاخر', '2', 25, 113) },
+  { id: 'wo-3', number: 'SO-2026-0120', date: daysAgo(0), channel: 'local', customerCode: 'CUS-003', customerName: 'شركة الربيع لمنتجات الورق', itemCode: 'FIN-NPK-18', itemName: 'نابكن سادة ج ١٨', quantityKg: 9000, status: 'late', availableFromStockKg: 0, toProduceKg: 9000, currency: 'EGP', exchangeRate: 1, agreedPrice: 29.25, collectionStatusKey: 'sales.collection.pending', ...qc('pure', 'نابكن سادة', '1', 18, 250) },
+  { id: 'wo-4', number: 'SO-2026-0117', date: daysAgo(4), channel: 'export', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantityKg: 44000, status: 'ready', availableFromStockKg: 44000, toProduceKg: 0, currency: 'USD', exchangeRate: 48.5, agreedPrice: 0.92, collectionStatusKey: 'sales.collection.paid', ...qc('mixed', 'Kitchen Super Mix', '2', 22, 160) },
 ];
 
 export const MOCK_EXPORT_ORDERS: ExportOrder[] = [

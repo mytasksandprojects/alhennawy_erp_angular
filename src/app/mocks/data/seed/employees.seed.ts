@@ -2,9 +2,19 @@ import { Employee } from '../../../core/models/hr.models';
 
 const IMG = 'assets/branding/alhennawy-logo.png';
 
+export function staffCode(nameEn: string, n: number): string {
+  const label = nameEn.trim().split(/\s+/).filter(Boolean).slice(0, 2).join(' ').toUpperCase() || 'EMPLOYEE';
+  return `${label} EMP${String(n).padStart(3, '0')}`;
+}
+
+export function staffSeq(code: string): number {
+  const match = String(code).match(/EMP\s*(\d+)\s*$/i);
+  return match ? Number(match[1]) : 0;
+}
+
 function emp(
   id: string,
-  code: string,
+  _code: string,
   name: string,
   nameEn: string,
   departmentKey: string,
@@ -12,8 +22,9 @@ function emp(
   jobTitleKey: string,
   roleId: string,
 ): Employee {
+  const n = Number(id.replace(/\D/g, '')) || 0;
   return {
-    id, code, name, name_en: nameEn, email: `${code.toLowerCase()}@alhennawy.net`,
+    id, code: staffCode(nameEn, n), name, name_en: nameEn, email: `${id.replace(/^e-/, '')}@alhennawy.net`,
     password: 'emp123', departmentKey, sectionKey, jobTitleKey, hireDate: '2020-01-01',
     status: 'active', leaveBalanceDays: 21, photoUrl: IMG, drugTestImageUrl: IMG,
     roleId, workStart: '08:00', workEnd: '16:00',

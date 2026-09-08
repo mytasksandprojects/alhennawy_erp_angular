@@ -6,8 +6,7 @@ import {
   ZkSyncLog,
 } from '../../core/models/hr.models';
 import { MockApiError } from '../mock-backend.interceptor';
-import { nextGenerated } from '../../shared/crud/serial';
-import { SEED_EMPLOYEES } from './seed/employees.seed';
+import { SEED_EMPLOYEES, staffCode, staffSeq } from './seed/employees.seed';
 
 /** MOCK LAYER — HR data incl. ZKTeco device sync logs. */
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
@@ -18,7 +17,7 @@ const IMG = 'assets/branding/alhennawy-logo.png';
 const FILES = `${IMG}#شهادة خبرة.pdf|${IMG}#شهادة تدريب.pdf`;
 
 export const MOCK_EMPLOYEES: Employee[] = [
-  { id: 'e-1', code: 'EMP-0001', name: 'محمد نبيل', name_en: 'Mohamed Nabil', email: 'mohamed.nabil@alhennawy.net', password: 'admin123', departmentKey: 'administrations.it', jobTitleKey: 'jobs.systemAdmin', hireDate: '2020-03-15', status: 'active', leaveBalanceDays: 18, salary: 28500, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: FILES, roleId: 'admin', workStart: '08:00', workEnd: '16:00' },
+  { id: 'e-1', code: staffCode('Mohamed Nabil', 1), name: 'محمد نبيل', name_en: 'Mohamed Nabil', email: 'mohamed.nabil@alhennawy.net', password: 'admin123', departmentKey: 'administrations.it', jobTitleKey: 'jobs.systemAdmin', hireDate: '2020-03-15', status: 'active', leaveBalanceDays: 18, salary: 28500, photoUrl: IMG, drugTestImageUrl: IMG, fileUrls: FILES, roleId: 'admin', workStart: '08:00', workEnd: '16:00' },
   ...SEED_EMPLOYEES,
 ];
 
@@ -41,6 +40,19 @@ export function findEmployeeLogin(login: string, password: string): Employee | u
   );
 }
 
+function nextStaffSeq(): number {
+  return MOCK_EMPLOYEES.reduce((max, row) => Math.max(max, staffSeq(row.code)), 0) + 1;
+}
+
+function namedCode(row: Employee, prev?: Employee): string {
+  const n = staffSeq(prev?.code || row.code || '') || nextStaffSeq();
+  return staffCode(String(row['name_en'] || row.name || 'EMPLOYEE'), n);
+}
+
+function codeOf(id: string): string {
+  return MOCK_EMPLOYEES.find((row) => row.id === id)?.code ?? id;
+}
+
 export function upsertEmployee(body: unknown): Employee {
   const incoming = body as Employee;
   const email = String(incoming.email ?? '').trim().toLowerCase();
@@ -53,7 +65,7 @@ export function upsertEmployee(body: unknown): Employee {
   if (index >= 0) {
     const prev = MOCK_EMPLOYEES[index];
     const password = String(incoming.password ?? '') || prev.password || '';
-    MOCK_EMPLOYEES[index] = { ...prev, ...incoming, email, password, id: prev.id };
+    MOCK_EMPLOYEES[index] = { ...prev, ...incoming, email, password, id: prev.id, code: namedCode(incoming, prev) };
     return withoutPassword(MOCK_EMPLOYEES[index]);
   }
   const password = String(incoming.password ?? '');
@@ -61,7 +73,7 @@ export function upsertEmployee(body: unknown): Employee {
   const row: Employee = {
     ...incoming,
     id: incoming.id || `e-${Date.now()}`,
-    code: incoming.code || nextGenerated(MOCK_EMPLOYEES, 'code', 'EMP'),
+    code: namedCode(incoming),
     email,
     password,
   };
@@ -76,13 +88,13 @@ export function deleteEmployee(id: string): Employee {
 }
 
 export const MOCK_ATTENDANCE: AttendanceRecord[] = [
-  { id: 'a-1', employeeCode: 'EMP-0001', employeeName: 'محمد نبيل', date: today, checkIn: '08:02', checkOut: '16:10', lateMinutes: 2, overtimeMinutes: 10, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
-  { id: 'a-1b', employeeCode: 'EMP-0001', employeeName: 'محمد نبيل', date: daysAgo(1).slice(0, 10), checkIn: '07:58', checkOut: '16:05', lateMinutes: 0, overtimeMinutes: 5, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
-  { id: 'a-1c', employeeCode: 'EMP-0001', employeeName: 'محمد نبيل', date: daysAgo(2).slice(0, 10), checkIn: '08:11', checkOut: '16:02', lateMinutes: 11, overtimeMinutes: 2, deviceId: 'APP', statusKey: 'hr.attendance.late' },
-  { id: 'a-1d', employeeCode: 'EMP-0001', employeeName: 'محمد نبيل', date: daysAgo(3).slice(0, 10), checkIn: '08:00', checkOut: '16:00', lateMinutes: 0, overtimeMinutes: 0, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
-  { id: 'a-2', employeeCode: 'hen62', employeeName: 'محمد نبيل كامل سالم', date: today, checkIn: '07:55', checkOut: '16:20', lateMinutes: 0, overtimeMinutes: 20, deviceId: 'ZK-PLANT-2', statusKey: 'hr.attendance.present' },
-  { id: 'a-3', employeeCode: 'hen15', employeeName: 'هشام إبراهيم محمد احمد', date: today, checkIn: '08:04', checkOut: '16:08', lateMinutes: 4, overtimeMinutes: 8, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
-  { id: 'a-4', employeeCode: 'hen75', employeeName: 'أحمد حمدي شعبان حمزة', date: today, checkIn: '08:11', lateMinutes: 11, overtimeMinutes: 0, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.late' },
+  { id: 'a-1', employeeCode: codeOf('e-1'), employeeName: 'محمد نبيل', date: today, checkIn: '08:02', checkOut: '16:10', lateMinutes: 2, overtimeMinutes: 10, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
+  { id: 'a-1b', employeeCode: codeOf('e-1'), employeeName: 'محمد نبيل', date: daysAgo(1).slice(0, 10), checkIn: '07:58', checkOut: '16:05', lateMinutes: 0, overtimeMinutes: 5, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
+  { id: 'a-1c', employeeCode: codeOf('e-1'), employeeName: 'محمد نبيل', date: daysAgo(2).slice(0, 10), checkIn: '08:11', checkOut: '16:02', lateMinutes: 11, overtimeMinutes: 2, deviceId: 'APP', statusKey: 'hr.attendance.late' },
+  { id: 'a-1d', employeeCode: codeOf('e-1'), employeeName: 'محمد نبيل', date: daysAgo(3).slice(0, 10), checkIn: '08:00', checkOut: '16:00', lateMinutes: 0, overtimeMinutes: 0, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
+  { id: 'a-2', employeeCode: codeOf('e-hen62'), employeeName: 'محمد نبيل كامل سالم', date: today, checkIn: '07:55', checkOut: '16:20', lateMinutes: 0, overtimeMinutes: 20, deviceId: 'ZK-PLANT-2', statusKey: 'hr.attendance.present' },
+  { id: 'a-3', employeeCode: codeOf('e-hen15'), employeeName: 'هشام إبراهيم محمد احمد', date: today, checkIn: '08:04', checkOut: '16:08', lateMinutes: 4, overtimeMinutes: 8, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.present' },
+  { id: 'a-4', employeeCode: codeOf('e-hen75'), employeeName: 'أحمد حمدي شعبان حمزة', date: today, checkIn: '08:11', lateMinutes: 11, overtimeMinutes: 0, deviceId: 'ZK-GATE-1', statusKey: 'hr.attendance.late' },
 ];
 
 export const MOCK_ZK_LOGS: ZkSyncLog[] = [
@@ -92,16 +104,16 @@ export const MOCK_ZK_LOGS: ZkSyncLog[] = [
 ];
 
 export const MOCK_LEAVES: LeaveRequest[] = [
-  { id: 'l-1', employeeCode: 'hen171', employeeName: 'على سيد على اسماعيل', typeKey: 'hr.leaveTypes.annual', from: daysAgo(2).slice(0, 10), to: daysAgo(-3).slice(0, 10), days: 5, status: 'approved' },
-  { id: 'l-2', employeeCode: 'hen6', employeeName: 'احمد ماهر محمد علي عبد الله', typeKey: 'hr.leaveTypes.casual', from: daysAgo(-7).slice(0, 10), to: daysAgo(-7).slice(0, 10), days: 1, status: 'pending' },
+  { id: 'l-1', employeeCode: codeOf('e-hen171'), employeeName: 'على سيد على اسماعيل', typeKey: 'hr.leaveTypes.annual', from: daysAgo(2).slice(0, 10), to: daysAgo(-3).slice(0, 10), days: 5, status: 'approved' },
+  { id: 'l-2', employeeCode: codeOf('e-hen6'), employeeName: 'احمد ماهر محمد علي عبد الله', typeKey: 'hr.leaveTypes.casual', from: daysAgo(-7).slice(0, 10), to: daysAgo(-7).slice(0, 10), days: 1, status: 'pending' },
 ];
 
 /** تقييم المديرين للموظفين */
 export const MOCK_EMPLOYEE_REVIEWS: PerformanceReview[] = [
-  { id: 'pr-1', subjectCode: 'hen50', subjectName: 'محمد عبد الغفار محمد ابو ادريس', reviewerName: 'أحمد حمدي شعبان حمزة', period: '2026-Q2', score: 4.7, rating: 'excellent', comment: 'التزام عالٍ على وردية الماكينة', date: daysAgo(12) },
-  { id: 'pr-2', subjectCode: 'hen171', subjectName: 'على سيد على اسماعيل', reviewerName: 'هشام إبراهيم محمد احمد', period: '2026-Q2', score: 4.1, rating: 'good', comment: 'دقة في القيود اليومية', date: daysAgo(10) },
-  { id: 'pr-3', subjectCode: 'hen158', subjectName: 'محمد رزق على عمر', reviewerName: 'محمد نبيل كامل سالم', period: '2026-Q2', score: 2.9, rating: 'average', comment: 'يحتاج تدريب إضافي على الجرد', date: daysAgo(8) },
-  { id: 'pr-4', subjectCode: 'hen75', subjectName: 'أحمد حمدي شعبان حمزة', reviewerName: 'محمد نبيل', period: '2026-Q2', score: 4.9, rating: 'excellent', comment: 'أفضل معدل اكتشاف عيوب في المعمل', date: daysAgo(6) },
+  { id: 'pr-1', subjectCode: codeOf('e-hen50'), subjectName: 'محمد عبد الغفار محمد ابو ادريس', reviewerName: 'أحمد حمدي شعبان حمزة', period: '2026-Q2', score: 4.7, rating: 'excellent', comment: 'التزام عالٍ على وردية الماكينة', date: daysAgo(12) },
+  { id: 'pr-2', subjectCode: codeOf('e-hen171'), subjectName: 'على سيد على اسماعيل', reviewerName: 'هشام إبراهيم محمد احمد', period: '2026-Q2', score: 4.1, rating: 'good', comment: 'دقة في القيود اليومية', date: daysAgo(10) },
+  { id: 'pr-3', subjectCode: codeOf('e-hen158'), subjectName: 'محمد رزق على عمر', reviewerName: 'محمد نبيل كامل سالم', period: '2026-Q2', score: 2.9, rating: 'average', comment: 'يحتاج تدريب إضافي على الجرد', date: daysAgo(8) },
+  { id: 'pr-4', subjectCode: codeOf('e-hen75'), subjectName: 'أحمد حمدي شعبان حمزة', reviewerName: 'محمد نبيل', period: '2026-Q2', score: 4.9, rating: 'excellent', comment: 'أفضل معدل اكتشاف عيوب في المعمل', date: daysAgo(6) },
 ];
 
 /** تقييم الموظفين لمديريهم */

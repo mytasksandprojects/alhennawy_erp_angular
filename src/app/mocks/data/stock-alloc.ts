@@ -102,12 +102,18 @@ export function planStock(row: Row): {
   return { parts, available, toProduce, quantityKg: available + toProduce };
 }
 
+export function syncQcParent(row: Row): Row {
+  const name = String(row['productName'] || row['parentFamily'] || '').trim();
+  return { ...row, productName: name, parentFamily: name };
+}
+
 function qcOf(row?: Row) {
   if (!row) return {};
+  const name = String(row['productName'] || row['parentFamily'] || '');
   return {
     mixType: String(row['mixType'] || ''),
-    productName: String(row['productName'] || ''),
-    parentFamily: String(row['parentFamily'] || ''),
+    productName: name,
+    parentFamily: name,
     ply: String(row['ply'] || ''),
     color: String(row['color'] || ''),
     gsm: Number(row['gsm'] || 0),

@@ -120,7 +120,7 @@ export function reviewFields(
 }
 
 export const EMPLOYEE_FIELDS: FormField[] = [
-  { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'EMP' },
+  { key: 'code', labelKey: 'common.code' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'email', labelKey: 'hr.fields.email', type: 'email', required: true },
   { key: 'password', labelKey: 'auth.password', type: 'password', required: true },

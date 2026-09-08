@@ -4,7 +4,7 @@ import { nextGenerated } from '../../shared/crud/serial';
 import { MockApiError } from '../mock-backend.interceptor';
 import { MOCK_EXPORT_SHIPMENTS } from './logistics.mock';
 import { MOCK_CUSTOMERS, MOCK_EXPORT_ORDERS, MOCK_INVOICES, MOCK_WORK_ORDERS } from './sales.mock';
-import { applyStockPlan, planStock, spawnShortage, statusFromPlan } from './stock-alloc';
+import { applyStockPlan, planStock, spawnShortage, statusFromPlan, syncQcParent } from './stock-alloc';
 import { MOCK_MOVEMENTS } from './warehouse.mock';
 
 const TARGET_EGP = 6000000;
@@ -168,7 +168,7 @@ export function prepareWorkOrder(row: Record<string, unknown>): Record<string, u
     next['status'] = statusFromPlan(Number(next['availableFromStockKg']), Number(next['toProduceKg']));
   }
   if (!next['date']) next['date'] = new Date().toISOString();
-  return next;
+  return syncQcParent(next);
 }
 
 export function salesDashboard(): DashboardData {
