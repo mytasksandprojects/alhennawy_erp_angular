@@ -91,6 +91,8 @@ export interface SelectOption {
   labelKey?: string;
   /** Raw display text (admin-managed lookups) when labelKey is absent. */
   label?: string;
+  /** When set, the option is shown only if the parent field matches. */
+  parentValue?: string;
 }
 
 /** Field used by the shared create/edit form — labels are translation keys. */
@@ -163,6 +165,8 @@ export interface FormField {
   rateKey?: string;
   /** Lookup selects only: copy the chosen option label into this draft key. */
   copyKey?: string;
+  /** Lookup selects only: keep options whose parentValue matches this draft key. */
+  filterBy?: string;
   /** Issued by the system on create — hidden in the add form, read-only later. */
   generated?: boolean;
   generatedPrefix?: string;

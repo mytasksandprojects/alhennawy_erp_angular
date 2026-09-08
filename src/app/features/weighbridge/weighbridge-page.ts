@@ -16,6 +16,7 @@ import { UiEntityForm } from '../../shared/components/ui-entity-form';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiModal } from '../../shared/components/ui-modal';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
+import { UiPager } from '../../shared/components/ui-pager';
 import { UiTable } from '../../shared/components/ui-table';
 import { Translated } from '../../shared/translated.base';
 import { WeighbridgeApiService } from './weighbridge-api.service';
@@ -36,6 +37,7 @@ const TYPE_FILTERS = ['purchase', 'dasht-purchase', 'sales', 'returns', 'purchas
     ModuleDashboard,
     UiPageHeader,
     UiTable,
+    UiPager,
     UiIcon,
     UiModal,
     UiEntityForm,
@@ -87,6 +89,13 @@ const TYPE_FILTERS = ['purchase', 'dasht-purchase', 'sales', 'returns', 'purchas
         [clickable]="true"
         titleKey="weighbridge.ticketsTitle"
         (rowClick)="openTicket($any($event))"
+      />
+      <ui-pager
+        [page]="page()"
+        [pageSize]="pageSize()"
+        [total]="total()"
+        (pageChange)="page.set($event); reload()"
+        (pageSizeChange)="pageSize.set($event); page.set(1); reload()"
       />
       <p class="ui-field__hint" style="margin-top: var(--space-sm)">
         {{ t('weighbridge.serialRule') }}
@@ -163,6 +172,9 @@ export class WeighbridgePage extends Translated implements OnInit {
   protected readonly typeFilter = signal('');
   protected readonly statusFilter = signal('');
   protected readonly search = signal('');
+  protected readonly page = signal(1);
+  protected readonly pageSize = signal(20);
+  protected readonly total = signal(0);
   protected readonly selected = signal<WeighingTicket | null>(null);
   protected readonly editing = signal<WeighingTicket | null>(null);
   protected readonly draft = signal<Draft>({});
@@ -192,6 +204,7 @@ export class WeighbridgePage extends Translated implements OnInit {
   }
 
   protected setTypeFilter(value: string): void {
+    this.page.set(1);
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { type: value || null },
@@ -200,6 +213,7 @@ export class WeighbridgePage extends Translated implements OnInit {
   }
 
   protected setStatusFilter(value: string): void {
+    this.page.set(1);
     void this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { status: value || null },
@@ -259,23 +273,18 @@ export class WeighbridgePage extends Translated implements OnInit {
     });
   }
 
-  private reload(): void {
+  protected reload(): void {
     this.weighbridgeApi
       .list({
         type: this.typeFilter() || undefined,
         status: this.statusFilter() || undefined,
+        q: this.search() || undefined,
+        page: this.page(),
+        pageSize: this.pageSize(),
       })
-      .subscribe((tickets) => {
-        const q = this.search().trim().toLowerCase();
-        this.tickets.set(
-          q
-            ? tickets.filter(
-                (t) =>
-                  String(t.serial).includes(q) ||
-                  t.vehiclePlate.toLowerCase().includes(q),
-              )
-            : tickets,
-        );
+      .subscribe((res) => {
+        this.tickets.set(res.data);
+        this.total.set(res.meta?.total ?? res.data.length);
       });
   }
 }

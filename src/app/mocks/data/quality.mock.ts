@@ -12,9 +12,9 @@ const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString()
 const daysAhead = (d: number) => new Date(Date.now() + d * 86400000).toISOString();
 
 export const MOCK_DASHT_INSPECTIONS: DashtInspection[] = [
-  { id: 'di-1', weighingSerial: 3018, date: daysAgo(1), supplierCode: 'SUP-001', supplierName: 'مورد دشت المنوفية', gradeKey: 'quality.grades.first', discountPercent: 3, firstWeightKg: 24500, secondWeightKg: 9200, netWeightKg: 15300, accepted: true, inspector: 'مصطفى رمضان' },
-  { id: 'di-2', weighingSerial: 3020, date: daysAgo(0), supplierCode: 'SUP-003', supplierName: 'مورد خامات السادات', gradeKey: 'quality.grades.second', discountPercent: 12, firstWeightKg: 21750, accepted: true, inspector: 'مصطفى رمضان' },
-  { id: 'di-3', weighingSerial: 3012, date: daysAgo(3), supplierCode: 'SUP-003', supplierName: 'مورد خامات السادات', gradeKey: 'quality.grades.rejected', discountPercent: 0, firstWeightKg: 18400, secondWeightKg: 9100, netWeightKg: 9300, accepted: false, inspector: 'مصطفى رمضان' },
+  { id: 'di-1', weighingSerial: 3018, date: daysAgo(1), supplierCode: 'SUP-001', supplierName: 'شركة اليسر للزيوت و الشحوم', gradeKey: 'quality.grades.first', discountPercent: 3, firstWeightKg: 24500, secondWeightKg: 9200, netWeightKg: 15300, accepted: true, inspector: 'أحمد حمدي شعبان حمزة' },
+  { id: 'di-2', weighingSerial: 3020, date: daysAgo(0), supplierCode: 'SUP-021', supplierName: 'مؤسسة الشرق للتجارة و التوريدات', gradeKey: 'quality.grades.second', discountPercent: 12, firstWeightKg: 21750, accepted: true, inspector: 'أحمد حمدي شعبان حمزة' },
+  { id: 'di-3', weighingSerial: 3012, date: daysAgo(3), supplierCode: 'SUP-021', supplierName: 'مؤسسة الشرق للتجارة و التوريدات', gradeKey: 'quality.grades.rejected', discountPercent: 0, firstWeightKg: 18400, secondWeightKg: 9100, netWeightKg: 9300, accepted: false, inspector: 'أحمد حمدي شعبان حمزة' },
 ];
 
 export const MOCK_MATERIAL_INSPECTIONS: MaterialInspection[] = [
@@ -42,7 +42,7 @@ export const MOCK_TECH_SHEETS: TechDataSheet[] = [
 ];
 
 export const MOCK_PRODUCTION_ORDERS: ProductionOrder[] = [
-  { id: 'po-1', number: 'PRD-2026-0221', date: daysAgo(1), workOrderNumber: 'SO-2026-0119', specCode: 'TWL-25', specName: 'تواليت فاخر ج ٢٥', quantityKg: 13750, producedKg: 8100, wastePercent: 3.4, rollsTarget: 46, rollsProduced: 27, status: 'in-progress', expectedFinish: daysAhead(2), autoCreated: true },
-  { id: 'po-2', number: 'PRD-2026-0220', date: daysAgo(4), workOrderNumber: 'SO-2026-0117', specCode: 'SMP-22', specName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantityKg: 44000, producedKg: 44000, wastePercent: 2.8, rollsTarget: 96, rollsProduced: 96, status: 'completed', expectedFinish: daysAgo(1), autoCreated: false },
-  { id: 'po-3', number: 'PRD-2026-0222', date: daysAgo(0), workOrderNumber: 'SO-2026-0120', specCode: 'NPK-18', specName: 'نابكن سادة ج ١٨', quantityKg: 9000, producedKg: 0, wastePercent: 0, rollsTarget: 30, rollsProduced: 0, status: 'open', expectedFinish: daysAhead(6), autoCreated: true },
+  { id: 'po-1', number: 'PRD-2026-0221', date: daysAgo(1), workOrderNumber: 'SO-2026-0119', specCode: 'TWL-25', specName: 'تواليت فاخر ج ٢٥', productName: 'تواليت فاخر', mixType: 'qc.mix.pure', parentFamily: 'qc.parents.toilet', ply: '2', color: 'qc.colors.white', gsm: 25, widthMm: 113, quantityKg: 13750, producedKg: 8100, wastePercent: 3.4, rollsTarget: 46, rollsProduced: 27, status: 'in-progress', expectedFinish: daysAhead(2), autoCreated: true },
+  { id: 'po-2', number: 'PRD-2026-0220', date: daysAgo(4), workOrderNumber: 'SO-2026-0117', specCode: 'SMP-22', specName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', productName: 'Kitchen Super Mix', mixType: 'qc.mix.mixed', parentFamily: 'qc.parents.kitchenTowel', ply: '2', color: 'qc.colors.white', gsm: 22, widthMm: 160, quantityKg: 44000, producedKg: 44000, wastePercent: 2.8, rollsTarget: 96, rollsProduced: 96, status: 'completed', expectedFinish: daysAgo(1), autoCreated: false },
+  { id: 'po-3', number: 'PRD-2026-0222', date: daysAgo(0), workOrderNumber: 'SO-2026-0120', specCode: 'NPK-18', specName: 'نابكن سادة ج ١٨', productName: 'نابكن سادة', mixType: 'qc.mix.pure', parentFamily: 'qc.parents.napkin', ply: '1', color: 'qc.colors.white', gsm: 18, widthMm: 250, quantityKg: 9000, producedKg: 0, wastePercent: 0, rollsTarget: 30, rollsProduced: 0, status: 'open', expectedFinish: daysAhead(6), autoCreated: true },
 ];

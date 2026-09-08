@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
+import { ApiResponse } from '../../core/models/common.models';
 import {
   WeighingCompleteRequest,
   WeighingCreateRequest,
@@ -13,10 +14,19 @@ import {
 export class WeighbridgeApiService {
   private readonly api = inject(ApiClientService);
 
-  list(filters?: { type?: string; status?: string }): Observable<WeighingTicket[]> {
-    return this.api.get<WeighingTicket[]>(API_ENDPOINTS.weighbridge.tickets, {
+  list(filters?: {
+    type?: string;
+    status?: string;
+    q?: string;
+    page?: number;
+    pageSize?: number;
+  }): Observable<ApiResponse<WeighingTicket[]>> {
+    return this.api.getWithMeta<WeighingTicket[]>(API_ENDPOINTS.weighbridge.tickets, {
       type: filters?.type,
       status: filters?.status,
+      q: filters?.q,
+      page: filters?.page,
+      pageSize: filters?.pageSize,
     });
   }
 

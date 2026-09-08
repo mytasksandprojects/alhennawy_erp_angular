@@ -7,6 +7,7 @@ export const EMPLOYEE_COLUMNS: TableColumn[] = [
   { key: 'name', labelKey: 'common.name', multilang: true },
   { key: 'email', labelKey: 'hr.fields.email' },
   { key: 'departmentKey', labelKey: 'hr.fields.department', type: 'key' },
+  { key: 'sectionKey', labelKey: 'hr.fields.section', type: 'key' },
   { key: 'jobTitleKey', labelKey: 'hr.fields.jobTitle', type: 'key' },
   { key: 'hireDate', labelKey: 'hr.fields.hireDate', type: 'date' },
   { key: 'salary', labelKey: 'hr.fields.salary', type: 'currency' },
@@ -123,8 +124,9 @@ export const EMPLOYEE_FIELDS: FormField[] = [
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'email', labelKey: 'hr.fields.email', type: 'email', required: true },
   { key: 'password', labelKey: 'auth.password', type: 'password', required: true },
-  { key: 'departmentKey', labelKey: 'hr.fields.department', type: 'select', lookup: 'departments' },
-  { key: 'jobTitleKey', labelKey: 'hr.fields.jobTitle' },
+  { key: 'departmentKey', labelKey: 'hr.fields.department', type: 'select', lookup: 'administrations' },
+  { key: 'sectionKey', labelKey: 'hr.fields.section', type: 'select', lookup: 'sections', filterBy: 'departmentKey' },
+  { key: 'jobTitleKey', labelKey: 'hr.fields.jobTitle', type: 'select', lookup: 'jobTitles' },
   { key: 'hireDate', labelKey: 'hr.fields.hireDate', type: 'date' },
   { key: 'leaveBalanceDays', labelKey: 'hr.fields.leaveBalance', type: 'number' },
   { key: 'salary', labelKey: 'hr.fields.salary', type: 'number' },
@@ -179,6 +181,28 @@ export const PENALTY_COLUMNS: TableColumn[] = [
   },
   { key: 'amount', labelKey: 'finance.fields.amount', type: 'currency' },
   { key: 'notes', labelKey: 'safety.fields.notes', multilang: true },
+];
+
+export const ADMINISTRATION_COLUMNS: TableColumn[] = [
+  { key: 'labelAr', labelKey: 'system.fields.labelAr' },
+  { key: 'labelEn', labelKey: 'system.fields.labelEn' },
+];
+
+export const ADMINISTRATION_FIELDS: FormField[] = [
+  { key: 'labelAr', labelKey: 'system.fields.labelAr', required: true },
+  { key: 'labelEn', labelKey: 'system.fields.labelEn', required: true },
+];
+
+export const SECTION_COLUMNS: TableColumn[] = [
+  { key: 'parentValue', labelKey: 'hr.fields.department', type: 'key' },
+  { key: 'labelAr', labelKey: 'system.fields.labelAr' },
+  { key: 'labelEn', labelKey: 'system.fields.labelEn' },
+];
+
+export const SECTION_FIELDS: FormField[] = [
+  { key: 'parentValue', labelKey: 'hr.fields.department', type: 'select', lookup: 'administrations', required: true },
+  { key: 'labelAr', labelKey: 'system.fields.labelAr', required: true },
+  { key: 'labelEn', labelKey: 'system.fields.labelEn', required: true },
 ];
 
 export const PENALTY_FIELDS: FormField[] = [

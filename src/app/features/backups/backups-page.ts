@@ -17,6 +17,7 @@ import { ConfirmService } from '../../core/services/confirm.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
+import { UiPager } from '../../shared/components/ui-pager';
 import { UiSwitch } from '../../shared/components/ui-switch';
 import { UiTable } from '../../shared/components/ui-table';
 import { Translated } from '../../shared/translated.base';
@@ -49,7 +50,7 @@ const BACKUP_COLUMNS: TableColumn[] = [
 @Component({
   selector: 'app-backups-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, UiIcon, UiPageHeader, UiSwitch, UiTable],
+  imports: [FormsModule, UiIcon, UiPageHeader, UiPager, UiSwitch, UiTable],
   template: `
     <ui-page-header titleKey="backup.title" subtitleKey="backup.subtitle" />
 
@@ -139,6 +140,13 @@ const BACKUP_COLUMNS: TableColumn[] = [
         titleKey="backup.history.title"
         (rowClick)="download($any($event))"
       />
+      <ui-pager
+        [page]="page()"
+        [pageSize]="pageSize()"
+        [total]="total()"
+        (pageChange)="page.set($event); refresh()"
+        (pageSizeChange)="pageSize.set($event); page.set(1); refresh()"
+      />
     </section>
   `,
 })
@@ -152,6 +160,9 @@ export class BackupsPage extends Translated {
   protected readonly backups = signal<BackupRecord[]>([]);
   protected readonly schedule = signal<BackupSchedule | null>(null);
   protected readonly busy = signal(false);
+  protected readonly page = signal(1);
+  protected readonly pageSize = signal(20);
+  protected readonly total = signal(0);
 
   constructor() {
     super();
@@ -161,10 +172,16 @@ export class BackupsPage extends Translated {
       .subscribe((sched) => this.schedule.set(sched));
   }
 
-  private refresh(): void {
+  protected refresh(): void {
     this.api
-      .get<BackupRecord[]>(API_ENDPOINTS.backups.list)
-      .subscribe((rows) => this.backups.set(rows));
+      .getWithMeta<BackupRecord[]>(API_ENDPOINTS.backups.list, {
+        page: this.page(),
+        pageSize: this.pageSize(),
+      })
+      .subscribe((res) => {
+        this.backups.set(res.data);
+        this.total.set(res.meta?.total ?? res.data.length);
+      });
   }
 
   protected edit(key: keyof BackupSchedule, value: unknown): void {

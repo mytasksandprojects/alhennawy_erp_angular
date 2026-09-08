@@ -8,6 +8,8 @@ export type WarehouseKind =
   | 'lab-virtual'
   | 'grease-oils'
   | 'dasht-raw'
+  | 'raw-materials'
+  | 'supplies'
   | 'finished-first'
   | 'finished-second';
 
@@ -26,6 +28,10 @@ export interface StockItem extends Localized {
   parentCode?: string;
   name: string;
   warehouseId: string;
+  /** مجموعة أساسية from the spare-parts tree. */
+  groupKey?: string;
+  /** مجموعة فرعية — parent is groupKey. */
+  subGroupKey?: string;
   unitKey: string;
   quantity: number;
   minimumStock: number;

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input, WritableSignal } from '@angular/core';
 import { FormField, TableColumn } from '../../core/models/common.models';
+import { ListFilter } from '../crud/list-filter';
 import { AccessService } from '../../core/security/access.service';
 import { routedTab, tabNavigator } from '../tab-route';
 import { Translated } from '../translated.base';
@@ -17,6 +18,7 @@ export interface ListTabConfig {
   fields?: FormField[];
   idKey?: string;
   custom?: boolean;
+  filters?: ListFilter[];
 }
 
 /**
@@ -54,6 +56,7 @@ export interface ListTabConfig {
             [idKey]="tab.idKey ?? 'id'"
             [titleKey]="tab.labelKey"
             [printKind]="tab.id === 'invoices' ? 'invoice' : 'record'"
+            [filters]="tab.filters ?? []"
           />
         }
       }

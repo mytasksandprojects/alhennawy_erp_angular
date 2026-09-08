@@ -1,0 +1,36 @@
+/* Labeled list-toolbar filters (search + dropdowns). */
+.crud-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.crud-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-xs);
+  flex: 0 1 calc(var(--space-xl) * 4.5);
+  min-width: calc(var(--space-xl) * 4);
+}
+
+.crud-filter--search {
+  flex: 1 1 calc(var(--space-xl) * 6);
+  min-width: calc(var(--space-xl) * 5);
+  max-width: calc(var(--space-xl) * 10);
+}
+
+.crud-filter .ui-field__label {
+  margin: 0;
+}
+
+.crud-filter .ui-control {
+  width: 100%;
+}
+
+select.ui-control {
+  cursor: pointer;
+}

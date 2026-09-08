@@ -3,10 +3,7 @@ import { CatalogModule, CatalogTab } from '../models/access.models';
 import { WEIGHING_COLUMNS } from '../../features/weighbridge/weighbridge.columns';
 import { ROLL_COLUMNS, SPEC_COLUMNS } from '../../features/cutter/cutter.columns';
 import {
-  MOVEMENT_COLUMNS,
-  RECEIPT_COLUMNS,
-  STOCK_ITEM_COLUMNS,
-  WAREHOUSE_COLUMNS,
+  LOOKUP_LABEL_COLUMNS, MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_ITEM_COLUMNS, WAREHOUSE_COLUMNS,
 } from '../../features/warehouse/warehouse.columns';
 import {
   CHEMICAL_CONSUMPTION_COLUMNS,
@@ -44,6 +41,8 @@ import {
   EMPLOYEE_COLUMNS,
   LEAVE_COLUMNS,
   PENALTY_COLUMNS,
+  ADMINISTRATION_COLUMNS,
+  SECTION_COLUMNS,
   ZK_SYNC_COLUMNS,
   reviewColumns,
 } from '../../features/hr/hr.columns';
@@ -104,6 +103,9 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       dash(),
       tab('warehouses', 'warehouse.tabs.warehouses', WAREHOUSE_COLUMNS),
       tab('items', 'warehouse.tabs.items', STOCK_ITEM_COLUMNS),
+      tab('itemGroups', 'warehouse.tabs.groups', LOOKUP_LABEL_COLUMNS),
+      tab('itemSubGroups', 'warehouse.tabs.subGroups', LOOKUP_LABEL_COLUMNS),
+      tab('units', 'warehouse.tabs.units', LOOKUP_LABEL_COLUMNS),
       tab('movements', 'warehouse.tabs.movements', MOVEMENT_COLUMNS),
       tab('receipts', 'warehouse.tabs.receipts', RECEIPT_COLUMNS),
       tab('purchaseRequests', 'purchasing.tabs.requests', PURCHASE_REQUEST_COLUMNS),
@@ -206,6 +208,8 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
     tabs: [
       dash(),
       tab('employees', 'hr.tabs.employees', EMPLOYEE_COLUMNS),
+      tab('administrations', 'hr.tabs.administrations', ADMINISTRATION_COLUMNS),
+      tab('sections', 'hr.tabs.sections', SECTION_COLUMNS),
       tab('attendance', 'hr.tabs.attendance', ATTENDANCE_COLUMNS),
       tab('leaves', 'hr.tabs.leaves', LEAVE_COLUMNS),
       tab('penalties', 'hr.tabs.penalties', PENALTY_COLUMNS),

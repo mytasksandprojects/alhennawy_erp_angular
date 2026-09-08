@@ -61,7 +61,7 @@ export function advanceExportOrder(id: string, body: unknown): ExportOrder {
   if (next === 'production-scheduled') {
     row.productionDeadline = String(patch.productionDeadline || '');
     if (!row.productionDeadline) throw new MockApiError(400, 'invalid-request');
-    spawnShortage(row.number, planStock(row as unknown as Record<string, unknown>).parts);
+    spawnShortage(row.number, planStock(row as unknown as Record<string, unknown>).parts, row as unknown as Record<string, unknown>);
   }
   if (next === 'logistics') {
     row.loadingDate = String(patch.loadingDate || '');

@@ -27,11 +27,32 @@ export class LookupService {
   private readonly store = inject(RuntimeConfigStore);
   private readonly values = signal<LookupValue[]>([]);
 
+  constructor() {
+    this.refresh();
+  }
+
   /** Re-fetch so admin edits are reflected the next time a form opens. */
   refresh(): void {
     this.api
       .get<LookupValue[]>(API_ENDPOINTS.system.lookups)
-      .subscribe((rows) => this.values.set(rows));
+      .subscribe((rows) => {
+        this.values.set(rows);
+        const lang = this.store.language();
+        const extra: Record<string, string> = {};
+        const live = new Set([
+          'administrations',
+          'sections',
+          'itemGroups',
+          'itemSubGroups',
+          'units',
+          'warehouses',
+        ]);
+        for (const row of rows) {
+          if (!live.has(row.group)) continue;
+          extra[row.value] = lang === 'ar' ? row.labelAr : row.labelEn;
+        }
+        this.store.patchTranslations(extra);
+      });
   }
 
   /** Default exchange rate stored on a lookup value (currencies group). */
@@ -53,6 +74,10 @@ export class LookupService {
     const lang = this.store.language();
     return this.values()
       .filter((row) => row.group === group)
-      .map((row) => ({ value: row.value, label: labelOf(row, lang) }));
+      .map((row) => ({
+        value: row.value,
+        label: labelOf(row, lang),
+        parentValue: row.parentValue,
+      }));
   }
 }

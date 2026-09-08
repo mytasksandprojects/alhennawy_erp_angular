@@ -79,6 +79,16 @@ import {
   updateCurrency,
 } from './data/lookups.mock';
 import {
+  addAdministration,
+  addSection,
+  deleteAdministration,
+  deleteSection,
+  listAdministrations,
+  listSections,
+  updateAdministration,
+  updateSection,
+} from './data/hr-org.mock';
+import {
   MOCK_CHEM_OP_PURCHASES,
   MOCK_CHEM_OUTPUT,
   MOCK_CHEM_RAW_PURCHASES,
@@ -204,6 +214,14 @@ export const MOCK_ROUTES: MockRoute[] = [
 
   { method: 'GET', pattern: '/system/audit-logs', handler: () => MOCK_AUDIT_LOGS },
   { method: 'GET', pattern: '/system/lookups', handler: () => [...MOCK_LOOKUP_VALUES, ...liveLookups()] },
+  { method: 'GET', pattern: '/hr/administrations', handler: () => listAdministrations() },
+  { method: 'POST', pattern: '/hr/administrations', handler: ({ body }) => addAdministration(body) },
+  { method: 'PUT', pattern: '/hr/administrations/:id', handler: ({ path, body }) => updateAdministration(decodeURIComponent(path.split('/').pop() ?? ''), body) },
+  { method: 'DELETE', pattern: '/hr/administrations/:id', handler: ({ path }) => deleteAdministration(decodeURIComponent(path.split('/').pop() ?? '')) },
+  { method: 'GET', pattern: '/hr/sections', handler: () => listSections() },
+  { method: 'POST', pattern: '/hr/sections', handler: ({ body }) => addSection(body) },
+  { method: 'PUT', pattern: '/hr/sections/:id', handler: ({ path, body }) => updateSection(decodeURIComponent(path.split('/').pop() ?? ''), body) },
+  { method: 'DELETE', pattern: '/hr/sections/:id', handler: ({ path }) => deleteSection(decodeURIComponent(path.split('/').pop() ?? '')) },
   { method: 'GET', pattern: '/finance/currencies', handler: () => listCurrencies() },
   { method: 'POST', pattern: '/finance/currencies', handler: ({ body }) => addCurrency(body) },
   { method: 'PUT', pattern: '/finance/currencies/:id', handler: ({ path, body }) => updateCurrency(decodeURIComponent(path.split('/').pop() ?? ''), body) },

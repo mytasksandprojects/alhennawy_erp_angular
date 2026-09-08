@@ -5,6 +5,7 @@ import {
 } from '@angular/common/http';
 import { delay, mergeMap, of, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { pageEnvelope } from './data/page.util';
 import { matchRoute } from './mock-registry';
 import { MOCK_ROUTES } from './routes';
 
@@ -37,13 +38,14 @@ export const mockBackendInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   try {
+    const query = new URLSearchParams(queryString ?? '');
     const data = match.route.handler({
       path,
       method: req.method,
       body: req.body,
-      query: new URLSearchParams(queryString ?? ''),
+      query,
     });
-    return of(new HttpResponse({ status: 200, body: { data } })).pipe(
+    return of(new HttpResponse({ status: 200, body: envelope(data, query) })).pipe(
       delay(SIMULATED_LATENCY_MS),
     );
   } catch (error) {
@@ -63,6 +65,17 @@ export const mockBackendInterceptor: HttpInterceptorFn = (req, next) => {
     );
   }
 };
+
+/** List GETs with page/pageSize return a slice + meta; everything else stays `{ data }`. */
+function envelope(data: unknown, query: URLSearchParams): { data: unknown; meta?: object } {
+  if (data && typeof data === 'object' && 'data' in data && 'meta' in data) {
+    return data as { data: unknown; meta: object };
+  }
+  if (Array.isArray(data) && (query.has('page') || query.has('pageSize'))) {
+    return pageEnvelope(data, query);
+  }
+  return { data };
+}
 
 /** Throw inside a handler to simulate a specific HTTP failure. */
 export class MockApiError extends Error {

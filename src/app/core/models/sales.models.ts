@@ -44,6 +44,13 @@ export interface SalesWorkOrder {
   itemName: string;
   quantityKg: number;
   sizeMm: number;
+  mixType?: string;
+  productName?: string;
+  parentFamily?: string;
+  ply?: string;
+  color?: string;
+  gsm?: number;
+  widthMm?: number;
   /** JSON cart of extra item codes — same shape as purchase request lines. */
   linesJson?: string;
   status: WorkOrderStatus;

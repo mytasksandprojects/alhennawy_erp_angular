@@ -67,6 +67,13 @@ export interface ProductionOrder {
   workOrderNumber: string;
   specCode: string;
   specName: string;
+  mixType?: string;
+  productName?: string;
+  parentFamily?: string;
+  ply?: string;
+  color?: string;
+  gsm?: number;
+  widthMm?: number;
   quantityKg: number;
   producedKg: number;
   wastePercent: number;

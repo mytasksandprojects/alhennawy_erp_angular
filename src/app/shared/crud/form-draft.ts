@@ -47,6 +47,20 @@ export function shownFields(
   });
 }
 
+export function draftFromRow(fields: FormField[], row: Row): Draft {
+  const next: Draft = {};
+  for (const field of fields) {
+    next[field.key] = (row[field.key] as string | number | boolean) ?? '';
+    if (!field.multilang) continue;
+    for (const [key, value] of Object.entries(row)) {
+      if (key.startsWith(`${field.key}_`)) {
+        next[key] = (value as string | number | boolean) ?? '';
+      }
+    }
+  }
+  return next;
+}
+
 export function rowMatches(
   row: Row,
   columns: TableColumn[],

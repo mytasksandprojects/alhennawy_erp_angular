@@ -78,8 +78,8 @@ export const FINANCE_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'fa-1', messageKey: 'finance.alerts.duePayment', params: ['SUP-002', 126000], severity: 'warning', date: daysAgo(0), route: '/purchasing', query: { tab: 'suppliers', q: 'SUP-002' } },
-    { id: 'fa-2', messageKey: 'finance.alerts.dueCollection', params: ['CUS-014', 199375], severity: 'info', date: daysAgo(0), route: '/sales', query: { tab: 'customers', q: 'CUS-014' } },
+    { id: 'fa-1', messageKey: 'finance.alerts.duePayment', params: ['SUP-019', 126000], severity: 'warning', date: daysAgo(0), route: '/purchasing', query: { tab: 'suppliers', q: 'SUP-019' } },
+    { id: 'fa-2', messageKey: 'finance.alerts.dueCollection', params: ['CUS-001', 0], severity: 'info', date: daysAgo(0), route: '/sales', query: { tab: 'customers', q: 'CUS-001' } },
   ],
 };
 
@@ -106,7 +106,7 @@ export const SALES_DASHBOARD: DashboardData = {
   ],
   alerts: [
     { id: 'sa-1', messageKey: 'sales.alerts.lateOrder', params: ['SO-2026-0120'], severity: 'warning', date: daysAgo(0), route: '/sales', query: { tab: 'workOrders', q: 'SO-2026-0120' } },
-    { id: 'sa-2', messageKey: 'sales.alerts.dueCollection', params: ['CUS-009', 200000], severity: 'info', date: daysAgo(1), route: '/sales', query: { tab: 'customers', q: 'CUS-009' } },
+    { id: 'sa-2', messageKey: 'sales.alerts.dueCollection', params: ['CUS-002', 0], severity: 'info', date: daysAgo(1), route: '/sales', query: { tab: 'customers', q: 'CUS-002' } },
   ],
 };
 
@@ -126,9 +126,9 @@ export const PURCHASING_DASHBOARD: DashboardData = {
       id: 'top-suppliers',
       titleKey: 'purchasing.charts.topSuppliers',
       points: [
-        { label: 'مورد دشت المنوفية', value: 1453500 },
-        { label: 'Shandong Pulp Co.', value: 860000 },
-        { label: 'شركة الكيماويات المتحدة', value: 495000 },
+        { label: 'شركة اليسر للزيوت و الشحوم', value: 1453500 },
+        { label: 'غريت لاند لتقنية اللب والورق', value: 860000 },
+        { label: 'مصر لصناعة الكيماويات', value: 495000 },
       ],
     },
   ],
@@ -201,7 +201,7 @@ export const HR_DASHBOARD: DashboardData = {
     },
   ],
   alerts: [
-    { id: 'ha-1', messageKey: 'hr.alerts.contractExpiring', params: ['EMP-0101'], severity: 'warning', date: daysAgo(0), route: '/hr', query: { tab: 'employees', q: 'EMP-0101' } },
+    { id: 'ha-1', messageKey: 'hr.alerts.contractExpiring', params: ['hen281'], severity: 'warning', date: daysAgo(0), route: '/hr', query: { tab: 'employees', q: 'hen281' } },
     { id: 'ha-2', messageKey: 'hr.alerts.deviceSyncFailed', params: ['ZK-WH-3'], severity: 'danger', date: daysAgo(1), route: '/hr', query: { tab: 'zk', q: 'ZK-WH-3' } },
   ],
 };

@@ -3,6 +3,7 @@
 .token-toolbar {
   gap: var(--space-md);
   flex-wrap: wrap;
+  align-items: flex-end;
   margin-bottom: var(--space-sm);
 }
 
@@ -265,26 +266,4 @@
   display: inline-flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
-}
-
-/* Shared crud toolbar date filter */
-.crud-filter {
-  gap: var(--space-xs);
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.crud-filter .ui-field__label {
-  margin: 0;
-}
-
-.crud-filter .ui-control {
-  width: auto;
-}
-
-/* Free-text search inside every module list */
-.crud-search {
-  flex: 1;
-  min-width: calc(var(--space-xl) * 5);
-  max-width: calc(var(--space-xl) * 9);
 }

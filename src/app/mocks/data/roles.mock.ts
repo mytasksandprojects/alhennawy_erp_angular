@@ -35,6 +35,7 @@ export const MOCK_ROLES: AppRole[] = [
       'hr.col.employees.code',
       'hr.col.employees.name',
       'hr.col.employees.departmentKey',
+      'hr.col.employees.sectionKey',
       'hr.col.employees.jobTitleKey',
       'hr.col.employees.status',
       'hr.act.employees.print',

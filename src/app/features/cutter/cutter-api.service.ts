@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
+import { ApiResponse } from '../../core/models/common.models';
 import {
   CustomerSpec,
   CutterRoll,
@@ -13,8 +14,8 @@ import {
 export class CutterApiService {
   private readonly api = inject(ApiClientService);
 
-  listRolls(grade?: string): Observable<CutterRoll[]> {
-    return this.api.get<CutterRoll[]>(API_ENDPOINTS.cutter.rolls, { grade });
+  listRolls(grade?: string, page = 1, pageSize = 20): Observable<ApiResponse<CutterRoll[]>> {
+    return this.api.getWithMeta<CutterRoll[]>(API_ENDPOINTS.cutter.rolls, { grade, page, pageSize });
   }
 
   createRoll(request: CutterRollCreateRequest): Observable<CutterRoll> {

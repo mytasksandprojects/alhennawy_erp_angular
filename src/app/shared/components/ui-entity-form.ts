@@ -179,8 +179,10 @@ export class UiEntityForm extends Translated {
 
   /** Static options from config, or the admin-managed lookup group. */
   protected optionsFor(field: FormField): SelectOption[] {
-    if (field.lookup) return this.lookups.options(field.lookup);
-    return field.options ?? [];
+    const rows = field.lookup ? this.lookups.options(field.lookup) : field.options ?? [];
+    if (!field.filterBy) return rows;
+    const parent = this.asText(field.filterBy);
+    return rows.filter((row) => row.parentValue === parent);
   }
 
   protected asText(key: string): string {
@@ -205,9 +207,15 @@ export class UiEntityForm extends Translated {
       const option = this.optionsFor(field).find((row) => row.value === value);
       if (option?.label) this.set(field.copyKey, option.label);
     }
-    if (!field.rateKey || !field.lookup) return;
-    const rate = this.lookups.rateOf(field.lookup, value);
-    if (rate !== null) this.set(field.rateKey, rate);
+    if (field.rateKey && field.lookup) {
+      const rate = this.lookups.rateOf(field.lookup, value);
+      if (rate !== null) this.set(field.rateKey, rate);
+    }
+    for (const child of this.fields()) {
+      if (child.filterBy !== field.key) continue;
+      const keep = this.optionsFor(child).some((row) => row.value === this.asText(child.key));
+      if (!keep) this.set(child.key, '');
+    }
   }
 
   protected toNumber(value: unknown): number {

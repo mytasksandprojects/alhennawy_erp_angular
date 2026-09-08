@@ -2,13 +2,22 @@ import { LookupValue } from '../../core/models/system.models';
 import { MOCK_EMPLOYEES } from './hr.mock';
 import { MOCK_PURCHASE_REQUESTS, MOCK_SUPPLIERS } from './purchasing.mock';
 import { MOCK_CUSTOMERS } from './sales.mock';
-import { MOCK_STOCK_ITEMS } from './warehouse.mock';
+import { MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './warehouse.mock';
 import { MOCK_ROLES } from './roles.mock';
 import {
   MOCK_CLINIC_MEDICINES,
   MOCK_CLINICS,
   MOCK_DOCTORS,
 } from './safety.mock';
+import { TRANSLATIONS } from './i18n';
+import { SEED_ADMINISTRATIONS, SEED_SECTIONS } from './seed/hr-org.seed';
+import {
+  SEED_ITEM_GROUPS,
+  SEED_ITEM_SUBGROUPS,
+  SEED_STOCK_UNITS,
+} from './seed/item-groups.seed';
+import { SEED_JOB_LOOKUPS } from './seed/job-lookups.seed';
+import { QC_LOOKUPS } from './seed/qc-lookups.seed';
 
 /**
  * MOCK LAYER — admin-managed dropdown lists (System & Audit → Dropdown
@@ -52,6 +61,8 @@ export const MOCK_LOOKUP_VALUES: LookupValue[] = [
   lk('lv-44', 'warehouseKinds', 'warehouse.kinds.dasht-raw', 'دشت (خامات)', 'Dasht (Raw Material)'),
   lk('lv-45', 'warehouseKinds', 'warehouse.kinds.finished-first', 'منتج تام درجة أولى', 'Finished — First Grade'),
   lk('lv-46', 'warehouseKinds', 'warehouse.kinds.finished-second', 'منتج تام درجة ثانية', 'Finished — Second Grade'),
+  lk('lv-47', 'warehouseKinds', 'warehouse.kinds.raw-materials', 'خامات', 'Raw Materials'),
+  lk('lv-48', 'warehouseKinds', 'warehouse.kinds.supplies', 'مستلزمات', 'Supplies'),
 
   lk('lv-70', 'companyDocTypes', 'administration.docTypes.taxCard', 'البطاقة الضريبية', 'Tax Card'),
   lk('lv-71', 'companyDocTypes', 'administration.docTypes.commercialRegister', 'السجل التجاري', 'Commercial Register'),
@@ -81,6 +92,19 @@ export const MOCK_LOOKUP_VALUES: LookupValue[] = [
   lk('lv-54', 'departments', 'departments.finance', 'المالية', 'Finance'),
   lk('lv-55', 'departments', 'departments.sales', 'المبيعات', 'Sales'),
   lk('lv-56', 'departments', 'departments.logistics', 'الشحن والتخليص', 'Logistics'),
+  lk('lv-57', 'departments', 'departments.maintenance', 'الصيانة', 'Maintenance'),
+  lk('lv-58', 'departments', 'departments.electrical', 'الصيانة الكهربائية', 'Electrical Maintenance'),
+  lk('lv-59', 'departments', 'departments.safety', 'السلامة والصحة المهنية', 'HSE'),
+  lk('lv-63', 'departments', 'departments.purchasing', 'المشتريات', 'Purchasing'),
+  lk('lv-64', 'departments', 'departments.hr', 'الموارد البشرية', 'Human Resources'),
+  lk('lv-65', 'departments', 'departments.it', 'تكنولوجيا المعلومات', 'IT'),
+  ...SEED_ADMINISTRATIONS,
+  ...SEED_SECTIONS,
+  ...SEED_ITEM_GROUPS,
+  ...SEED_ITEM_SUBGROUPS,
+  ...SEED_STOCK_UNITS,
+  ...QC_LOOKUPS,
+  ...SEED_JOB_LOOKUPS,
 ];
 
 /**
@@ -170,6 +194,15 @@ export function liveLookups(): LookupValue[] {
     ),
     ...MOCK_DOCTORS.map((d) => liveLk(`live-doctor-${d.id}`, 'doctors', d)),
     ...MOCK_EMPLOYEES.map((e) => liveLk(`live-emp-${e.id}`, 'employees', e)),
+    ...MOCK_WAREHOUSES.map((row) =>
+      lk(
+        `live-wh-${row.id}`,
+        'warehouses',
+        row.id,
+        TRANSLATIONS['ar'][row.nameKey] ?? row.nameKey,
+        TRANSLATIONS['en'][row.nameKey] ?? row.nameKey,
+      ),
+    ),
     ...MOCK_STOCK_ITEMS.map((item) => ({
       ...liveLk(`live-item-${item.code}`, 'stockItems', item),
       value: item.code,

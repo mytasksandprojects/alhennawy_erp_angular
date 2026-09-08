@@ -29,6 +29,20 @@ import {
 import { MOCK_LEDGER, MOCK_TRIAL_BALANCE } from './data/finance-reports.mock';
 import { listMaintenance, prepareMaintenance } from './data/maintenance.mock';
 import { MOCK_MAINTENANCE, MOCK_TECH_SHEETS } from './data/quality.mock';
+import {
+  addItemGroup,
+  addItemSubGroup,
+  addStockUnit,
+  deleteItemGroup,
+  deleteItemSubGroup,
+  deleteStockUnit,
+  listItemGroups,
+  listItemSubGroups,
+  listStockUnits,
+  updateItemGroup,
+  updateItemSubGroup,
+  updateStockUnit,
+} from './data/hr-org.mock';
 
 export const ACCESS_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/roles', handler: () => listRoles() },
@@ -50,6 +64,18 @@ export const ACCESS_ROUTES: MockRoute[] = [
     pattern: '/hr/employees/:id',
     handler: ({ path }) => deleteEmployee(decodeURIComponent(path.split('/').pop() ?? '')),
   },
+  { method: 'GET', pattern: '/warehouse/item-groups', handler: () => listItemGroups() },
+  { method: 'POST', pattern: '/warehouse/item-groups', handler: ({ body }) => addItemGroup(body) },
+  { method: 'PUT', pattern: '/warehouse/item-groups/:id', handler: ({ path, body }) => updateItemGroup(decodeURIComponent(path.split('/').pop() ?? ''), body) },
+  { method: 'DELETE', pattern: '/warehouse/item-groups/:id', handler: ({ path }) => deleteItemGroup(decodeURIComponent(path.split('/').pop() ?? '')) },
+  { method: 'GET', pattern: '/warehouse/item-sub-groups', handler: () => listItemSubGroups() },
+  { method: 'POST', pattern: '/warehouse/item-sub-groups', handler: ({ body }) => addItemSubGroup(body) },
+  { method: 'PUT', pattern: '/warehouse/item-sub-groups/:id', handler: ({ path, body }) => updateItemSubGroup(decodeURIComponent(path.split('/').pop() ?? ''), body) },
+  { method: 'DELETE', pattern: '/warehouse/item-sub-groups/:id', handler: ({ path }) => deleteItemSubGroup(decodeURIComponent(path.split('/').pop() ?? '')) },
+  { method: 'GET', pattern: '/warehouse/units', handler: () => listStockUnits() },
+  { method: 'POST', pattern: '/warehouse/units', handler: ({ body }) => addStockUnit(body) },
+  { method: 'PUT', pattern: '/warehouse/units/:id', handler: ({ path, body }) => updateStockUnit(decodeURIComponent(path.split('/').pop() ?? ''), body) },
+  { method: 'DELETE', pattern: '/warehouse/units/:id', handler: ({ path }) => deleteStockUnit(decodeURIComponent(path.split('/').pop() ?? '')) },
   { method: 'GET', pattern: '/warehouse/purchase-requests', handler: () => listDeptRequests('departments.warehouse') },
   { method: 'POST', pattern: '/warehouse/purchase-requests', handler: ({ body }) => upsertDeptRequest('departments.warehouse', body) },
   {

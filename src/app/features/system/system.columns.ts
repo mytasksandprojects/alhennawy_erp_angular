@@ -34,7 +34,17 @@ const LOOKUP_GROUPS = [
   'journalSources',
   'bankNames',
   'warehouseKinds',
+  'itemGroups',
+  'itemSubGroups',
+  'units',
   'departments',
+  'administrations',
+  'sections',
+  'jobTitles',
+  'qcMix',
+  'qcParents',
+  'qcPly',
+  'qcColors',
 ];
 
 export const LOOKUP_COLUMNS: TableColumn[] = [

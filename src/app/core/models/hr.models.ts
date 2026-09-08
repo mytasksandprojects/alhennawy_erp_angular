@@ -7,6 +7,8 @@ export interface Employee extends Localized {
   code: string;
   name: string;
   departmentKey: string;
+  /** القسم — child of الإدارة, from the attendance sheet. */
+  sectionKey?: string;
   jobTitleKey: string;
   hireDate: string;
   status: 'active' | 'on-leave' | 'terminated' | 'probation';

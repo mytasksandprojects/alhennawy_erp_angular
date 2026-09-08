@@ -9,12 +9,17 @@ import {
   PURCHASE_REQUEST_COLUMNS,
 } from '../purchasing/purchasing.columns';
 import {
+  ITEM_GROUP_FIELDS,
+  ITEM_SUBGROUP_COLUMNS,
+  ITEM_SUBGROUP_FIELDS,
+  LOOKUP_LABEL_COLUMNS,
   MOVEMENT_COLUMNS,
   MOVEMENT_FIELDS,
   RECEIPT_COLUMNS,
   RECEIPT_FIELDS,
   STOCK_ITEM_COLUMNS,
   STOCK_ITEM_FIELDS,
+  STOCK_ITEM_FILTERS,
   WAREHOUSE_COLUMNS,
   WAREHOUSE_FIELDS,
 } from './warehouse.columns';
@@ -48,7 +53,29 @@ export class WarehousePage {
       endpoint: API_ENDPOINTS.warehouse.items,
       columns: STOCK_ITEM_COLUMNS,
       fields: STOCK_ITEM_FIELDS,
+      filters: STOCK_ITEM_FILTERS,
       idKey: 'code',
+    },
+    {
+      id: 'itemGroups',
+      labelKey: 'warehouse.tabs.groups',
+      endpoint: API_ENDPOINTS.warehouse.itemGroups,
+      columns: LOOKUP_LABEL_COLUMNS,
+      fields: ITEM_GROUP_FIELDS,
+    },
+    {
+      id: 'itemSubGroups',
+      labelKey: 'warehouse.tabs.subGroups',
+      endpoint: API_ENDPOINTS.warehouse.itemSubGroups,
+      columns: ITEM_SUBGROUP_COLUMNS,
+      fields: ITEM_SUBGROUP_FIELDS,
+    },
+    {
+      id: 'units',
+      labelKey: 'warehouse.tabs.units',
+      endpoint: API_ENDPOINTS.warehouse.units,
+      columns: LOOKUP_LABEL_COLUMNS,
+      fields: ITEM_GROUP_FIELDS,
     },
     {
       id: 'movements',

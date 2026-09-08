@@ -27,7 +27,7 @@ export const MOCK_SAFETY_CERTIFICATES: SafetyCertificate[] = [
 export const MOCK_PENALTIES: EmployeePenalty[] = [
   { id: 'pn-1', employeeName: 'خالد عبد العزيز', date: daysAgo(6), reasonKey: 'safety.penaltyReasons.noPpe', kind: 'warning', notes: 'عدم ارتداء خوذة داخل الصالة' },
   { id: 'pn-2', employeeName: 'أحمد الحناوي', date: daysAgo(14), reasonKey: 'safety.penaltyReasons.smoking', kind: 'deduction', amount: 500, notes: 'التدخين بجوار مخزن الكيماويات' },
-  { id: 'pn-3', employeeName: 'مصطفى رمضان', date: daysAgo(40), reasonKey: 'safety.penaltyReasons.unsafeAct', kind: 'suspension', amount: 0, notes: 'تشغيل معدة بدون تصريح — إيقاف يومين' },
+  { id: 'pn-3', employeeName: 'أحمد حمدي شعبان حمزة', date: daysAgo(40), reasonKey: 'safety.penaltyReasons.unsafeAct', kind: 'suspension', amount: 0, notes: 'تشغيل معدة بدون تصريح — إيقاف يومين' },
 ];
 
 export const MOCK_INSURANCE: InsurancePolicy[] = [

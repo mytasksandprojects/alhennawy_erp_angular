@@ -25,6 +25,8 @@ export interface LookupValue {
   labelEn: string;
   /** currencies group only: default exchange rate to EGP (EGP itself = 1). */
   rate?: number;
+  /** Optional parent value — child dropdowns filter on this. */
+  parentValue?: string;
 }
 
 /** A backend feature/integration switch with its live status. */

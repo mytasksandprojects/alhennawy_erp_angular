@@ -1,4 +1,5 @@
 import { FormField, TableColumn } from '../../core/models/common.models';
+import { ListFilter } from '../../shared/crud/list-filter';
 import { keysToOptions } from '../../shared/crud/options';
 
 export const WAREHOUSE_COLUMNS: TableColumn[] = [
@@ -11,6 +12,9 @@ export const WAREHOUSE_COLUMNS: TableColumn[] = [
 export const STOCK_ITEM_COLUMNS: TableColumn[] = [
   { key: 'code', labelKey: 'common.code' },
   { key: 'name', labelKey: 'common.name', multilang: true },
+  { key: 'warehouseId', labelKey: 'warehouse.tabs.warehouses', type: 'key' },
+  { key: 'groupKey', labelKey: 'warehouse.fields.group', type: 'key' },
+  { key: 'subGroupKey', labelKey: 'warehouse.fields.subGroup', type: 'key' },
   { key: 'quantity', labelKey: 'common.quantity', type: 'number' },
   { key: 'unitKey', labelKey: 'warehouse.fields.unit', type: 'key', align: 'center' },
   { key: 'minimumStock', labelKey: 'warehouse.fields.minimum', type: 'number' },
@@ -50,12 +54,21 @@ export const WAREHOUSE_FIELDS: FormField[] = [
   { key: 'occupancyPercent', labelKey: 'warehouse.fields.occupancy', type: 'number' },
 ];
 
+export const STOCK_ITEM_FILTERS: ListFilter[] = [
+  { key: 'warehouseId', labelKey: 'warehouse.tabs.warehouses', lookup: 'warehouses' },
+  { key: 'groupKey', labelKey: 'warehouse.fields.group', lookup: 'itemGroups' },
+  { key: 'subGroupKey', labelKey: 'warehouse.fields.subGroup', lookup: 'itemSubGroups', filterBy: 'groupKey' },
+  { key: 'unitKey', labelKey: 'warehouse.fields.unit', lookup: 'units' },
+];
+
 export const STOCK_ITEM_FIELDS: FormField[] = [
   { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'ITM' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
-  { key: 'warehouseId', labelKey: 'warehouse.tabs.warehouses' },
+  { key: 'warehouseId', labelKey: 'warehouse.tabs.warehouses', type: 'select', lookup: 'warehouses', required: true },
+  { key: 'groupKey', labelKey: 'warehouse.fields.group', type: 'select', lookup: 'itemGroups' },
+  { key: 'subGroupKey', labelKey: 'warehouse.fields.subGroup', type: 'select', lookup: 'itemSubGroups', filterBy: 'groupKey' },
   { key: 'quantity', labelKey: 'common.quantity', type: 'number' },
-  { key: 'unitKey', labelKey: 'warehouse.fields.unit' },
+  { key: 'unitKey', labelKey: 'warehouse.fields.unit', type: 'select', lookup: 'units', required: true },
   { key: 'minimumStock', labelKey: 'warehouse.fields.minimum', type: 'number' },
   { key: 'unitCost', labelKey: 'warehouse.fields.unitCost', type: 'number' },
 ];
@@ -66,7 +79,7 @@ export const MOVEMENT_FIELDS: FormField[] = [
   { key: 'type', labelKey: 'common.type', type: 'select', options: keysToOptions('warehouse.types.', ['receipt', 'issue', 'transfer', 'adjustment']) },
   { key: 'itemName', labelKey: 'common.name', multilang: true },
   { key: 'quantity', labelKey: 'common.quantity', type: 'number' },
-  { key: 'unitKey', labelKey: 'warehouse.fields.unit' },
+  { key: 'unitKey', labelKey: 'warehouse.fields.unit', type: 'select', lookup: 'units' },
   { key: 'reference', labelKey: 'warehouse.fields.reference' },
   { key: 'byUser', labelKey: 'common.user' },
 ];
@@ -79,3 +92,24 @@ export const RECEIPT_COLUMNS: TableColumn[] = MOVEMENT_COLUMNS.filter(
 export const RECEIPT_FIELDS: FormField[] = MOVEMENT_FIELDS.filter(
   (field) => field.key !== 'type',
 );
+
+export const LOOKUP_LABEL_COLUMNS: TableColumn[] = [
+  { key: 'labelAr', labelKey: 'system.fields.labelAr' },
+  { key: 'labelEn', labelKey: 'system.fields.labelEn' },
+];
+
+export const ITEM_GROUP_FIELDS: FormField[] = [
+  { key: 'labelAr', labelKey: 'system.fields.labelAr', required: true },
+  { key: 'labelEn', labelKey: 'system.fields.labelEn', required: true },
+];
+
+export const ITEM_SUBGROUP_COLUMNS: TableColumn[] = [
+  { key: 'parentValue', labelKey: 'warehouse.fields.group', type: 'key' },
+  ...LOOKUP_LABEL_COLUMNS,
+];
+
+export const ITEM_SUBGROUP_FIELDS: FormField[] = [
+  { key: 'parentValue', labelKey: 'warehouse.fields.group', type: 'select', lookup: 'itemGroups', required: true },
+  { key: 'labelAr', labelKey: 'system.fields.labelAr', required: true },
+  { key: 'labelEn', labelKey: 'system.fields.labelEn', required: true },
+];

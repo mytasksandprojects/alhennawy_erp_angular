@@ -119,7 +119,7 @@ export const REPORTS_DASHBOARD: DashboardData = {
     {
       id: 'rp-1',
       messageKey: 'sales.alerts.dueCollection',
-      params: ['CUS-009', 200000],
+      params: ['CUS-002', 0],
       severity: 'info',
       date: daysAgo(1),
       route: '/reports',

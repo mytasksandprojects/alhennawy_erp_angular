@@ -8,19 +8,14 @@ import {
 } from '../../core/models/purchasing.models';
 import { nextGenerated } from '../../shared/crud/serial';
 import { MockApiError } from '../mock-backend.interceptor';
+import { SEED_SUPPLIERS } from './seed/suppliers.seed';
 import { MOCK_STOCK_ITEMS } from './warehouse.mock';
 
 /** MOCK LAYER — purchasing cycle data (PR → quotations → PO). */
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
 const daysAhead = (d: number) => new Date(Date.now() + d * 86400000).toISOString();
 
-export const MOCK_SUPPLIERS: Supplier[] = [
-  { code: 'SUP-001', name: 'مورد دشت المنوفية', name_en: 'Menoufia Recovered Paper Supplier', currency: 'EGP', balance: 425000, onTimeDeliveryPercent: 92 },
-  { code: 'SUP-002', name: 'شركة الكيماويات المتحدة', name_en: 'United Chemicals Co.', currency: 'EGP', balance: 180500, onTimeDeliveryPercent: 88 },
-  { code: 'SUP-003', name: 'مورد خامات السادات', name_en: 'Sadat Raw Materials Supplier', currency: 'EGP', balance: 96200, onTimeDeliveryPercent: 76 },
-  { code: 'SUP-004', name: 'Voith Paper GmbH', currency: 'EUR', balance: 42800, onTimeDeliveryPercent: 97 },
-  { code: 'SUP-005', name: 'Shandong Pulp Co.', currency: 'USD', balance: 118000, onTimeDeliveryPercent: 84 },
-];
+export const MOCK_SUPPLIERS: Supplier[] = SEED_SUPPLIERS;
 
 export const MOCK_PURCHASE_REQUESTS: PurchaseRequest[] = [
   { id: 'pr-1', number: 'PR-2026-0301', date: daysAgo(1), requestingDepartmentKey: 'departments.production', status: 'pending', lines: [
@@ -46,18 +41,18 @@ export const MOCK_PURCHASE_REQUESTS: PurchaseRequest[] = [
 ];
 
 export const MOCK_QUOTATIONS: SupplierQuotation[] = [
-  { id: 'q-1', requestId: 'pr-2', supplierCode: 'SUP-002', supplierName: 'شركة الكيماويات المتحدة', totalValue: 126000, currency: 'EGP', exchangeRate: 1, deliveryDays: 7, technicalScore: 95, selected: true },
-  { id: 'q-2', requestId: 'pr-2', supplierCode: 'SUP-005', supplierName: 'Shandong Pulp Co.', totalValue: 2480, currency: 'USD', exchangeRate: 48.5, deliveryDays: 45, technicalScore: 90, selected: false },
-  { id: 'q-3', requestId: 'pr-1', supplierCode: 'SUP-004', supplierName: 'Voith Paper GmbH', totalValue: 3150, currency: 'EUR', exchangeRate: 52.8, deliveryDays: 21, technicalScore: 98, selected: false },
-  { id: 'q-4', requestId: 'pr-6', supplierCode: 'SUP-002', supplierName: 'شركة الكيماويات المتحدة', totalValue: 84000, currency: 'EGP', exchangeRate: 1, deliveryDays: 5, technicalScore: 92, selected: false },
-  { id: 'q-5', requestId: 'pr-6', supplierCode: 'SUP-003', supplierName: 'مورد خامات السادات', totalValue: 79000, currency: 'EGP', exchangeRate: 1, deliveryDays: 8, technicalScore: 80, selected: false },
+  { id: 'q-1', requestId: 'pr-2', supplierCode: 'SUP-019', supplierName: 'مصر لصناعة الكيماويات', totalValue: 126000, currency: 'EGP', exchangeRate: 1, deliveryDays: 7, technicalScore: 95, selected: true },
+  { id: 'q-2', requestId: 'pr-2', supplierCode: 'SUP-033', supplierName: 'ويفانغ غريت لاند للكيماويات', totalValue: 2480, currency: 'USD', exchangeRate: 48.5, deliveryDays: 45, technicalScore: 90, selected: false },
+  { id: 'q-3', requestId: 'pr-1', supplierCode: 'SUP-030', supplierName: 'فويث', totalValue: 3150, currency: 'EUR', exchangeRate: 52.8, deliveryDays: 21, technicalScore: 98, selected: false },
+  { id: 'q-4', requestId: 'pr-6', supplierCode: 'SUP-019', supplierName: 'مصر لصناعة الكيماويات', totalValue: 84000, currency: 'EGP', exchangeRate: 1, deliveryDays: 5, technicalScore: 92, selected: false },
+  { id: 'q-5', requestId: 'pr-6', supplierCode: 'SUP-021', supplierName: 'مؤسسة الشرق للتجارة و التوريدات', totalValue: 79000, currency: 'EGP', exchangeRate: 1, deliveryDays: 8, technicalScore: 80, selected: false },
 ];
 
 export const MOCK_PURCHASE_ORDERS: PurchaseOrder[] = [
-  { id: 'po-1', number: 'PO-2026-0077', date: daysAgo(5), supplierCode: 'SUP-001', supplierName: 'مورد دشت المنوفية', status: 'received', currency: 'EGP', exchangeRate: 1, totalValue: 1453500, expectedDelivery: daysAgo(1), leadTimeDays: 4, requestId: 'pr-3' },
-  { id: 'po-2', number: 'PO-2026-0078', date: daysAgo(4), supplierCode: 'SUP-002', supplierName: 'شركة الكيماويات المتحدة', status: 'open', currency: 'EGP', exchangeRate: 1, totalValue: 126000, expectedDelivery: daysAhead(3), requestId: 'pr-2' },
-  { id: 'po-3', number: 'PO-2026-0079', date: daysAgo(12), supplierCode: 'SUP-005', supplierName: 'Shandong Pulp Co.', status: 'late', currency: 'USD', exchangeRate: 48.5, totalValue: 86000, expectedDelivery: daysAgo(2) },
-  { id: 'po-4', number: 'PO-2026-0080', date: daysAgo(2), supplierCode: 'SUP-004', supplierName: 'Voith Paper GmbH', status: 'partially-received', currency: 'EUR', exchangeRate: 52.8, totalValue: 3150, expectedDelivery: daysAhead(10) },
+  { id: 'po-1', number: 'PO-2026-0077', date: daysAgo(5), supplierCode: 'SUP-001', supplierName: 'شركة اليسر للزيوت و الشحوم', status: 'received', currency: 'EGP', exchangeRate: 1, totalValue: 1453500, expectedDelivery: daysAgo(1), leadTimeDays: 4, requestId: 'pr-3' },
+  { id: 'po-2', number: 'PO-2026-0078', date: daysAgo(4), supplierCode: 'SUP-019', supplierName: 'مصر لصناعة الكيماويات', status: 'open', currency: 'EGP', exchangeRate: 1, totalValue: 126000, expectedDelivery: daysAhead(3), requestId: 'pr-2' },
+  { id: 'po-3', number: 'PO-2026-0079', date: daysAgo(12), supplierCode: 'SUP-032', supplierName: 'غريت لاند لتقنية اللب والورق', status: 'late', currency: 'USD', exchangeRate: 48.5, totalValue: 86000, expectedDelivery: daysAgo(2) },
+  { id: 'po-4', number: 'PO-2026-0080', date: daysAgo(2), supplierCode: 'SUP-030', supplierName: 'فويث', status: 'partially-received', currency: 'EUR', exchangeRate: 52.8, totalValue: 3150, expectedDelivery: daysAhead(10) },
 ];
 
 function resolveStock(name: string, code: string): { code: string; name: string; unitKey: string } {

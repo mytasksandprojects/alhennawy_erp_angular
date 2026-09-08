@@ -72,6 +72,8 @@ export const API_ENDPOINTS = {
   },
   hr: {
     employees: '/hr/employees',
+    administrations: '/hr/administrations',
+    sections: '/hr/sections',
     attendance: '/hr/attendance',
     leaves: '/hr/leaves',
     zkSyncLogs: '/hr/zk-sync-logs',
@@ -90,6 +92,9 @@ export const API_ENDPOINTS = {
   warehouse: {
     warehouses: '/warehouse/warehouses',
     items: '/warehouse/items',
+    itemGroups: '/warehouse/item-groups',
+    itemSubGroups: '/warehouse/item-sub-groups',
+    units: '/warehouse/units',
     movements: '/warehouse/movements',
     receipts: '/warehouse/receipts',
     purchaseRequests: '/warehouse/purchase-requests',

@@ -9,20 +9,24 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiClientService } from '../../core/api/api-client.service';
 import { FormField, TableColumn } from '../../core/models/common.models';
+import { LookupService } from '../../core/services/lookup.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { AccessService } from '../../core/security/access.service';
 import { exportRowsToCsv } from '../crud/export-csv';
 import { deleteRow, persistRow } from '../crud/crud-write';
-import { emptyDraft, shownColumns, shownFields } from '../crud/form-draft';
+import { draftFromRow, emptyDraft, shownColumns, shownFields } from '../crud/form-draft';
+import { childFilterPatch, extrasFromParams, ListFilter, withStockFilter } from '../crud/list-filter';
+import { crudListQuery, decorateRows, readListParams } from '../crud/paged-list';
 import { coerceStatus, isStatusKey, StatusPick } from '../crud/status-flow';
 import { withGenerated } from '../crud/serial';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { printWide } from '../crud/print-page';
-import { filterCrudRows } from '../crud/stock-filter';
 import { Translated } from '../translated.base';
 import { UiEntityForm } from './ui-entity-form';
 import { UiIcon } from './ui-icon';
+import { UiListFilters } from './ui-list-filters';
 import { UiModal } from './ui-modal';
+import { UiPager } from './ui-pager';
 import { UiTable } from './ui-table';
 
 type Row = Record<string, unknown>;
@@ -31,51 +35,24 @@ type Draft = Record<string, string | number | boolean>;
 @Component({
   selector: 'crud-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiTable, UiEntityForm, UiModal, UiIcon],
+  imports: [UiTable, UiEntityForm, UiModal, UiIcon, UiPager, UiListFilters],
   template: `
     <div class="row token-toolbar">
-      <input
-        class="ui-control crud-search"
-        type="search"
-        [placeholder]="t('common.search')"
-        [value]="search()"
-        (input)="search.set($any($event.target).value)"
+      <ui-list-filters
+        [search]="search()"
+        [filters]="activeFilters()"
+        [values]="filterValues()"
+        [status]="status()"
+        [statusKeys]="statusKeys()"
+        [statusPrefix]="statusCol()?.keyPrefix ?? ''"
+        [showDates]="!!dateKey()"
+        [fromDate]="fromDate()"
+        [toDate]="toDate()"
+        (searchChange)="onSearch($event)"
+        (changed)="onFilter($event)"
+        (fromChange)="fromDate.set($event); reloadFirst()"
+        (toChange)="toDate.set($event); reloadFirst()"
       />
-      @if (hasStockFilter()) {
-        <select class="ui-control" [value]="stock()" (change)="setParam('stock', $any($event.target).value)">
-          <option value="">{{ t('common.all') }}</option>
-          <option value="below">{{ t('warehouse.stats.belowMinimum') }}</option>
-          <option value="out">{{ t('warehouse.stats.outOfStock') }}</option>
-        </select>
-      }
-      @if (statusCol(); as col) {
-        <select class="ui-control" [value]="status()" (change)="setParam('status', $any($event.target).value)">
-          <option value="">{{ t('common.all') }}</option>
-          @for (key of statusKeys(col); track key) {
-            <option [value]="key">{{ t((col.keyPrefix ?? '') + key) }}</option>
-          }
-        </select>
-      }
-      @if (dateKey()) {
-        <label class="row crud-filter">
-          <span class="ui-field__label">{{ t('common.from') }}</span>
-          <input
-            class="ui-control"
-            type="date"
-            [value]="fromDate()"
-            (change)="fromDate.set($any($event.target).value)"
-          />
-        </label>
-        <label class="row crud-filter">
-          <span class="ui-field__label">{{ t('common.to') }}</span>
-          <input
-            class="ui-control"
-            type="date"
-            [value]="toDate()"
-            (change)="toDate.set($any($event.target).value)"
-          />
-        </label>
-      }
       <div class="row token-toolbar__actions">
         @if (allow('print')) {
           <button type="button" class="ui-btn ui-btn--ghost" (click)="print()">
@@ -106,7 +83,7 @@ type Draft = Record<string, string | number | boolean>;
     <div class="print-area">
       <ui-table
         [columns]="shownColumns()"
-        [rows]="filtered()"
+        [rows]="rows()"
         [clickable]="!readOnly() && allow('edit')"
         [rowExport]="allow('print') || allow('pdf') || allow('excel')"
         [allowPrint]="allow('print')"
@@ -120,9 +97,16 @@ type Draft = Record<string, string | number | boolean>;
         (statusChange)="applyStatus($event)"
       />
     </div>
+    <ui-pager
+      [page]="page()"
+      [pageSize]="pageSize()"
+      [total]="total()"
+      (pageChange)="setParam('page', $event)"
+      (pageSizeChange)="setParam('pageSize', $event)"
+    />
 
     @if (open()) {
-      <ui-modal [titleKey]="editingId() ? 'common.edit' : 'common.create'" (closed)="close()">
+      <ui-modal [titleKey]="editingId() ? 'common.edit' : 'common.create'" (closed)="open.set(false)">
         <div class="stack">
           <ui-entity-form [fields]="shownFields()" [moduleId]="moduleId()" [tabId]="tabId()" [(draft)]="draft" />
           <div class="row">
@@ -134,7 +118,7 @@ type Draft = Record<string, string | number | boolean>;
                 {{ t('common.delete') }}
               </button>
             }
-            <button type="button" class="ui-btn ui-btn--ghost" (click)="close()">
+            <button type="button" class="ui-btn ui-btn--ghost" (click)="open.set(false)">
               {{ t('common.cancel') }}
             </button>
           </div>
@@ -153,14 +137,15 @@ export class CrudPanel extends Translated {
   readonly readOnly = input(false);
   readonly titleKey = input('');
   readonly printKind = input<'record' | 'invoice' | 'sheet'>('record');
-
+  readonly filters = input<ListFilter[]>([]);
   private readonly api = inject(ApiClientService);
   private readonly access = inject(AccessService);
   private readonly confirm = inject(ConfirmService);
+  private readonly lookups = inject(LookupService);
   private readonly notifications = inject(NotificationService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-
+  private searchTimer: ReturnType<typeof setTimeout> | undefined;
   protected readonly rows = signal<Row[]>([]);
   protected readonly open = signal(false);
   protected readonly editingId = signal<string | null>(null);
@@ -171,38 +156,60 @@ export class CrudPanel extends Translated {
   protected readonly search = signal('');
   protected readonly stock = signal('');
   protected readonly status = signal('');
+  protected readonly page = signal(1);
+  protected readonly pageSize = signal(20);
+  protected readonly total = signal(0);
+  protected readonly filterValues = signal<Record<string, string>>({});
   protected readonly hasStockFilter = computed(() =>
     this.columns().some((col) => col.key === 'stockStatus'),
   );
+  protected readonly activeFilters = computed(() => withStockFilter(this.filters(), this.hasStockFilter()));
   protected readonly statusCol = computed(() =>
     this.columns().find((col) => col.type === 'badge' && isStatusKey(col.key)),
   );
+  protected readonly statusKeys = computed(() => Object.keys(this.statusCol()?.badgeToneMap ?? {}));
   protected readonly dateKey = computed(
     () => this.columns().find((col) => col.type === 'date' || col.type === 'datetime')?.key ?? '',
-  );
-  protected readonly filtered = computed(() =>
-    filterCrudRows(
-      this.rows(), this.dateKey(), this.fromDate(), this.toDate(),
-      this.stock(), this.status(), this.search(), this.columns(), this.t, this.hasStockFilter(),
-    ),
   );
 
   constructor() {
     super();
     this.route.queryParamMap.subscribe((params) => {
-      this.stock.set(params.get('stock') ?? '');
-      this.status.set(params.get('status') ?? '');
-      this.search.set(params.get('q') ?? '');
+      const next = readListParams(params);
+      this.stock.set(next.stock);
+      this.status.set(next.status);
+      this.search.set(next.q);
+      this.page.set(next.page);
+      this.pageSize.set(next.pageSize);
+      queueMicrotask(() => this.reload());
     });
-    queueMicrotask(() => this.reload());
   }
 
-  protected statusKeys(col: TableColumn): string[] {
-    return Object.keys(col.badgeToneMap ?? {});
+  protected setParam(key: string, value: string | number): void {
+    this.patchParams({ [key]: value || null });
   }
 
-  protected setParam(key: string, value: string): void {
-    void this.router.navigate([], { relativeTo: this.route, queryParams: { [key]: value || null }, queryParamsHandling: 'merge' });
+  protected onFilter(event: { key: string; value: string }): void {
+    this.patchParams(childFilterPatch(this.activeFilters(), event.key, event.value));
+  }
+
+  private patchParams(patch: Record<string, string | number | null>): void {
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: 1, ...patch },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  protected onSearch(value: string): void {
+    this.search.set(value);
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => this.setParam('q', value), 300);
+  }
+
+  protected reloadFirst(): void {
+    this.page.set(1);
+    this.reload();
   }
 
   protected print(asPdf = false): void {
@@ -232,7 +239,10 @@ export class CrudPanel extends Translated {
   }
 
   protected exportExcel(): void {
-    exportRowsToCsv(this.shownColumns(), this.filtered(), this.endpoint(), this.t, this.i18n.formatNumber);
+    const query = crudListQuery(this.page(), this.pageSize(), this.search(), this.fromDate(), this.toDate(), this.status(), this.stock(), this.extras(), true);
+    this.api.getWithMeta<Row[]>(this.endpoint(), query).subscribe((res) => {
+      exportRowsToCsv(this.shownColumns(), decorateRows(res.data, this.hasStockFilter()), this.endpoint(), this.t, this.i18n.formatNumber);
+    });
   }
 
   protected openCreate(): void {
@@ -244,22 +254,8 @@ export class CrudPanel extends Translated {
   protected openEdit(row: Row): void {
     if (this.readOnly()) return;
     this.editingId.set(String(row[this.idKey()] ?? ''));
-    const next: Draft = {};
-    for (const field of this.shownFields()) {
-      next[field.key] = (row[field.key] as string | number | boolean) ?? '';
-      if (!field.multilang) continue;
-      for (const [key, value] of Object.entries(row)) {
-        if (key.startsWith(`${field.key}_`)) {
-          next[key] = (value as string | number | boolean) ?? '';
-        }
-      }
-    }
-    this.draft.set(next);
+    this.draft.set(draftFromRow(this.shownFields(), row));
     this.open.set(true);
-  }
-
-  protected close(): void {
-    this.open.set(false);
   }
 
   protected async save(): Promise<void> {
@@ -267,7 +263,7 @@ export class CrudPanel extends Translated {
     this.busy.set(true);
     persistRow(this.api, this.notifications, this.endpoint(), this.editingId(), withGenerated(this.fields(), this.draft(), this.rows()), () => {
       this.busy.set(false);
-      this.close();
+      this.open.set(false);
       this.reload();
     }, () => this.busy.set(false));
   }
@@ -278,12 +274,24 @@ export class CrudPanel extends Translated {
     this.busy.set(true);
     deleteRow(this.api, this.notifications, this.endpoint(), id, () => {
       this.busy.set(false);
-      this.close();
+      this.open.set(false);
       this.reload();
     }, () => this.busy.set(false));
   }
 
+  private extras(): Record<string, string> {
+    const extras = extrasFromParams(this.route.snapshot.queryParamMap, this.activeFilters());
+    this.filterValues.set(extras);
+    return extras;
+  }
+
   private reload(): void {
-    this.api.get<Row[]>(this.endpoint()).subscribe((data) => this.rows.set(data.map((row) => ({ ...row }))));
+    this.lookups.refresh();
+    const query = crudListQuery(this.page(), this.pageSize(), this.search(), this.fromDate(), this.toDate(), this.status(), this.stock(), this.extras());
+    this.api.getWithMeta<Row[]>(this.endpoint(), query).subscribe((res) => {
+      this.rows.set(decorateRows(res.data, this.hasStockFilter()));
+      this.total.set(res.meta?.total ?? res.data.length);
+      if (res.meta?.page) this.page.set(res.meta.page);
+    });
   }
 }

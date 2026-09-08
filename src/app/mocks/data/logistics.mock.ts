@@ -9,7 +9,7 @@ const daysAhead = (d: number) => new Date(Date.now() + d * 86400000).toISOString
 
 export const MOCK_IMPORTS: ImportShipment[] = [
   {
-    id: 'imp-1', number: 'IMP-2026-0012', supplierCode: 'SUP-005', supplierName: 'Shandong Pulp Co.',
+    id: 'imp-1', number: 'IMP-2026-0012', supplierCode: 'SUP-032', supplierName: 'غريت لاند لتقنية اللب والورق',
     stage: 'customs', acidNo: 'ACID-7841120', releasePermitNo: 'REL-30412', releasePermitDate: daysAgo(1),
     customsNameKey: 'logistics.customs.alexandria', originPort: 'Qingdao', arrivalPort: 'Alexandria',
     etaDate: daysAgo(3), isLate: true,
@@ -21,12 +21,12 @@ export const MOCK_IMPORTS: ImportShipment[] = [
     ],
   },
   {
-    id: 'imp-2', number: 'IMP-2026-0013', supplierCode: 'SUP-004', supplierName: 'Voith Paper GmbH',
+    id: 'imp-2', number: 'IMP-2026-0013', supplierCode: 'SUP-030', supplierName: 'فويث',
     stage: 'cargox', acidNo: 'ACID-7852201', originPort: 'Hamburg', arrivalPort: 'Damietta',
     etaDate: daysAhead(12), isLate: false, costs: [],
   },
   {
-    id: 'imp-3', number: 'IMP-2026-0011', supplierCode: 'SUP-005', supplierName: 'Shandong Pulp Co.',
+    id: 'imp-3', number: 'IMP-2026-0011', supplierCode: 'SUP-032', supplierName: 'غريت لاند لتقنية اللب والورق',
     stage: 'finance-costing', acidNo: 'ACID-7830514', releasePermitNo: 'REL-30320', releasePermitDate: daysAgo(8),
     customsNameKey: 'logistics.customs.alexandria', originPort: 'Qingdao', arrivalPort: 'Alexandria',
     etaDate: daysAgo(10), isLate: false,
@@ -40,7 +40,7 @@ export const MOCK_IMPORTS: ImportShipment[] = [
 ];
 
 export const MOCK_EXPORT_SHIPMENTS: ExportShipment[] = [
-  { id: 'exs-1', number: 'SHP-2026-0044', customerCode: 'CUS-EXP-03', customerName: 'Napoli Tissue S.r.l.', stage: 'loading', containersCount: 2, vessel: 'MSC AURORA', portKey: 'logistics.ports.alexandria', loadingDate: daysAhead(7), telexReleased: false, isLate: false },
-  { id: 'exs-2', number: 'SHP-2026-0043', customerCode: 'CUS-EXP-07', customerName: 'Amman Hygiene Co.', stage: 'documents', containersCount: 1, vessel: 'CMA CGM NILE', portKey: 'logistics.ports.damietta', loadingDate: daysAgo(6), shippingLineInvoicesTotal: 3850, telexReleased: true, isLate: false },
-  { id: 'exs-3', number: 'SHP-2026-0042', customerCode: 'CUS-EXP-03', customerName: 'Napoli Tissue S.r.l.', stage: 'delivered', containersCount: 2, vessel: 'MAERSK VALENCIA', portKey: 'logistics.ports.alexandria', loadingDate: daysAgo(24), shippingLineInvoicesTotal: 7400, telexReleased: true, isLate: true },
+  { id: 'exs-1', number: 'SHP-2026-0044', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', stage: 'loading', containersCount: 2, vessel: 'MSC AURORA', portKey: 'logistics.ports.alexandria', loadingDate: daysAhead(7), telexReleased: false, isLate: false },
+  { id: 'exs-2', number: 'SHP-2026-0043', customerCode: 'CUS-007', customerName: 'شركة المعالي للورق الصحي', stage: 'documents', containersCount: 1, vessel: 'CMA CGM NILE', portKey: 'logistics.ports.damietta', loadingDate: daysAgo(6), shippingLineInvoicesTotal: 3850, telexReleased: true, isLate: false },
+  { id: 'exs-3', number: 'SHP-2026-0042', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', stage: 'delivered', containersCount: 2, vessel: 'MAERSK VALENCIA', portKey: 'logistics.ports.alexandria', loadingDate: daysAgo(24), shippingLineInvoicesTotal: 7400, telexReleased: true, isLate: true },
 ];

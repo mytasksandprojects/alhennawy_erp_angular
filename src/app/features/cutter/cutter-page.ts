@@ -17,6 +17,7 @@ import { UiEntityForm } from '../../shared/components/ui-entity-form';
 import { UiIcon } from '../../shared/components/ui-icon';
 import { UiModal } from '../../shared/components/ui-modal';
 import { UiPageHeader } from '../../shared/components/ui-page-header';
+import { UiPager } from '../../shared/components/ui-pager';
 import { UiTable } from '../../shared/components/ui-table';
 import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
 import { routedTab, tabNavigator } from '../../shared/tab-route';
@@ -37,6 +38,7 @@ type Draft = Record<string, string | number | boolean>;
     RouterLink,
     UiPageHeader,
     UiTable,
+    UiPager,
     UiIcon,
     UiModal,
     UiEntityForm,
@@ -85,6 +87,13 @@ type Draft = Record<string, string | number | boolean>;
           [clickable]="true"
           titleKey="cutter.tabs.rolls"
           (rowClick)="openRoll($any($event))"
+        />
+        <ui-pager
+          [page]="page()"
+          [pageSize]="pageSize()"
+          [total]="total()"
+          (pageChange)="page.set($event); reload()"
+          (pageSizeChange)="pageSize.set($event); page.set(1); reload()"
         />
         <p class="ui-field__hint" style="margin-top: var(--space-sm)">
           {{ t('cutter.printRule') }}
@@ -146,6 +155,9 @@ export class CutterPage extends Translated implements OnInit {
   }
   protected readonly rolls = signal<CutterRoll[]>([]);
   protected readonly gradeFilter = signal('');
+  protected readonly page = signal(1);
+  protected readonly pageSize = signal(20);
+  protected readonly total = signal(0);
   protected readonly selected = signal<CutterRoll | null>(null);
   protected readonly draft = signal<Draft>({});
   protected readonly busy = signal(false);
@@ -156,6 +168,7 @@ export class CutterPage extends Translated implements OnInit {
 
   protected setGradeFilter(value: string): void {
     this.gradeFilter.set(value);
+    this.page.set(1);
     this.reload();
   }
 
@@ -205,9 +218,12 @@ export class CutterPage extends Translated implements OnInit {
     });
   }
 
-  private reload(): void {
+  protected reload(): void {
     this.cutterApi
-      .listRolls(this.gradeFilter() || undefined)
-      .subscribe((rolls) => this.rolls.set(rolls));
+      .listRolls(this.gradeFilter() || undefined, this.page(), this.pageSize())
+      .subscribe((res) => {
+        this.rolls.set(res.data);
+        this.total.set(res.meta?.total ?? res.data.length);
+      });
   }
 }

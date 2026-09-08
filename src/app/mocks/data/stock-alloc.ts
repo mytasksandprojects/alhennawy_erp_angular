@@ -102,11 +102,25 @@ export function planStock(row: Row): {
   return { parts, available, toProduce, quantityKg: available + toProduce };
 }
 
-export function spawnShortage(workOrderNumber: string, parts: StockPart[]): void {
+function qcOf(row?: Row) {
+  if (!row) return {};
+  return {
+    mixType: String(row['mixType'] || ''),
+    productName: String(row['productName'] || ''),
+    parentFamily: String(row['parentFamily'] || ''),
+    ply: String(row['ply'] || ''),
+    color: String(row['color'] || ''),
+    gsm: Number(row['gsm'] || 0),
+    widthMm: Number(row['widthMm'] || row['sizeMm'] || 0),
+  };
+}
+
+export function spawnShortage(workOrderNumber: string, parts: StockPart[], source?: Row): void {
   if (!workOrderNumber || MOCK_PRODUCTION_ORDERS.some((row) => row.workOrderNumber === workOrderNumber)) {
     return;
   }
   const finish = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+  const qc = qcOf(source);
   parts.forEach((part, index) => {
     if (part.toProduce <= 0) return;
     MOCK_PRODUCTION_ORDERS.unshift({
@@ -115,7 +129,7 @@ export function spawnShortage(workOrderNumber: string, parts: StockPart[]): void
       date: new Date().toISOString(),
       workOrderNumber,
       specCode: specOf(part.itemCode),
-      specName: part.itemName,
+      specName: qc.productName || part.itemName,
       quantityKg: part.toProduce,
       producedKg: 0,
       wastePercent: 0,
@@ -124,6 +138,7 @@ export function spawnShortage(workOrderNumber: string, parts: StockPart[]): void
       status: 'open',
       expectedFinish: finish,
       autoCreated: true,
+      ...qc,
     });
   });
 }
@@ -136,7 +151,8 @@ export function statusFromPlan(available: number, toProduce: number): string {
 export function applyStockPlan(row: Row, spawn: boolean): Row {
   const plan = planStock(row);
   const number = String(row['number'] || '');
-  if (spawn) spawnShortage(number, plan.parts);
+  if (spawn) spawnShortage(number, plan.parts, row);
+  const width = Number(row['widthMm'] || row['sizeMm'] || 0);
   let linesJson = row['linesJson'];
   try {
     const parsed = JSON.parse(String(row['linesJson'] || '[]')) as object[];
@@ -161,5 +177,7 @@ export function applyStockPlan(row: Row, spawn: boolean): Row {
     availableFromStockKg: plan.available,
     toProduceKg: plan.toProduce,
     collectionStatusKey: row['collectionStatusKey'] || 'sales.collection.pending',
+    widthMm: width,
+    sizeMm: width,
   };
 }
