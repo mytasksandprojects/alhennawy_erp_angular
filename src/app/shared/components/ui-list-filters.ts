@@ -47,14 +47,16 @@ import { Translated } from '../translated.base';
         </label>
       }
       @if (showDates()) {
-        <label class="crud-filter">
-          <span class="ui-field__label">{{ t('common.from') }}</span>
-          <input class="ui-control" type="date" [value]="fromDate()" (change)="fromChange.emit($any($event.target).value)" />
-        </label>
-        <label class="crud-filter">
-          <span class="ui-field__label">{{ t('common.to') }}</span>
-          <input class="ui-control" type="date" [value]="toDate()" (change)="toChange.emit($any($event.target).value)" />
-        </label>
+        <div class="crud-filter-range">
+          <label class="crud-filter crud-filter--date">
+            <span class="ui-field__label">{{ t('common.from') }}</span>
+            <input class="ui-control" type="date" [value]="fromDate()" (change)="fromChange.emit($any($event.target).value)" />
+          </label>
+          <label class="crud-filter crud-filter--date">
+            <span class="ui-field__label">{{ t('common.to') }}</span>
+            <input class="ui-control" type="date" [value]="toDate()" (change)="toChange.emit($any($event.target).value)" />
+          </label>
+        </div>
       }
     </div>
   `,

@@ -1,10 +1,15 @@
 /* Labeled list-toolbar filters (search + dropdowns). */
+ui-list-filters {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .crud-filters {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--space-sm);
-  flex: 1;
   min-width: 0;
 }
 
@@ -21,6 +26,20 @@
   flex: 1 1 calc(var(--space-xl) * 6);
   min-width: calc(var(--space-xl) * 5);
   max-width: calc(var(--space-xl) * 10);
+}
+
+.crud-filter-range {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  flex: 0 0 auto;
+}
+
+.crud-filter--date {
+  flex: 0 0 auto;
+  width: calc(var(--control-height) * 4);
+  min-width: calc(var(--control-height) * 4);
 }
 
 .crud-filter .ui-field__label {
