@@ -70,6 +70,17 @@ export function prepareMovement(row: Record<string, unknown>): Record<string, un
   };
 }
 
+export function prepareCustody(row: Record<string, unknown>): Record<string, unknown> {
+  const today = new Date().toISOString().slice(0, 10);
+  const out = String(row['status'] || 'out') !== 'returned';
+  return {
+    ...row,
+    status: out ? 'out' : 'returned',
+    issuedAt: row['issuedAt'] || today,
+    returnedAt: out ? '' : row['returnedAt'] || today,
+  };
+}
+
 export const MOCK_TOOL_CUSTODY: ToolCustody[] = [
   { id: 'tc-1', number: 'CST-2026-0001', itemName: 'ميكرومتر خارجي 0-25', warehouseId: 'wh-spare', holderName: 'أحمد حمدي شعبان حمزة', issuedAt: daysAgo(2), status: 'out' },
   { id: 'tc-2', number: 'CST-2026-0002', itemName: 'طقم مفكات', warehouseId: 'wh-spare', holderName: 'محمد عبد الغفار محمد ابو ادريس', issuedAt: daysAgo(8), returnedAt: daysAgo(1), status: 'returned' },

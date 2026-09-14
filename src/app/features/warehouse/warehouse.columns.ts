@@ -142,7 +142,7 @@ export const TOOL_CUSTODY_FIELDS: FormField[] = [
   { key: 'itemCode', labelKey: 'weighbridge.fields.item', type: 'select', lookup: 'stockItems', copyKey: 'itemName' },
   { key: 'warehouseId', labelKey: 'warehouse.tabs.warehouses', type: 'select', lookup: 'warehouses', required: true },
   { key: 'holderName', labelKey: 'administration.fields.holder', multilang: true, required: true },
-  { key: 'issuedAt', labelKey: 'administration.fields.issuedAt', type: 'date' },
+  { key: 'issuedAt', labelKey: 'administration.fields.issuedAt', type: 'date', required: true },
   { key: 'returnedAt', labelKey: 'warehouse.fields.returnedAt', type: 'date' },
   { key: 'status', labelKey: 'common.status', type: 'select', options: keysToOptions('warehouse.custody.', ['out', 'returned']) },
 ];

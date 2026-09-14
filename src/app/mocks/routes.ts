@@ -14,7 +14,7 @@ import {
 } from './data/weighbridge.mock';
 import { MOCK_SPECS, createRoll, listRolls, registerPrint } from './data/cutter.mock';
 import { createReceipt, listReceipts, MOCK_MOVEMENTS, MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './data/warehouse.mock';
-import { assignItemCode, MOCK_STOCK_COUNTS, MOCK_TOOL_CUSTODY, prepareMovement, prepareStockCount } from './data/warehouse-ops.mock';
+import { assignItemCode, MOCK_STOCK_COUNTS, MOCK_TOOL_CUSTODY, prepareCustody, prepareMovement, prepareStockCount } from './data/warehouse-ops.mock';
 import { listItemCardReport, listItemMovementReport } from './data/warehouse-reports.mock';
 import { MOCK_ACCOUNT_FLAT, MOCK_BANKS, MOCK_JOURNAL_ENTRIES } from './data/finance.mock';
 import { MOCK_BALANCE_SHEET, MOCK_EXPENSES, MOCK_PNL } from './data/finance-reports.mock';
@@ -241,7 +241,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/warehouse/items', MOCK_STOCK_ITEMS, 'code', true, assignItemCode),
   ...crudRoutes('/warehouse/movements', MOCK_MOVEMENTS, 'id', true, prepareMovement),
   ...crudRoutes('/warehouse/receipts', MOCK_MOVEMENTS, 'id', false, prepareMovement),
-  ...crudRoutes('/warehouse/custody', MOCK_TOOL_CUSTODY),
+  ...crudRoutes('/warehouse/custody', MOCK_TOOL_CUSTODY, 'id', true, prepareCustody),
   ...crudRoutes('/warehouse/counts', MOCK_STOCK_COUNTS, 'id', true, prepareStockCount),
   ...crudRoutes('/finance/accounts', MOCK_ACCOUNT_FLAT, 'code'),
   ...crudRoutes('/finance/journal-entries', MOCK_JOURNAL_ENTRIES),

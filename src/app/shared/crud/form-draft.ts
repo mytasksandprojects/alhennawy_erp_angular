@@ -13,7 +13,9 @@ export function emptyDraft(fields: FormField[]): Draft {
         : field.type === 'number'
           ? 0
           : field.type === 'date'
-            ? new Date().toISOString().slice(0, 10)
+            ? field.key === 'returnedAt'
+              ? ''
+              : new Date().toISOString().slice(0, 10)
             : field.options?.[0]?.value ?? '';
   }
   return next;
