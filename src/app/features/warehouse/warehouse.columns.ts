@@ -184,8 +184,10 @@ export const ITEM_MOVEMENT_COLUMNS: TableColumn[] = [
   { key: 'groupKey', labelKey: 'warehouse.fields.group', type: 'key' },
   { key: 'location', labelKey: 'warehouse.fields.location' },
   { key: 'unitKey', labelKey: 'warehouse.fields.unit', type: 'key', align: 'center' },
+  { key: 'movementDate', labelKey: 'warehouse.fields.movementDate', type: 'date' },
   { key: 'inbound', labelKey: 'warehouse.fields.inbound', type: 'number' },
   { key: 'outbound', labelKey: 'warehouse.fields.outbound', type: 'number' },
+  { key: 'beginningBalance', labelKey: 'warehouse.fields.beginningBalance', type: 'number' },
   { key: 'balance', labelKey: 'warehouse.fields.balance', type: 'number' },
   {
     key: 'stockStatus',

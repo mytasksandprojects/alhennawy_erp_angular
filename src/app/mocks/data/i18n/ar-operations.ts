@@ -125,6 +125,8 @@ export const AR_OPERATIONS: TranslationMap = {
   'warehouse.fields.unitCost': 'تكلفة الوحدة',
   'warehouse.fields.referenceType': 'نوع المرجع',
   'warehouse.fields.reference': 'المرجع',
+  'warehouse.fields.movementDate': 'تاريخ الحركة',
+  'warehouse.fields.beginningBalance': 'رصيد أول المدة',
 
   'warehouse.types.receipt': 'إذن إضافة',
   'warehouse.types.issue': 'إذن صرف',

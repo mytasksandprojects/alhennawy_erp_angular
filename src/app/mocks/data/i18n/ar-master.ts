@@ -126,6 +126,8 @@ export const AR_MASTER: Record<string, string> = {
   'warehouse.fields.balance': 'الرصيد',
   'warehouse.fields.serial': 'مسلسل',
   'warehouse.fields.movement': 'الحركة',
+  'warehouse.fields.movementDate': 'تاريخ الحركة',
+  'warehouse.fields.beginningBalance': 'رصيد أول المدة',
   'warehouse.types.opening': 'رصيد أول المدة',
   'warehouse.reports.hideZero': 'إخفاء الأرصدة الصفرية',
   'warehouse.fields.group': 'المجموعة الأساسية',

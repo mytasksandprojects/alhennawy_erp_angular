@@ -125,6 +125,8 @@ export const EN_OPERATIONS: TranslationMap = {
   'warehouse.fields.unitCost': 'Unit Cost',
   'warehouse.fields.referenceType': 'Reference Type',
   'warehouse.fields.reference': 'Reference',
+  'warehouse.fields.movementDate': 'Movement Date',
+  'warehouse.fields.beginningBalance': 'Beginning Balance',
 
   'warehouse.types.receipt': 'Receipt',
   'warehouse.types.issue': 'Issue',

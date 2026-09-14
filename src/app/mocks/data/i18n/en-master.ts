@@ -127,6 +127,8 @@ export const EN_MASTER: Record<string, string> = {
   'warehouse.fields.balance': 'Balance',
   'warehouse.fields.serial': 'Serial',
   'warehouse.fields.movement': 'Movement',
+  'warehouse.fields.movementDate': 'Movement Date',
+  'warehouse.fields.beginningBalance': 'Beginning Balance',
   'warehouse.types.opening': 'Opening balance',
   'warehouse.reports.hideZero': 'Hide zero balances',
   'warehouse.fields.group': 'Main group',

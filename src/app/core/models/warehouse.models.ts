@@ -39,6 +39,10 @@ export interface StockItem extends Localized {
   isBelowMinimum: boolean;
   /** Free-text bin / section, e.g. «سيكشن أ — الرف 3». */
   location?: string;
+  /** تاريخ آخر حركة — date of last movement. */
+  movementDate?: string;
+  /** رصيد أول المدة — beginning balance. */
+  beginningBalance?: number;
 }
 
 export type MovementType =

@@ -68,12 +68,29 @@ export function listItemMovementReport(query: URLSearchParams): Row[] {
   return MOCK_STOCK_ITEMS.filter((item) => !warehouseId || item.warehouseId === warehouseId).map((item) => {
     let inbound = 0;
     let outbound = 0;
-    for (const row of ofItem(item.code, warehouseId)) {
-      if (!inRange(row.date, from, to)) continue;
+    let movementDate = '';
+    let beginningBalance = 0;
+    
+    // Calculate all metrics from movement history
+    const history = ofItem(item.code, warehouseId);
+    for (const row of history) {
       const [inn, out] = flow(row, warehouseId);
-      inbound += inn;
-      outbound += out;
+      
+      // Track movement date (latest movement within period)
+      if (inRange(row.date, from, to)) {
+        inbound += inn;
+        outbound += out;
+        if (!movementDate || row.date > movementDate) {
+          movementDate = row.date;
+        }
+      }
+      
+      // Calculate beginning balance from movements before the period
+      if (from && row.date.slice(0, 10) < from) {
+        beginningBalance += inn - out;
+      }
     }
+    
     return {
       id: item.code,
       itemCode: item.code,
@@ -83,8 +100,10 @@ export function listItemMovementReport(query: URLSearchParams): Row[] {
       subGroupKey: item.subGroupKey,
       unitKey: item.unitKey,
       location: item.location,
+      movementDate: movementDate || new Date().toISOString(),
       inbound,
       outbound,
+      beginningBalance,
       balance: item.quantity,
       quantity: item.quantity,
       minimumStock: item.minimumStock,
