@@ -3,7 +3,8 @@ import { CatalogModule, CatalogTab } from '../models/access.models';
 import { WEIGHING_COLUMNS } from '../../features/weighbridge/weighbridge.columns';
 import { ROLL_COLUMNS, SPEC_COLUMNS } from '../../features/cutter/cutter.columns';
 import {
-  LOOKUP_LABEL_COLUMNS, MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_ITEM_COLUMNS, WAREHOUSE_COLUMNS,
+  ITEM_CARD_COLUMNS, ITEM_MOVEMENT_COLUMNS, LOOKUP_LABEL_COLUMNS, MOVEMENT_COLUMNS, RECEIPT_COLUMNS,
+  STOCK_COUNT_COLUMNS, STOCK_ITEM_COLUMNS, TOOL_CUSTODY_COLUMNS, WAREHOUSE_COLUMNS,
 } from '../../features/warehouse/warehouse.columns';
 import {
   CHEMICAL_CONSUMPTION_COLUMNS,
@@ -70,17 +71,14 @@ function tab(id: string, labelKey: string, columns: TableColumn[]): CatalogTab {
     })),
   };
 }
-
 function dash(): CatalogTab {
   return tab('dashboard', 'common.dashboardTab', []);
 }
-
 function reports(): CatalogTab[] {
   return REPORT_CATEGORIES.flatMap((category) =>
     category.reports.map((report) => tab(report.id, report.labelKey, report.columns)),
   );
 }
-
 /** Every module, sub-module, and column the roles matrix can grant. */
 export const PERMISSION_CATALOG: CatalogModule[] = [
   {
@@ -103,11 +101,15 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       dash(),
       tab('warehouses', 'warehouse.tabs.warehouses', WAREHOUSE_COLUMNS),
       tab('items', 'warehouse.tabs.items', STOCK_ITEM_COLUMNS),
+      tab('itemMovement', 'warehouse.reports.itemMovement', ITEM_MOVEMENT_COLUMNS),
+      tab('itemCard', 'warehouse.reports.itemCard', ITEM_CARD_COLUMNS),
       tab('itemGroups', 'warehouse.tabs.groups', LOOKUP_LABEL_COLUMNS),
       tab('itemSubGroups', 'warehouse.tabs.subGroups', LOOKUP_LABEL_COLUMNS),
       tab('units', 'warehouse.tabs.units', LOOKUP_LABEL_COLUMNS),
       tab('movements', 'warehouse.tabs.movements', MOVEMENT_COLUMNS),
       tab('receipts', 'warehouse.tabs.receipts', RECEIPT_COLUMNS),
+      tab('custody', 'warehouse.tabs.custody', TOOL_CUSTODY_COLUMNS),
+      tab('counts', 'warehouse.tabs.counts', STOCK_COUNT_COLUMNS),
       tab('purchaseRequests', 'purchasing.tabs.requests', PURCHASE_REQUEST_COLUMNS),
     ],
   },

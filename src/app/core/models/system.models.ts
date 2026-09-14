@@ -27,6 +27,8 @@ export interface LookupValue {
   rate?: number;
   /** Optional parent value — child dropdowns filter on this. */
   parentValue?: string;
+  /** Item groups only: short code used in SKUs (OS → SPR-OS-0001). */
+  codePrefix?: string;
 }
 
 /** A backend feature/integration switch with its live status. */

@@ -169,7 +169,7 @@ export class CrudPanel extends Translated {
   );
   protected readonly statusKeys = computed(() => Object.keys(this.statusCol()?.badgeToneMap ?? {}));
   protected readonly dateKey = computed(
-    () => this.columns().find((col) => col.type === 'date' || col.type === 'datetime')?.key ?? '',
+    () => this.columns().find((col) => col.type === 'date' || col.type === 'datetime')?.key ?? (this.moduleId() === 'reports' || this.tabId() === 'itemMovement' ? 'date' : ''),
   );
 
   constructor() {

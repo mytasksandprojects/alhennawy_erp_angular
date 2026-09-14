@@ -207,6 +207,9 @@ export function liveLookups(): LookupValue[] {
       ...liveLk(`live-item-${item.code}`, 'stockItems', item),
       value: item.code,
     })),
+    ...[...new Set(MOCK_STOCK_ITEMS.map((item) => item.location).filter((value): value is string => !!value))].map(
+      (location) => lk(`live-loc-${location}`, 'itemLocations', location, location, location),
+    ),
     ...MOCK_SUPPLIERS.map((supplier) => ({
       ...liveLk(`live-sup-${supplier.code}`, 'suppliers', supplier),
       value: supplier.code,

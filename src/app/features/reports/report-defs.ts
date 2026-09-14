@@ -1,5 +1,6 @@
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { TableColumn } from '../../core/models/common.models';
+import { ListFilter } from '../../shared/crud/list-filter';
 import { CUSTODY_COLUMNS, CONTRACT_COLUMNS, DOCUMENT_COLUMNS, FLEET_COLUMNS, PERMIT_COLUMNS } from '../administration/administration.columns';
 import { OUTPUT_COLUMNS, PURCHASE_COLUMNS, STAFF_COLUMNS } from '../chemicals/chemicals.columns';
 import { DISPENSE_COLUMNS, MEDICINE_COLUMNS, VISIT_COLUMNS } from '../clinic/clinic-page';
@@ -12,7 +13,7 @@ import { PURCHASE_ORDER_COLUMNS, PURCHASE_REQUEST_COLUMNS, QUOTATION_COLUMNS, SU
 import { CHEMICAL_CONSUMPTION_COLUMNS, DASHT_INSPECTION_COLUMNS, MAINTENANCE_COLUMNS, MATERIAL_INSPECTION_COLUMNS, TECH_SHEET_COLUMNS } from '../quality/quality.columns';
 import { CUSTOMER_COLUMNS, EXPORT_ORDER_COLUMNS, INVOICE_COLUMNS, workOrderColumns } from '../sales/sales.columns';
 import { CERTIFICATE_COLUMNS, INSURANCE_COLUMNS } from '../safety/safety.columns';
-import { MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_ITEM_COLUMNS } from '../warehouse/warehouse.columns';
+import { ITEM_CARD_COLUMNS, ITEM_CARD_FILTERS, ITEM_MOVEMENT_COLUMNS, ITEM_MOVEMENT_FILTERS, MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_COUNT_COLUMNS, STOCK_ITEM_COLUMNS, TOOL_CUSTODY_COLUMNS } from '../warehouse/warehouse.columns';
 import { WEIGHING_COLUMNS } from '../weighbridge/weighbridge.columns';
 
 /** One printable/exportable report backed by an existing collection. */
@@ -21,6 +22,7 @@ export interface ReportDef {
   labelKey: string;
   endpoint: string;
   columns: TableColumn[];
+  filters?: ListFilter[];
 }
 
 export interface ReportCategory {
@@ -43,8 +45,12 @@ export const REPORT_ICONS: Record<string, string> = {
   productionOrders: 'production',
   rolls: 'cutter',
   stockItems: 'items',
+  itemMovement: 'items',
+  itemCard: 'document',
   movements: 'transfer',
   receipts: 'inbox',
+  toolCustody: 'items',
+  stockCounts: 'document',
   imports: 'logistics',
   exports: 'outbox',
   dashtInspections: 'quality',
@@ -111,8 +117,12 @@ export const REPORT_CATEGORIES: ReportCategory[] = [
       { id: 'productionOrders', labelKey: 'production.tabs.orders', endpoint: API.production.orders, columns: PRODUCTION_ORDER_COLUMNS },
       { id: 'rolls', labelKey: 'cutter.tabs.rolls', endpoint: API.cutter.rolls, columns: ROLL_COLUMNS },
       { id: 'stockItems', labelKey: 'warehouse.tabs.items', endpoint: API.warehouse.items, columns: STOCK_ITEM_COLUMNS },
+      { id: 'itemMovement', labelKey: 'warehouse.reports.itemMovement', endpoint: API.warehouse.itemMovement, columns: ITEM_MOVEMENT_COLUMNS, filters: ITEM_MOVEMENT_FILTERS },
+      { id: 'itemCard', labelKey: 'warehouse.reports.itemCard', endpoint: API.warehouse.itemCard, columns: ITEM_CARD_COLUMNS, filters: ITEM_CARD_FILTERS },
       { id: 'movements', labelKey: 'warehouse.tabs.movements', endpoint: API.warehouse.movements, columns: MOVEMENT_COLUMNS },
       { id: 'receipts', labelKey: 'warehouse.tabs.receipts', endpoint: API.warehouse.receipts, columns: RECEIPT_COLUMNS },
+      { id: 'toolCustody', labelKey: 'warehouse.tabs.custody', endpoint: API.warehouse.custody, columns: TOOL_CUSTODY_COLUMNS },
+      { id: 'stockCounts', labelKey: 'warehouse.tabs.counts', endpoint: API.warehouse.counts, columns: STOCK_COUNT_COLUMNS },
       { id: 'imports', labelKey: 'logistics.tabs.imports', endpoint: API.logistics.imports, columns: IMPORT_COLUMNS },
       { id: 'exports', labelKey: 'logistics.tabs.exports', endpoint: API.logistics.exports, columns: EXPORT_SHIPMENT_COLUMNS },
       { id: 'dashtInspections', labelKey: 'quality.tabs.dasht', endpoint: API.quality.dashtInspections, columns: DASHT_INSPECTION_COLUMNS },
@@ -195,8 +205,12 @@ export const REPORT_DASHBOARD: Record<string, string> = {
   productionOrders: 'production',
   rolls: 'production',
   stockItems: 'warehouse',
+  itemMovement: 'warehouse',
+  itemCard: 'warehouse',
   movements: 'warehouse',
   receipts: 'warehouse',
+  toolCustody: 'warehouse',
+  stockCounts: 'warehouse',
   imports: 'logistics',
   exports: 'logistics',
   dashtInspections: 'quality',

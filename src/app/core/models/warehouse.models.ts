@@ -37,9 +37,17 @@ export interface StockItem extends Localized {
   minimumStock: number;
   unitCost: number;
   isBelowMinimum: boolean;
+  /** Free-text bin / section, e.g. «سيكشن أ — الرف 3». */
+  location?: string;
 }
 
-export type MovementType = 'receipt' | 'issue' | 'transfer' | 'adjustment';
+export type MovementType =
+  | 'receipt'
+  | 'issue'
+  | 'transfer'
+  | 'adjustment'
+  | 'warehouse-return'
+  | 'supplier-return';
 
 export interface StockMovement {
   id: string;
@@ -55,4 +63,31 @@ export interface StockMovement {
   referenceKey?: string;
   reference?: string;
   byUser: string;
+  linesJson?: string;
+}
+
+/** أدوات مسلّمة للفنيين وتعود للمخزن. */
+export interface ToolCustody {
+  id: string;
+  number: string;
+  itemCode?: string;
+  itemName: string;
+  warehouseId: string;
+  holderName: string;
+  issuedAt: string;
+  returnedAt?: string;
+  status: 'out' | 'returned';
+}
+
+/** جرد كمية النظام مقابل العد الفعلي. */
+export interface StockCount {
+  id: string;
+  number: string;
+  date: string;
+  warehouseId: string;
+  itemCode: string;
+  itemName: string;
+  systemQty: number;
+  countedQty: number;
+  difference: number;
 }

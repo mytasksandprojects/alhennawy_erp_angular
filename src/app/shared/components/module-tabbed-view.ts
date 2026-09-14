@@ -19,6 +19,7 @@ export interface ListTabConfig {
   idKey?: string;
   custom?: boolean;
   filters?: ListFilter[];
+  readOnly?: boolean;
 }
 
 /**
@@ -57,6 +58,7 @@ export interface ListTabConfig {
             [titleKey]="tab.labelKey"
             [printKind]="tab.id === 'invoices' ? 'invoice' : 'record'"
             [filters]="tab.filters ?? []"
+            [readOnly]="!!tab.readOnly"
           />
         }
       }

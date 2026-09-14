@@ -31,12 +31,12 @@ export function filterCrudRows(
 /** Derived badge: empty bin vs still-on-shelf but under the minimum. */
 export function stockStatusOf(
   row: Record<string, unknown>,
-): 'out' | 'below' | 'available' {
+): 'out' | 'below' | 'low' | 'available' {
   const qty = Number(row['quantity']);
+  const min = Number(row['minimumStock']);
   if (qty === 0) return 'out';
-  if (row['isBelowMinimum'] === true || qty < Number(row['minimumStock'])) {
-    return 'below';
-  }
+  if (row['isBelowMinimum'] === true || (min > 0 && qty <= min)) return 'below';
+  if (min > 0 && qty <= Math.max(min * 1.25, min + 2)) return 'low';
   return 'available';
 }
 

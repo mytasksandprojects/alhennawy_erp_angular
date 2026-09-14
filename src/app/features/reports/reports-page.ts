@@ -65,6 +65,7 @@ import { Translated } from '../../shared/translated.base';
           [tabId]="selected()!.id"
           [endpoint]="selected()!.endpoint"
           [columns]="selected()!.columns"
+          [filters]="selected()!.filters ?? []"
           [readOnly]="true"
           [titleKey]="selected()!.labelKey"
           [printKind]="selected()!.id === 'invoices' ? 'invoice' : 'record'"

@@ -35,7 +35,7 @@ function matchesQuery(row: Record<string, unknown>, query: URLSearchParams): boo
   const to = query.get('to') ?? '';
   if (from || to) {
     const value = dateOf(row);
-    if (!value || (from && value < from) || (to && value > to)) return false;
+    if (value && ((from && value < from) || (to && value > to))) return false;
   }
   const q = (query.get('q') ?? query.get('search') ?? '').trim().toLowerCase();
   if (q && !Object.values(row).some((value) => String(value ?? '').toLowerCase().includes(q))) {
@@ -60,7 +60,9 @@ function dateOf(row: Record<string, unknown>): string {
 
 function stockFlag(row: Record<string, unknown>): string {
   const qty = Number(row['quantity']);
+  const min = Number(row['minimumStock']);
   if (qty === 0) return 'out';
-  if (row['isBelowMinimum'] === true || qty < Number(row['minimumStock'])) return 'below';
+  if (row['isBelowMinimum'] === true || (min > 0 && qty <= min)) return 'below';
+  if (min > 0 && qty <= Math.max(min * 1.25, min + 2)) return 'low';
   return 'available';
 }

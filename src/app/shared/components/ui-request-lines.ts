@@ -119,18 +119,7 @@ export class UiRequestLines extends Translated {
       unitKey: this.unitKey(),
       specification: this.note().trim() || undefined,
     };
-    const lines = [...this.lines()];
-    const index = lines.findIndex((line) => sameLine(line, next));
-    if (index >= 0) {
-      lines[index] = {
-        ...lines[index],
-        quantity: Number(lines[index].quantity) + quantity,
-        specification: next.specification || lines[index].specification,
-      };
-    } else {
-      lines.push(next);
-    }
-    this.emit(lines);
+    this.emit([...this.lines(), next]);
     this.name.set('');
     this.note.set('');
     this.qty.set(1);
@@ -154,11 +143,6 @@ export class UiRequestLines extends Translated {
   private emit(lines: PurchaseRequestLine[]): void {
     this.valueChange.emit(JSON.stringify(lines));
   }
-}
-
-function sameLine(left: PurchaseRequestLine, right: PurchaseRequestLine): boolean {
-  if (left.itemCode || right.itemCode) return left.itemCode === right.itemCode;
-  return left.itemName === right.itemName && (left.specification ?? '') === (right.specification ?? '');
 }
 
 function parseLines(raw: string): PurchaseRequestLine[] {

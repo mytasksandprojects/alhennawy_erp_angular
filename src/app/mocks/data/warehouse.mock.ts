@@ -15,12 +15,12 @@ const DEMO_STOCK_ITEMS: StockItem[] = [
   { code: 'DSH-002-S1', parentCode: 'DSH-002', name: 'ورق دشت درجة ثانية — تحويل داخلي', name_en: 'Recovered Paper Grade 2 — Internal Transfer', warehouseId: 'wh-dasht', unitKey: 'units.kg', quantity: 5200, minimumStock: 0, unitCost: 6.75, isBelowMinimum: false },
   { code: 'CHM-011', name: 'كيماوي نشا كاتيوني', name_en: 'Cationic Starch Chemical', warehouseId: 'wh-chem', unitKey: 'units.kg', quantity: 1200, minimumStock: 2000, unitCost: 42, isBelowMinimum: true },
   { code: 'CHM-014', name: 'مثبت رغوة', name_en: 'Foam Stabilizer', warehouseId: 'wh-chem', unitKey: 'units.liter', quantity: 3400, minimumStock: 800, unitCost: 55, isBelowMinimum: false },
-  { code: 'SPR-201', name: 'رولمان بلي 6204', name_en: 'Ball Bearing 6204', warehouseId: 'wh-spare', groupKey: 'itemGroups.bearings', unitKey: 'units.piece', quantity: 14, minimumStock: 10, unitCost: 380, isBelowMinimum: false },
-  { code: 'SPR-318', name: 'سير ناقل حركة B-52', name_en: 'Drive Belt B-52', warehouseId: 'wh-spare', groupKey: 'itemGroups.belts', unitKey: 'units.piece', quantity: 2, minimumStock: 6, unitCost: 940, isBelowMinimum: true },
+  { code: 'SPR-201', name: 'رولمان بلي 6204', name_en: 'Ball Bearing 6204', warehouseId: 'wh-spare', groupKey: 'itemGroups.bearings', unitKey: 'units.piece', quantity: 14, minimumStock: 12, unitCost: 380, isBelowMinimum: false, location: 'سيكشن بلي — الرف 2' },
+  { code: 'SPR-318', name: 'سير ناقل حركة B-52', name_en: 'Drive Belt B-52', warehouseId: 'wh-spare', groupKey: 'itemGroups.belts', unitKey: 'units.piece', quantity: 2, minimumStock: 6, unitCost: 940, isBelowMinimum: true, location: 'سيكشن سيور — الرف 1' },
   { code: 'FIN-SMP-22', name: 'سوبر مكس مطبخ ط ٢ ج ٢٢', name_en: 'Super Mix Kitchen T2 G22', warehouseId: 'wh-fin1', unitKey: 'units.kg', quantity: 61200, minimumStock: 15000, unitCost: 27.5, isBelowMinimum: false },
   { code: 'FIN-TWL-25', name: 'تواليت فاخر ج ٢٥', name_en: 'Premium Toilet Tissue G25', warehouseId: 'wh-fin1', unitKey: 'units.kg', quantity: 8250, minimumStock: 10000, unitCost: 31, isBelowMinimum: true },
   { code: 'FIN2-SMP-22', name: 'سوبر مكس درجة ثانية ج ٢٢', name_en: 'Super Mix Grade 2 G22', warehouseId: 'wh-fin2', unitKey: 'units.kg', quantity: 4300, minimumStock: 0, unitCost: 18, isBelowMinimum: false },
-  { code: 'SPR-409', name: 'فلتر هواء MP-1', name_en: 'Air Filter MP-1', warehouseId: 'wh-spare', groupKey: 'itemGroups.air', subGroupKey: 'itemSubGroups.compressor', unitKey: 'units.piece', quantity: 0, minimumStock: 4, unitCost: 220, isBelowMinimum: true },
+  { code: 'SPR-409', name: 'فلتر هواء MP-1', name_en: 'Air Filter MP-1', warehouseId: 'wh-spare', groupKey: 'itemGroups.air', subGroupKey: 'itemSubGroups.compressor', unitKey: 'units.piece', quantity: 0, minimumStock: 4, unitCost: 220, isBelowMinimum: true, location: 'سيكشن هواء — الحته الغربية' },
   { code: 'CHM-020', name: 'مضاد رغوة سيليكون', name_en: 'Silicone Defoamer', warehouseId: 'wh-chem', unitKey: 'units.liter', quantity: 0, minimumStock: 50, unitCost: 78, isBelowMinimum: true },
 ];
 
@@ -62,6 +62,14 @@ export const MOCK_MOVEMENTS: StockMovement[] = [
   { id: 'mv-6', number: 'ADJ-2026-0009', date: daysAgo(3), type: 'adjustment', itemCode: 'FIN-TWL-25', itemName: 'تواليت فاخر ج ٢٥', quantity: -120, unitKey: 'units.kg', fromWarehouseId: 'wh-fin1', referenceKey: 'warehouse.refs.stockCount', reference: 'CNT-2026-03', byUser: 'ADMIN' },
   { id: 'mv-7', number: 'RCV-2026-0843', date: daysAgo(3), type: 'receipt', itemCode: 'CHM-014', itemName: 'مثبت رغوة', quantity: 800, unitKey: 'units.liter', toWarehouseId: 'wh-chem', referenceKey: 'warehouse.refs.purchaseOrder', reference: 'PO-2026-081', byUser: 'STORE1' },
   { id: 'mv-8', number: 'RCV-2026-0844', date: daysAgo(4), type: 'receipt', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantity: 9200, unitKey: 'units.kg', toWarehouseId: 'wh-fin1', referenceKey: 'warehouse.refs.weighing', reference: '3022', byUser: 'STORE2' },
+  { id: 'mv-9', number: 'WRT-2026-0001', date: daysAgo(1), type: 'warehouse-return', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 2, unitKey: 'units.piece', toWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.stockCount', reference: 'RET-SP-01', byUser: 'STORE1' },
+  { id: 'mv-10', number: 'SRT-2026-0001', date: daysAgo(2), type: 'supplier-return', itemCode: 'RAW-005', itemName: 'كلور', quantity: 1, unitKey: 'units.ton', fromWarehouseId: 'wh-raw', referenceKey: 'warehouse.refs.purchaseOrder', reference: 'PO-2026-090', byUser: 'STORE1' },
+  { id: 'mv-11', number: 'WRT-2026-0002', date: daysAgo(3), type: 'warehouse-return', itemCode: 'SPL-001', itemName: 'استرتش', quantity: 4, unitKey: 'units.ton', toWarehouseId: 'wh-supplies', referenceKey: 'warehouse.refs.stockCount', reference: 'RET-SP-02', byUser: 'STORE2' },
+  { id: 'mv-12', number: 'ISS-2026-0514', date: daysAgo(18), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 3, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-014', byUser: 'STORE1' },
+  { id: 'mv-13', number: 'ISS-2026-0515', date: daysAgo(15), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 2, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-021', byUser: 'STORE1' },
+  { id: 'mv-14', number: 'ISS-2026-0516', date: daysAgo(12), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 1, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-028', byUser: 'STORE1' },
+  { id: 'mv-15', number: 'ISS-2026-0517', date: daysAgo(9), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 2, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-033', byUser: 'STORE1' },
+  { id: 'mv-16', number: 'ISS-2026-0518', date: daysAgo(6), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 1, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-041', byUser: 'STORE1' },
 ];
 
 export function listReceipts(): StockMovement[] {
@@ -79,10 +87,12 @@ export function createReceipt(body: unknown): StockMovement {
     itemName: draft.itemName || '',
     quantity: Number(draft.quantity) || 0,
     unitKey: draft.unitKey || 'units.kg',
+    fromWarehouseId: draft.fromWarehouseId,
     toWarehouseId: draft.toWarehouseId,
     referenceKey: draft.referenceKey,
     reference: draft.reference,
     byUser: draft.byUser || '',
+    linesJson: draft.linesJson,
   };
   MOCK_MOVEMENTS.unshift(row);
   return row;

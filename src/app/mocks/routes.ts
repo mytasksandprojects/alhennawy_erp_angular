@@ -14,6 +14,8 @@ import {
 } from './data/weighbridge.mock';
 import { MOCK_SPECS, createRoll, listRolls, registerPrint } from './data/cutter.mock';
 import { createReceipt, listReceipts, MOCK_MOVEMENTS, MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './data/warehouse.mock';
+import { assignItemCode, MOCK_STOCK_COUNTS, MOCK_TOOL_CUSTODY, prepareMovement, prepareStockCount } from './data/warehouse-ops.mock';
+import { listItemCardReport, listItemMovementReport } from './data/warehouse-reports.mock';
 import { MOCK_ACCOUNT_FLAT, MOCK_BANKS, MOCK_JOURNAL_ENTRIES } from './data/finance.mock';
 import { MOCK_BALANCE_SHEET, MOCK_EXPENSES, MOCK_PNL } from './data/finance-reports.mock';
 import {
@@ -152,7 +154,9 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/warehouse/items', handler: ({ query }) => filterBy(MOCK_STOCK_ITEMS, 'warehouseId', query.get('warehouseId')) },
   { method: 'GET', pattern: '/warehouse/movements', handler: ({ query }) => filterBy(MOCK_MOVEMENTS, 'type', query.get('type')) },
   { method: 'GET', pattern: '/warehouse/receipts', handler: () => listReceipts() },
-  { method: 'POST', pattern: '/warehouse/receipts', handler: ({ body }) => createReceipt(body) },
+  { method: 'GET', pattern: '/warehouse/reports/item-movements', handler: ({ query }) => listItemMovementReport(query) },
+  { method: 'GET', pattern: '/warehouse/reports/item-card', handler: ({ query }) => listItemCardReport(query) },
+  { method: 'POST', pattern: '/warehouse/receipts', handler: ({ body }) => createReceipt(prepareMovement({ ...(body as Record<string, unknown>) })) },
 
   { method: 'GET', pattern: '/finance/accounts', handler: () => MOCK_ACCOUNT_FLAT },
   { method: 'GET', pattern: '/finance/journal-entries', handler: () => MOCK_JOURNAL_ENTRIES },
@@ -234,9 +238,11 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/cutter/rolls', MOCK_ROLLS, 'id', false),
   ...crudRoutes('/cutter/specs', MOCK_SPECS, 'specCode'),
   ...crudRoutes('/warehouse/warehouses', MOCK_WAREHOUSES),
-  ...crudRoutes('/warehouse/items', MOCK_STOCK_ITEMS, 'code'),
-  ...crudRoutes('/warehouse/movements', MOCK_MOVEMENTS),
-  ...crudRoutes('/warehouse/receipts', MOCK_MOVEMENTS, 'id', false),
+  ...crudRoutes('/warehouse/items', MOCK_STOCK_ITEMS, 'code', true, assignItemCode),
+  ...crudRoutes('/warehouse/movements', MOCK_MOVEMENTS, 'id', true, prepareMovement),
+  ...crudRoutes('/warehouse/receipts', MOCK_MOVEMENTS, 'id', false, prepareMovement),
+  ...crudRoutes('/warehouse/custody', MOCK_TOOL_CUSTODY),
+  ...crudRoutes('/warehouse/counts', MOCK_STOCK_COUNTS, 'id', true, prepareStockCount),
   ...crudRoutes('/finance/accounts', MOCK_ACCOUNT_FLAT, 'code'),
   ...crudRoutes('/finance/journal-entries', MOCK_JOURNAL_ENTRIES),
   ...crudRoutes('/finance/banks', MOCK_BANKS),

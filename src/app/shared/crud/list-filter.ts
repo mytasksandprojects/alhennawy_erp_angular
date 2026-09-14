@@ -14,6 +14,7 @@ export const STOCK_LIST_FILTER: ListFilter = {
   key: 'stock',
   labelKey: 'common.status',
   options: [
+    { value: 'low', labelKey: 'warehouse.stock.low' },
     { value: 'below', labelKey: 'warehouse.stock.below' },
     { value: 'out', labelKey: 'warehouse.stock.out' },
   ],

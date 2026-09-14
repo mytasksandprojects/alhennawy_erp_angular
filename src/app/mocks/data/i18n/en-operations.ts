@@ -130,6 +130,8 @@ export const EN_OPERATIONS: TranslationMap = {
   'warehouse.types.issue': 'Issue',
   'warehouse.types.transfer': 'Transfer',
   'warehouse.types.adjustment': 'Count Adjustment',
+  'warehouse.types.warehouse-return': 'Warehouse return',
+  'warehouse.types.supplier-return': 'Supplier return',
 
   'warehouse.stock.available': 'Available',
   'warehouse.stock.below': 'Below Minimum',

@@ -130,6 +130,8 @@ export const AR_OPERATIONS: TranslationMap = {
   'warehouse.types.issue': 'إذن صرف',
   'warehouse.types.transfer': 'تحويل بين مخازن',
   'warehouse.types.adjustment': 'تسوية جرد',
+  'warehouse.types.warehouse-return': 'إذن ارتجاع مخزن',
+  'warehouse.types.supplier-return': 'إذن ارتجاع مورد',
 
   'warehouse.stock.available': 'متوفر',
   'warehouse.stock.below': 'تحت الحد الأدنى',

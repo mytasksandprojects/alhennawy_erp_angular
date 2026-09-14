@@ -97,6 +97,10 @@ export const API_ENDPOINTS = {
     units: '/warehouse/units',
     movements: '/warehouse/movements',
     receipts: '/warehouse/receipts',
+    custody: '/warehouse/custody',
+    counts: '/warehouse/counts',
+    itemMovement: '/warehouse/reports/item-movements',
+    itemCard: '/warehouse/reports/item-card',
     purchaseRequests: '/warehouse/purchase-requests',
   },
   quality: {
