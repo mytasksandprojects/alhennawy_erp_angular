@@ -1,0 +1,32 @@
+import { TranslationMap } from '../../../core/models/config.models';
+
+/** MOCK LAYER — Arabic: backup schedules and restore. */
+export const AR_BACKUP: TranslationMap = {
+  'backup.title': 'النسخ الاحتياطي',
+  'backup.subtitle': 'نسخ مجدولة وتصدير فوري واستعادة من ملف',
+  'backup.schedule.title': 'جدولة النسخ الاحتياطي',
+  'backup.schedule.nextRun': 'موعد التشغيل القادم',
+  'backup.fields.enabled': 'نسخ تلقائي',
+  'backup.fields.frequency': 'التكرار',
+  'backup.fields.time': 'وقت التشغيل',
+  'backup.fields.retention': 'مدة الاحتفاظ (يوم)',
+  'backup.fields.file': 'الملف',
+  'backup.fields.size': 'الحجم (م.ب)',
+  'backup.freq.daily': 'يومي',
+  'backup.freq.weekly': 'أسبوعي',
+  'backup.freq.monthly': 'شهري',
+  'backup.kinds.scheduled': 'مجدول',
+  'backup.kinds.manual': 'يدوي',
+  'backup.kinds.imported': 'مستورد',
+  'backup.status.completed': 'مكتمل',
+  'backup.status.failed': 'فشل',
+  'backup.history.title': 'سجل النسخ الاحتياطية',
+  'backup.hint.download': 'اضغط على أي نسخة في الجدول لتنزيلها كملف JSON',
+  'backup.actions.runNow': 'نسخ احتياطي الآن',
+  'backup.actions.import': 'استيراد نسخة',
+  'backup.msg.scheduleSaved': 'تم حفظ جدولة النسخ الاحتياطي',
+  'backup.msg.created': 'تم إنشاء النسخة {0}',
+  'backup.msg.downloaded': 'جارٍ تنزيل {0}',
+  'backup.msg.imported': 'تم استيراد النسخة {0} بنجاح',
+  'backup.msg.importInvalid': 'ملف نسخة احتياطية غير صالح',
+};

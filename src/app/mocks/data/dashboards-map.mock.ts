@@ -17,7 +17,7 @@ import { REPORTS_DASHBOARD } from './dashboards-reports.mock';
 import { maintenanceDashboard } from './maintenance.mock';
 import { purchasingDashboard } from './purchasing-workflow';
 import { CLINIC_DASHBOARD, SAFETY_DASHBOARD } from './safety.mock';
-import { salesDashboard } from './sales-workflow';
+import { salesDashboard } from './sales-dashboard.mock';
 
 /** Live dashboards — sales/purchasing/maintenance recompute on each read. */
 export const DASHBOARDS: Record<

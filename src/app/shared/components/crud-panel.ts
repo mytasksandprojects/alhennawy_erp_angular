@@ -189,9 +189,7 @@ export class CrudPanel extends Translated {
     });
   }
 
-  protected setParam(key: string, value: string | number): void {
-    this.patchParams({ [key]: value || null });
-  }
+  protected setParam(key: string, value: string | number): void { this.patchParams({ [key]: value || null }); }
 
   protected onFilter(event: { key: string; value: string }): void {
     this.patchParams(childFilterPatch(this.activeFilters(), event.key, event.value));

@@ -1,9 +1,11 @@
-import { TableColumn } from '../models/common.models';
-import { CatalogModule, CatalogTab } from '../models/access.models';
+import { CatalogModule } from '../models/access.models';
 import { WEIGHING_COLUMNS } from '../../features/weighbridge/weighbridge.columns';
 import { ROLL_COLUMNS, SPEC_COLUMNS } from '../../features/cutter/cutter.columns';
 import {
-  ITEM_CARD_COLUMNS, ITEM_MOVEMENT_COLUMNS, LOOKUP_LABEL_COLUMNS, MOVEMENT_COLUMNS, RECEIPT_COLUMNS,
+  ITEM_CARD_COLUMNS, ITEM_MOVEMENT_COLUMNS,
+} from '../../features/warehouse/warehouse-reports.columns';
+import {
+  LOOKUP_LABEL_COLUMNS, MOVEMENT_COLUMNS, RECEIPT_COLUMNS,
   STOCK_COUNT_COLUMNS, STOCK_ITEM_COLUMNS, TOOL_CUSTODY_COLUMNS, WAREHOUSE_COLUMNS,
 } from '../../features/warehouse/warehouse.columns';
 import {
@@ -56,29 +58,13 @@ import {
   MEDICINE_COLUMNS,
   VISIT_COLUMNS,
 } from '../../features/clinic/clinic-page';
-import { REPORT_CATEGORIES } from '../../features/reports/report-defs';
 import { LOCATION_COLUMNS } from '../../features/hr/attendance-config.columns';
-import { AUDIT_COLUMNS, LOOKUP_COLUMNS } from '../../features/system/system.columns';
+import {
+  catalogTab as tab,
+  dashboardTab as dash,
+} from './permission-catalog.helpers';
+import { SYSTEM_CATALOG } from './permission-catalog.system';
 
-function tab(id: string, labelKey: string, columns: TableColumn[]): CatalogTab {
-  return {
-    id,
-    labelKey,
-    columns: columns.map((col) => ({
-      key: col.key,
-      labelKey: col.labelKey,
-      multilang: col.multilang,
-    })),
-  };
-}
-function dash(): CatalogTab {
-  return tab('dashboard', 'common.dashboardTab', []);
-}
-function reports(): CatalogTab[] {
-  return REPORT_CATEGORIES.flatMap((category) =>
-    category.reports.map((report) => tab(report.id, report.labelKey, report.columns)),
-  );
-}
 /** Every module, sub-module, and column the roles matrix can grant. */
 export const PERMISSION_CATALOG: CatalogModule[] = [
   {
@@ -255,63 +241,5 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
       tab('dispenses', 'clinic.tabs.dispenses', DISPENSE_COLUMNS),
     ],
   },
-  { id: 'reports', labelKey: 'menu.reports', tabs: reports() },
-  {
-    id: 'factory',
-    labelKey: 'menu.factory',
-    tabs: [
-      tab('profile', 'factory.title', [
-        { key: 'name', labelKey: 'factory.fields.name', multilang: true },
-        { key: 'address', labelKey: 'factory.fields.address', multilang: true },
-        { key: 'phone', labelKey: 'factory.fields.phone' },
-        { key: 'fax', labelKey: 'factory.fields.fax' },
-        { key: 'logoUrl', labelKey: 'factory.fields.logo' },
-        { key: 'iso', labelKey: 'factory.fields.iso' },
-      ]),
-    ],
-  },
-  {
-    id: 'appearance',
-    labelKey: 'menu.appearance',
-    tabs: [
-      tab('theme', 'appearance.tabs.theme', []),
-      tab('translations', 'appearance.tabs.translations', []),
-      tab('languages', 'appearance.tabs.languages', [
-        { key: 'code', labelKey: 'appearance.fields.code' },
-        { key: 'name', labelKey: 'appearance.fields.name' },
-        { key: 'direction', labelKey: 'appearance.fields.direction' },
-      ]),
-    ],
-  },
-  { id: 'backups', labelKey: 'menu.backups', tabs: [tab('list', 'backup.title', [])] },
-  {
-    id: 'taxApi',
-    labelKey: 'menu.taxApi',
-    tabs: [
-      tab('settings', 'taxApi.title', [
-        { key: 'enabled', labelKey: 'taxApi.fields.enabled' },
-        { key: 'environment', labelKey: 'taxApi.fields.environment' },
-        { key: 'apiUrl', labelKey: 'taxApi.fields.apiUrl' },
-        { key: 'clientId', labelKey: 'taxApi.fields.clientId' },
-        { key: 'clientSecret', labelKey: 'taxApi.fields.clientSecret' },
-        { key: 'registrationNumber', labelKey: 'taxApi.fields.registrationNumber' },
-        { key: 'branchCode', labelKey: 'taxApi.fields.branchCode' },
-        { key: 'activityCode', labelKey: 'taxApi.fields.activityCode' },
-        { key: 'posSerial', labelKey: 'taxApi.fields.posSerial' },
-        { key: 'issuerType', labelKey: 'taxApi.fields.issuerType' },
-        { key: 'documentVersion', labelKey: 'taxApi.fields.documentVersion' },
-      ]),
-    ],
-  },
-  {
-    id: 'system',
-    labelKey: 'menu.system',
-    tabs: [
-      tab('audit', 'system.tabs.audit', AUDIT_COLUMNS),
-      tab('lookups', 'system.tabs.lookups', LOOKUP_COLUMNS),
-      tab('switches', 'system.tabs.switches', []),
-    ],
-  },
-  { id: 'checkin', labelKey: 'menu.checkin', tabs: [tab('punch', 'checkin.title', ATTENDANCE_COLUMNS)] },
-  { id: 'roles', labelKey: 'menu.roles', tabs: [tab('matrix', 'roles.title', [])] },
+  ...SYSTEM_CATALOG,
 ];

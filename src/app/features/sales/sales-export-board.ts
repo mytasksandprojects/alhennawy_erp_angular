@@ -6,13 +6,7 @@ import { ApiClientService } from '../../core/api/api-client.service';
 import { API_ENDPOINTS } from '../../core/api/api-endpoints';
 import { CutterRoll } from '../../core/models/cutter.models';
 import { ProductionOrder } from '../../core/models/quality.models';
-import {
-  Customer,
-  ExportDocStage,
-  ExportOrder,
-  SalesOrderLine,
-  SalesSettings,
-} from '../../core/models/sales.models';
+import { Customer, ExportOrder, SalesSettings } from '../../core/models/sales.models';
 import { AccessService } from '../../core/security/access.service';
 import { AuthService } from '../../core/security/auth.service';
 import { ConfirmService } from '../../core/services/confirm.service';
@@ -20,9 +14,10 @@ import { NotificationService } from '../../core/services/notification.service';
 import { Translated } from '../../shared/translated.base';
 import { UiBadge } from '../../shared/components/ui-badge';
 import { UiIcon } from '../../shared/components/ui-icon';
-import { UiModal } from '../../shared/components/ui-modal';
 import { UiPrintDoc } from '../../shared/components/ui-print-doc';
-import { UiSalesLines } from '../../shared/components/ui-sales-lines';
+import { ExportOrderCard } from './export-order-card';
+import { ExportOrderForm } from './export-order-form';
+import { ExportStagePanel } from './export-stage-panel';
 import { EXPORT_NEXT, EXPORT_RANK, EXPORT_TONE, exportLines } from './sales-export.meta';
 import { EXPORT_ORDER_COLUMNS } from './sales.columns';
 
@@ -34,7 +29,7 @@ import { EXPORT_ORDER_COLUMNS } from './sales.columns';
 @Component({
   selector: 'app-sales-export-board',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UiBadge, UiIcon, UiModal, UiPrintDoc, UiSalesLines],
+  imports: [UiBadge, UiIcon, UiPrintDoc, ExportOrderCard, ExportOrderForm, ExportStagePanel],
   template: `
     <div class="row token-toolbar">
       <div class="row token-toolbar__actions">
@@ -67,222 +62,31 @@ import { EXPORT_ORDER_COLUMNS } from './sales.columns';
 
       @if (current(); as row) {
         <div class="stack">
-          <section class="ui-card stack">
-            <div class="row row--between">
-              <h2 class="ui-card__title">{{ row.number }}</h2>
-              <div class="row">
-                @if (row.trialOrder) {
-                  <ui-badge [labelKey]="'sales.fields.trialOrder'" tone="info" />
-                }
-                @if (access.canAction('sales', 'exportOrders', 'update')) {
-                  <button type="button" class="ui-btn ui-btn--ghost" (click)="openEdit(row)">{{ t('common.edit') }}</button>
-                }
-                <ui-badge [labelKey]="'sales.stages.' + row.stage" [tone]="TONE[row.stage]" />
-              </div>
-            </div>
-            <p class="text-faint">{{ row.customerCode }} · {{ row.customerName }}</p>
-            @for (line of linesOf(row); track $index) {
-              <p>
-                {{ line.itemName }}
-                <span class="text-faint">
-                  {{ t('qc.fields.ply') }} {{ line.ply || '—' }} · {{ colorOf(line) }} ·
-                  {{ fmtNum(line.widthMm || 0) }} mm · {{ fmtNum(line.gsm || 0) }} {{ t('cutter.label.gsm') }} ·
-                  {{ fmtNum(line.quantity || 0) }} {{ t('units.kg') }} × {{ fmtNum(line.pricePerKg || 0) }}
-                  = {{ fmtNum(lineTotal(line)) }}
-                </span>
-                @if (line.rolls) {
-                  <span class="text-faint">· {{ t('sales.fields.rolls') }}: {{ fmtNum(line.rolls) }}</span>
-                }
-              </p>
-            }
-            @if (row.toProduceKg != null) {
-              <p>{{ t('sales.fields.available') }}: {{ fmtNum(row.availableFromStockKg || 0) }} · {{ t('sales.fields.toProduce') }}: {{ fmtNum(row.toProduceKg) }}</p>
-            }
-            @if (showPrice(row)) {
-              <p>{{ t('sales.fields.totalPrice') }}: {{ fmtNum(row.totalUsd) }}</p>
-            }
-            @if (row.rollsCount) {
-              <p>{{ t('sales.fields.rolls') }}: {{ fmtNum(row.rollsCount) }} · {{ t('logistics.fields.containers') }}: {{ fmtNum(row.containersCount) }}</p>
-            }
-            @if (row.proformaStatus) {
-              <p>
-                {{ t('sales.fields.proformaStatus') }}:
-                <ui-badge [labelKey]="'sales.proforma.' + row.proformaStatus" [tone]="proformaTone(row)" />
-              </p>
-            }
-            @if (row.productionDeadline) {
-              <p>{{ t('sales.fields.deadline') }}: {{ fmtDate(row.productionDeadline) }}</p>
-            }
-            @if (row.productionDate) {
-              <p>{{ t('sales.fields.productionDate') }}: {{ fmtDate(row.productionDate) }}</p>
-            }
-            @if (row.loadingDate) {
-              <p>{{ t('logistics.fields.loadingDate') }}: {{ fmtDate(row.loadingDate) }}</p>
-            }
-            @if (row.loadingRequestStatus) {
-              <p>
-                {{ t('sales.fields.loadingRequest') }}: {{ fmtDate(row.requestedLoadingDate || '') }}
-                <ui-badge [labelKey]="'sales.requestStatus.' + row.loadingRequestStatus" [tone]="requestTone(row)" />
-              </p>
-            }
-          </section>
-
-          @if (row.stage === 'quotation' || row.stage === 'internal-approval') {
-            <section class="ui-card stack">
-              <label class="row">
-                <input
-                  type="checkbox"
-                  [checked]="trial()"
-                  (change)="trial.set(!trial())"
-                />
-                {{ t('sales.fields.trialOrder') }}
-              </label>
-              <p class="ui-field__hint">{{ t('sales.hints.trialOrder') }}</p>
-              <div class="ui-field">
-                <span class="ui-field__label">{{ t('sales.fields.terms') }}</span>
-                <p class="ui-field__hint">{{ settings()?.termsConditions || '—' }}</p>
-              </div>
-              <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                {{ t('sales.actions.issueProforma') }}
-              </button>
-            </section>
-          }
-
-          @if (row.stage === 'proforma') {
-            <section class="ui-card stack">
-              @if (row.proformaStatus !== 'approved') {
-                <p class="ui-field__hint">{{ t('sales.hints.proformaGate') }}</p>
-                <div class="row">
-                  <button type="button" class="ui-btn ui-btn--primary" (click)="decideProforma('approved')">
-                    {{ t('common.approve') }}
-                  </button>
-                  <button type="button" class="ui-btn ui-btn--danger" (click)="decideProforma('rejected')">
-                    {{ t('common.reject') }}
-                  </button>
-                </div>
-              } @else {
-                <div class="row">
-                  <button type="button" class="ui-btn ui-btn--ghost" (click)="print(row, false)">
-                    <ui-icon name="print" [size]="16" [brand]="true" />
-                    {{ t('sales.actions.printProforma') }}
-                  </button>
-                  <button type="button" class="ui-btn ui-btn--ghost" (click)="print(row, true)">
-                    <ui-icon name="pdf" [size]="16" />
-                    {{ t('common.exportPdf') }}
-                  </button>
-                  <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                    {{ t('sales.stages.supply-order') }}
-                  </button>
-                </div>
-              }
-            </section>
-          }
-
-          @if (row.stage === 'supply-order') {
-            <section class="ui-card stack">
-              <p class="ui-field__hint">{{ t('sales.hints.rolls') }}</p>
-              @for (line of linesOf(row); track $index) {
-                <div class="row">
-                  <label class="ui-field">
-                    <span class="ui-field__label">
-                      {{ line.itemName }} — {{ t('sales.fields.rolls') }}
-                    </span>
-                    <input
-                      class="ui-control"
-                      type="number"
-                      [value]="lineRolls()[$index] || 0"
-                      (input)="setLineRoll($index, num($event))"
-                    />
-                  </label>
-                  <span class="ui-field__hint">
-                    {{ t('sales.fields.availableRolls') }}: {{ fmtNum(availableRolls(line)) }}
-                  </span>
-                </div>
-              }
-              <label class="ui-field">
-                <span class="ui-field__label">{{ t('logistics.fields.containers') }}</span>
-                <input class="ui-control" type="number" [value]="containers()" (input)="containers.set(num($event))" />
-              </label>
-              <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                {{ t('sales.stages.warehouse') }}
-              </button>
-            </section>
-          }
-
-          @if (row.stage === 'warehouse') {
-            <section class="ui-card stack">
-              <label class="ui-field">
-                <span class="ui-field__label">{{ t('sales.fields.deadline') }}</span>
-                <input class="ui-control" type="date" [value]="deadline()" (input)="deadline.set($any($event.target).value)" />
-              </label>
-              <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                {{ t('sales.stages.production-scheduled') }}
-              </button>
-            </section>
-          }
-
-          @if (row.stage === 'production-scheduled') {
-            <section class="ui-card stack">
-              @if (!linkedApproved(row)) {
-                <p class="ui-field__hint">{{ t('sales.hints.waitingApproval') }}</p>
-              }
-              <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                {{ t('sales.stages.production') }}
-              </button>
-            </section>
-          }
-
-          @if (row.stage === 'production') {
-            <section class="ui-card stack">
-              <p class="ui-field__hint">{{ t('sales.hints.logisticsDate') }}</p>
-              <label class="ui-field">
-                <span class="ui-field__label">{{ t('logistics.fields.loadingDate') }}</span>
-                <input
-                  class="ui-control"
-                  type="date"
-                  [min]="(row.productionDate || '').slice(0, 10)"
-                  [value]="loading()"
-                  (input)="loading.set($any($event.target).value)"
-                />
-              </label>
-              <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                {{ t('sales.stages.logistics') }}
-              </button>
-            </section>
-          }
-
-          @if (row.stage === 'logistics' || row.stage === 'issued') {
-            <section class="ui-card stack">
-              @if (row.stage === 'logistics') {
-                <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                  {{ t('sales.stages.issued') }}
-                </button>
-              } @else if (nextOf(row); as next) {
-                <button type="button" class="ui-btn ui-btn--primary" (click)="advance()">
-                  {{ t('sales.stages.' + next) }}
-                </button>
-              }
-              @if (row.loadingDate && row.loadingRequestStatus !== 'pending') {
-                <div class="row">
-                  <label class="ui-field">
-                    <span class="ui-field__label">{{ t('sales.fields.requestedLoadingDate') }}</span>
-                    <input
-                      class="ui-control"
-                      type="date"
-                      [min]="(row.productionDate || '').slice(0, 10)"
-                      [value]="requestedLoading()"
-                      (input)="requestedLoading.set($any($event.target).value)"
-                    />
-                  </label>
-                  <button type="button" class="ui-btn ui-btn--ghost" (click)="requestLoading()">
-                    {{ t('sales.actions.requestLoading') }}
-                  </button>
-                </div>
-                <p class="ui-field__hint">{{ t('sales.hints.reschedule') }}</p>
-              }
-            </section>
-          }
-
+          <app-export-order-card
+            [row]="row"
+            [lines]="exportLines(row)"
+            [showPrice]="showPrice(row)"
+            [canUpdate]="access.canAction('sales', 'exportOrders', 'update')"
+            (edit)="openEdit(row)"
+          />
+          <app-export-stage-panel
+            [row]="row"
+            [lines]="exportLines(row)"
+            [termsText]="settings()?.termsConditions || ''"
+            [next]="nextOf(row)"
+            [trial]="trial"
+            [lineRolls]="lineRolls"
+            [containers]="containers"
+            [deadline]="deadline"
+            [loading]="loading"
+            [requestedLoading]="requestedLoading"
+            [rolls]="rolls()"
+            [productionOrders]="productionOrders()"
+            (advanceStage)="advance()"
+            (decide)="decideProforma($event)"
+            (printDoc)="print(row, $event)"
+            (requestLoading)="requestLoading()"
+          />
         </div>
       }
     </div>
@@ -294,26 +98,14 @@ import { EXPORT_ORDER_COLUMNS } from './sales.columns';
         [notes]="printNotes()"
       />
     }
-    @if (open()) {
-      <ui-modal [titleKey]="editingId() ? 'common.edit' : 'common.create'" (closed)="closeForm()">
-        <div class="stack">
-          <label class="ui-field">
-            <span class="ui-field__label">{{ t('sales.fields.customer') }}</span>
-            <select class="ui-control" [value]="newCustomer()" (change)="newCustomer.set($any($event.target).value)">
-              <option value="">{{ t('common.search') }}</option>
-              @for (customer of exportCustomers(); track customer.code) {
-                <option [value]="customer.code">{{ customer.code }} · {{ customer.name }}</option>
-              }
-            </select>
-          </label>
-          <ui-sales-lines [value]="newLines()" unitKey="units.kg" (valueChange)="newLines.set($event)" />
-          <div class="row">
-            <button type="button" class="ui-btn ui-btn--primary" (click)="saveOrder()">{{ t('common.save') }}</button>
-            <button type="button" class="ui-btn ui-btn--ghost" (click)="closeForm()">{{ t('common.cancel') }}</button>
-          </div>
-        </div>
-      </ui-modal>
-    }
+    <app-export-order-form
+      [open]="open"
+      [editingId]="editingId"
+      [newCustomer]="newCustomer"
+      [newLines]="newLines"
+      [customers]="exportCustomers()"
+      (saved)="onSaved($event)"
+    />
   `,
 })
 export class SalesExportBoard extends Translated {
@@ -327,6 +119,7 @@ export class SalesExportBoard extends Translated {
 
   protected readonly TONE = EXPORT_TONE;
   protected readonly printColumns = EXPORT_ORDER_COLUMNS;
+  protected readonly exportLines = exportLines;
   protected readonly open = signal(false);
   protected readonly editingId = signal('');
   protected readonly rows = signal<ExportOrder[]>([]);
@@ -375,54 +168,8 @@ export class SalesExportBoard extends Translated {
     return this.canPrice() || row.stage === 'quotation' || row.stage === 'proforma' || row.stage === 'internal-approval';
   }
 
-  protected nextOf(row: ExportOrder): ExportDocStage | null {
+  protected nextOf(row: ExportOrder) {
     return EXPORT_NEXT[row.stage];
-  }
-
-  protected linesOf(row: ExportOrder): SalesOrderLine[] {
-    return exportLines(row);
-  }
-
-  protected lineTotal(line: SalesOrderLine): number {
-    return Number(line.quantity || 0) * Number(line.pricePerKg || 0);
-  }
-
-  protected colorOf(line: SalesOrderLine): string {
-    const color = String(line.color || '');
-    return this.t(color) || color || '—';
-  }
-
-  protected proformaTone(row: ExportOrder): 'warning' | 'success' | 'danger' | 'neutral' {
-    return row.proformaStatus === 'approved'
-      ? 'success'
-      : row.proformaStatus === 'rejected'
-        ? 'danger'
-        : 'warning';
-  }
-
-  protected requestTone(row: ExportOrder): 'warning' | 'success' | 'danger' | 'neutral' {
-    return row.loadingRequestStatus === 'approved'
-      ? 'success'
-      : row.loadingRequestStatus === 'rejected'
-        ? 'danger'
-        : 'warning';
-  }
-
-  /** Rolls on hand matching the line's item/spec — shown read-only. */
-  protected availableRolls(line: SalesOrderLine): number {
-    return this.rolls().filter(
-      (roll) =>
-        roll.specName === line.itemName ||
-        (!!line.gsm && !!line.widthMm && roll.gsm === line.gsm && roll.rollWidthMm === line.widthMm),
-    ).length;
-  }
-
-  /** The linked production order must be approved before production starts. */
-  protected linkedApproved(row: ExportOrder): boolean {
-    const order = this.productionOrders().find(
-      (item) => item.id === row.productionOrderId || item.workOrderNumber === row.number,
-    );
-    return !!order && order.approvalStatus === 'approved';
   }
 
   protected printNotes(): { labelKey: string; text: string }[] {
@@ -433,10 +180,6 @@ export class SalesExportBoard extends Translated {
       { labelKey: 'sales.settings.bankInfo', text: settings.bankInfo },
       { labelKey: 'sales.settings.paymentOptions', text: settings.paymentOptions },
     ].filter((note) => !!note.text);
-  }
-
-  protected setLineRoll(index: number, value: number): void {
-    this.lineRolls.update((rolls) => rolls.map((roll, i) => (i === index ? value : roll)));
   }
 
   protected openCreate(): void {
@@ -451,18 +194,6 @@ export class SalesExportBoard extends Translated {
     this.newCustomer.set(row.customerCode);
     this.newLines.set(row.linesJson || '');
     this.open.set(true);
-  }
-
-  protected closeForm(): void {
-    this.open.set(false);
-    this.editingId.set('');
-    this.newCustomer.set('');
-    this.newLines.set('');
-  }
-
-  protected num(event: Event): number {
-    const parsed = Number((event.target as HTMLInputElement).value);
-    return Number.isFinite(parsed) ? parsed : 0;
   }
 
   protected print(row: ExportOrder, asPdf: boolean): void {
@@ -527,20 +258,9 @@ export class SalesExportBoard extends Translated {
       });
   }
 
-  protected async saveOrder(): Promise<void> {
-    if (!this.newCustomer() || !this.newLines() || this.newLines() === '[]') return;
-    if (!(await this.confirm.askSave())) return;
-    const id = this.editingId();
-    const body = { customerCode: this.newCustomer(), linesJson: this.newLines() };
-    const req = id
-      ? this.api.put<ExportOrder>(`${API_ENDPOINTS.sales.exportOrders}/${id}`, body)
-      : this.api.post<ExportOrder>(API_ENDPOINTS.sales.exportOrders, body);
-    req.subscribe((row) => {
-      this.notify.success(id ? 'common.updated' : 'common.created');
-      this.closeForm();
-      this.selectedId.set(row.id);
-      this.reload();
-    });
+  protected onSaved(row: ExportOrder): void {
+    this.selectedId.set(row.id);
+    this.reload();
   }
 
   private reload(): void {

@@ -288,9 +288,7 @@ export class UiTable extends Translated {
     return '';
   }
 
-  protected asText(value: unknown): string {
-    return value == null ? '' : String(value);
-  }
+  protected asText(value: unknown): string { return value == null ? '' : String(value); }
 
   protected imageUrls(value: unknown): string[] {
     return splitImageList(this.asText(value));

@@ -1,0 +1,32 @@
+import { TranslationMap } from '../../../core/models/config.models';
+
+/** MOCK LAYER — English: backup schedules and restore. */
+export const EN_BACKUP: TranslationMap = {
+  'backup.title': 'Backups',
+  'backup.subtitle': 'Scheduled backups, on-demand export and restore from file',
+  'backup.schedule.title': 'Backup Schedule',
+  'backup.schedule.nextRun': 'Next scheduled run',
+  'backup.fields.enabled': 'Automatic backups',
+  'backup.fields.frequency': 'Frequency',
+  'backup.fields.time': 'Run Time',
+  'backup.fields.retention': 'Retention (days)',
+  'backup.fields.file': 'File',
+  'backup.fields.size': 'Size (MB)',
+  'backup.freq.daily': 'Daily',
+  'backup.freq.weekly': 'Weekly',
+  'backup.freq.monthly': 'Monthly',
+  'backup.kinds.scheduled': 'Scheduled',
+  'backup.kinds.manual': 'Manual',
+  'backup.kinds.imported': 'Imported',
+  'backup.status.completed': 'Completed',
+  'backup.status.failed': 'Failed',
+  'backup.history.title': 'Backup History',
+  'backup.hint.download': 'Click any backup row to download it as a JSON file',
+  'backup.actions.runNow': 'Backup Now',
+  'backup.actions.import': 'Import Backup',
+  'backup.msg.scheduleSaved': 'Backup schedule saved',
+  'backup.msg.created': 'Backup {0} created',
+  'backup.msg.downloaded': 'Downloading {0}',
+  'backup.msg.imported': 'Backup {0} imported successfully',
+  'backup.msg.importInvalid': 'Invalid backup file',
+};

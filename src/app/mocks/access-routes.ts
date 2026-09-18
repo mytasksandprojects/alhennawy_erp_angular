@@ -22,7 +22,7 @@ import {
   createExportQuotation,
   decideProforma,
   requestLoadingChange,
-} from './data/sales-workflow';
+} from './data/export-workflow';
 import { getSalesSettings, saveSalesSettings } from './data/sales-settings.mock';
 import { getTaxApiSettings, saveTaxApiSettings, testTaxApiConnection } from './data/tax-api.mock';
 import { listRoles, upsertRole } from './data/roles.mock';

@@ -13,7 +13,8 @@ import { PURCHASE_ORDER_COLUMNS, PURCHASE_REQUEST_COLUMNS, QUOTATION_COLUMNS, SU
 import { CHEMICAL_CONSUMPTION_COLUMNS, DASHT_INSPECTION_COLUMNS, MAINTENANCE_COLUMNS, MATERIAL_INSPECTION_COLUMNS, TECH_SHEET_COLUMNS } from '../quality/quality.columns';
 import { CUSTOMER_COLUMNS, EXPORT_ORDER_COLUMNS, INVOICE_COLUMNS, workOrderColumns } from '../sales/sales.columns';
 import { CERTIFICATE_COLUMNS, INSURANCE_COLUMNS } from '../safety/safety.columns';
-import { ITEM_CARD_COLUMNS, ITEM_CARD_FILTERS, ITEM_MOVEMENT_COLUMNS, ITEM_MOVEMENT_FILTERS, MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_COUNT_COLUMNS, STOCK_ITEM_COLUMNS, TOOL_CUSTODY_COLUMNS } from '../warehouse/warehouse.columns';
+import { ITEM_CARD_COLUMNS, ITEM_CARD_FILTERS, ITEM_MOVEMENT_COLUMNS, ITEM_MOVEMENT_FILTERS } from '../warehouse/warehouse-reports.columns';
+import { MOVEMENT_COLUMNS, RECEIPT_COLUMNS, STOCK_COUNT_COLUMNS, STOCK_ITEM_COLUMNS, TOOL_CUSTODY_COLUMNS } from '../warehouse/warehouse.columns';
 import { WEIGHING_COLUMNS } from '../weighbridge/weighbridge.columns';
 
 /** One printable/exportable report backed by an existing collection. */

@@ -34,12 +34,8 @@ import {
   listExportOrders,
   listWorkOrders,
 } from './data/sales.mock';
-import {
-  prepareExportOrder,
-  prepareProductionOrder,
-  prepareTaxInvoice,
-  prepareWorkOrder,
-} from './data/sales-workflow';
+import { prepareProductionOrder, prepareTaxInvoice, prepareWorkOrder } from './data/sales-workflow';
+import { prepareExportOrder } from './data/export-workflow';
 import { MOCK_EXPORT_SHIPMENTS, MOCK_IMPORTS, packingLists } from './data/logistics.mock';
 import {
   listEmployees,
