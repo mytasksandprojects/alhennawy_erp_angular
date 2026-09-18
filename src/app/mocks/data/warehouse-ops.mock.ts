@@ -1,6 +1,7 @@
 import { StockCount, StockMovement, ToolCustody } from '../../core/models/warehouse.models';
+import { MockApiError } from '../mock-backend.interceptor';
 import { MOCK_LOOKUP_VALUES } from './lookups.mock';
-import { MOCK_MOVEMENTS, MOCK_STOCK_ITEMS } from './warehouse.mock';
+import { MOCK_MOVEMENTS, MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './warehouse.mock';
 
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
 
@@ -42,6 +43,11 @@ export function nextItemCode(warehouseId: string, groupKey: string): string {
 }
 
 export function assignItemCode(row: Record<string, unknown>): Record<string, unknown> {
+  // المخزن قد يفرض المجموعة الأساسية والفرعية على أصنافه.
+  const warehouse = MOCK_WAREHOUSES.find((item) => item.id === row['warehouseId']);
+  if (warehouse?.requireGroups && (!row['groupKey'] || !row['subGroupKey'])) {
+    throw new MockApiError(400, 'groups-required');
+  }
   const code = String(row['code'] || '');
   if (code && !code.startsWith('ITM-')) return row;
   return { ...row, code: nextItemCode(String(row['warehouseId'] || ''), String(row['groupKey'] || '')) };
@@ -60,14 +66,27 @@ function linesOf(row: Record<string, unknown>): Line[] {
 
 export function prepareMovement(row: Record<string, unknown>): Record<string, unknown> {
   const lines = linesOf(row);
-  if (!lines.length) return row;
-  return {
-    ...row,
-    itemCode: lines.map((line) => line.itemCode).filter(Boolean).join(', '),
-    itemName: lines.map((line) => line.itemName).filter(Boolean).join(' · ') || row['itemName'],
-    quantity: lines.reduce((sum, line) => sum + Number(line.quantity || 0), 0),
-    unitKey: lines[0]?.unitKey || row['unitKey'] || 'units.piece',
-  };
+  const next = { ...row };
+  if (lines.length) {
+    next['itemCode'] = lines.map((line) => line.itemCode).filter(Boolean).join(', ');
+    next['itemName'] = lines.map((line) => line.itemName).filter(Boolean).join(' · ') || row['itemName'];
+    next['quantity'] = lines.reduce((sum, line) => sum + Number(line.quantity || 0), 0);
+    next['unitKey'] = lines[0]?.unitKey || row['unitKey'] || 'units.piece';
+  }
+  // الوجهة حسب النوع — issue goes to an order, others to a warehouse.
+  if (next['type'] === 'issue') {
+    delete next['toWarehouseId'];
+    if (next['toType'] !== 'export') delete next['containerNumber'];
+    if (next['orderNumber'] && !next['reference']) {
+      next['reference'] = next['orderNumber'];
+      next['referenceKey'] = 'warehouse.refs.salesOrder';
+    }
+  } else {
+    delete next['toType'];
+    delete next['orderNumber'];
+    delete next['containerNumber'];
+  }
+  return next;
 }
 
 export function prepareCustody(row: Record<string, unknown>): Record<string, unknown> {

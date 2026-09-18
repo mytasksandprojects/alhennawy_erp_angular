@@ -1,13 +1,13 @@
 /** بيانات أساسية وحقول الجودة على أمر الشغل. */
 export const AR_MASTER: Record<string, string> = {
-  'qc.fields.mixType': 'مخلوط / نقي',
+  'qc.fields.mixType': 'سوبر مكس / بيور',
   'qc.fields.productName': 'اسم الصنف',
   'qc.fields.parent': 'الأب',
   'qc.fields.ply': 'الطبقات',
   'qc.fields.color': 'اللون',
   'qc.fields.width': 'العرض (مم)',
-  'qc.mix.mixed': 'مخلوط',
-  'qc.mix.pure': 'نقي',
+  'qc.mix.mixed': 'سوبر مكس',
+  'qc.mix.pure': 'بيور',
   'qc.parents.facial': 'مناديل وجه',
   'qc.parents.toilet': 'تواليت',
   'qc.parents.maxiRoll': 'ماكسي رول',

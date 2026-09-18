@@ -1,7 +1,8 @@
 import { LookupValue } from '../../core/models/system.models';
 import { MOCK_EMPLOYEES } from './hr.mock';
 import { MOCK_PURCHASE_REQUESTS, MOCK_SUPPLIERS } from './purchasing.mock';
-import { MOCK_CUSTOMERS } from './sales.mock';
+import { MOCK_CUSTOMERS, MOCK_EXPORT_ORDERS, MOCK_WORK_ORDERS } from './sales.mock';
+import { salesWarehouseIds } from './sales-settings.mock';
 import { MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './warehouse.mock';
 import { MOCK_ROLES } from './roles.mock';
 import {
@@ -194,17 +195,26 @@ export function liveLookups(): LookupValue[] {
     ),
     ...MOCK_DOCTORS.map((d) => liveLk(`live-doctor-${d.id}`, 'doctors', d)),
     ...MOCK_EMPLOYEES.map((e) => liveLk(`live-emp-${e.id}`, 'employees', e)),
-    ...MOCK_WAREHOUSES.map((row) =>
-      lk(
+    ...MOCK_WAREHOUSES.map((row) => ({
+      ...lk(
         `live-wh-${row.id}`,
         'warehouses',
         row.id,
         TRANSLATIONS['ar'][row.nameKey] ?? row.nameKey,
         TRANSLATIONS['en'][row.nameKey] ?? row.nameKey,
       ),
-    ),
+      flags: row.requireGroups ? ['requireGroups'] : [],
+    })),
     ...MOCK_STOCK_ITEMS.map((item) => ({
       ...liveLk(`live-item-${item.code}`, 'stockItems', item),
+      value: item.code,
+    })),
+    // Items offered to sales orders — limited by إعدادات المبيعات warehouses.
+    ...MOCK_STOCK_ITEMS.filter(
+      (item) =>
+        !salesWarehouseIds().length || salesWarehouseIds().includes(item.warehouseId),
+    ).map((item) => ({
+      ...liveLk(`live-sale-item-${item.code}`, 'salesItems', item),
       value: item.code,
     })),
     ...[...new Set(MOCK_STOCK_ITEMS.map((item) => item.location).filter((value): value is string => !!value))].map(
@@ -217,6 +227,35 @@ export function liveLookups(): LookupValue[] {
     ...MOCK_CUSTOMERS.map((customer) => ({
       ...liveLk(`live-cus-${customer.code}`, 'customers', customer),
       value: customer.code,
+    })),
+    ...MOCK_CUSTOMERS.filter((customer) => customer.channel === 'local').map((customer) => ({
+      ...liveLk(`live-local-cus-${customer.code}`, 'localCustomers', customer),
+      value: customer.code,
+    })),
+    ...MOCK_CUSTOMERS.filter((customer) => customer.channel === 'export').map((customer) => ({
+      ...liveLk(`live-export-cus-${customer.code}`, 'exportCustomers', customer),
+      value: customer.code,
+    })),
+    // وجهة إذن الصرف — local shows work orders, export shows export orders.
+    ...MOCK_WORK_ORDERS.map((row) => ({
+      ...lk(
+        `live-dest-wo-${row.id}`,
+        'orderDestinations',
+        row.number,
+        `${row.number} — ${row.customerName}`,
+        `${row.number} — ${row.customerName}`,
+      ),
+      parentValue: 'local',
+    })),
+    ...MOCK_EXPORT_ORDERS.map((row) => ({
+      ...lk(
+        `live-dest-eo-${row.id}`,
+        'orderDestinations',
+        row.number,
+        `${row.number} — ${row.customerName}`,
+        `${row.number} — ${row.customerName}`,
+      ),
+      parentValue: 'export',
     })),
     ...MOCK_PURCHASE_REQUESTS.filter((row) => row.status !== 'rejected').map((row) =>
       lk(`live-pr-${row.id}`, 'purchaseRequests', row.id, row.number, row.number),

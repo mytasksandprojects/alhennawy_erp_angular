@@ -12,7 +12,7 @@ import {
   getWeighing,
   listWeighings,
 } from './data/weighbridge.mock';
-import { MOCK_SPECS, createRoll, listRolls, registerPrint } from './data/cutter.mock';
+import { MOCK_SPECS, createRoll, createRolls, listRolls, peekRollSerial, registerPrint } from './data/cutter.mock';
 import { createReceipt, listReceipts, MOCK_MOVEMENTS, MOCK_STOCK_ITEMS, MOCK_WAREHOUSES } from './data/warehouse.mock';
 import { assignItemCode, MOCK_STOCK_COUNTS, MOCK_TOOL_CUSTODY, prepareCustody, prepareMovement, prepareStockCount } from './data/warehouse-ops.mock';
 import { listItemCardReport, listItemMovementReport } from './data/warehouse-reports.mock';
@@ -29,13 +29,18 @@ import {
   MOCK_EXPORT_ORDERS,
   MOCK_INVOICES,
   MOCK_STATEMENTS,
+  MOCK_TAX_INVOICES,
   MOCK_WORK_ORDERS,
   listExportOrders,
   listWorkOrders,
 } from './data/sales.mock';
-import { prepareExportOrder, prepareWorkOrder } from './data/sales-workflow';
-import { syncQcParent } from './data/stock-alloc';
-import { MOCK_EXPORT_SHIPMENTS, MOCK_IMPORTS } from './data/logistics.mock';
+import {
+  prepareExportOrder,
+  prepareProductionOrder,
+  prepareTaxInvoice,
+  prepareWorkOrder,
+} from './data/sales-workflow';
+import { MOCK_EXPORT_SHIPMENTS, MOCK_IMPORTS, packingLists } from './data/logistics.mock';
 import {
   listEmployees,
   MOCK_ATTENDANCE,
@@ -134,11 +139,12 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/alerts', handler: () => listAlerts() },
   { method: 'GET', pattern: '/factory/profile', handler: () => getFactoryProfile() },
   { method: 'PUT', pattern: '/factory/profile', handler: ({ body }) => saveFactoryProfile(body) },
-  { method: 'GET', pattern: '/dashboards/:id', handler: ({ path }) => {
+  { method: 'GET', pattern: '/dashboards/:id', handler: ({ path, query }) => {
       const id = path.split('/').pop() ?? '';
-      const dashboard = DASHBOARDS[id];
-      if (!dashboard) throw new MockApiError(404, 'unknown-dashboard');
-      return dashboard;
+      const entry = DASHBOARDS[id];
+      if (!entry) throw new MockApiError(404, 'unknown-dashboard');
+      // Live dashboards are functions — they receive the list query (from/to/currency).
+      return typeof entry === 'function' ? entry(query) : entry;
     } },
   { method: 'GET', pattern: '/weighbridge/tickets', handler: ({ query }) => listWeighings(query) },
   { method: 'GET', pattern: '/weighbridge/tickets/:id', handler: ({ path }) => getWeighing(path.split('/').pop() ?? '') },
@@ -146,7 +152,9 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'POST', pattern: '/weighbridge/tickets/complete', handler: ({ body }) => completeWeighing(body) },
 
   { method: 'GET', pattern: '/cutter/rolls', handler: ({ query }) => listRolls(query) },
+  { method: 'GET', pattern: '/cutter/rolls/next-serial', handler: () => peekRollSerial() },
   { method: 'POST', pattern: '/cutter/rolls', handler: ({ body }) => createRoll(body) },
+  { method: 'POST', pattern: '/cutter/rolls/batch', handler: ({ body }) => createRolls(body) },
   { method: 'POST', pattern: '/cutter/rolls/:id/print', handler: ({ path }) => registerPrint(path.split('/')[3] ?? '') },
   { method: 'GET', pattern: '/cutter/specs', handler: () => MOCK_SPECS },
 
@@ -175,9 +183,11 @@ export const MOCK_ROUTES: MockRoute[] = [
   { method: 'GET', pattern: '/sales/work-orders', handler: () => listWorkOrders() },
   { method: 'GET', pattern: '/sales/export-orders', handler: () => listExportOrders() },
   { method: 'GET', pattern: '/sales/invoices', handler: () => MOCK_INVOICES },
+  { method: 'GET', pattern: '/sales/tax-invoices', handler: () => MOCK_TAX_INVOICES },
 
   { method: 'GET', pattern: '/logistics/imports', handler: () => MOCK_IMPORTS },
   { method: 'GET', pattern: '/logistics/exports', handler: () => MOCK_EXPORT_SHIPMENTS },
+  { method: 'GET', pattern: '/logistics/packing-lists', handler: () => packingLists() },
 
   { method: 'GET', pattern: '/hr/employees', handler: () => listEmployees() },
   { method: 'GET', pattern: '/hr/attendance', handler: () => MOCK_ATTENDANCE },
@@ -256,6 +266,7 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/sales/work-orders', MOCK_WORK_ORDERS, 'id', true, prepareWorkOrder),
   ...crudRoutes('/sales/export-orders', MOCK_EXPORT_ORDERS, 'id', false, prepareExportOrder),
   ...crudRoutes('/sales/invoices', MOCK_INVOICES),
+  ...crudRoutes('/sales/tax-invoices', MOCK_TAX_INVOICES, 'id', true, prepareTaxInvoice),
   ...crudRoutes('/logistics/imports', MOCK_IMPORTS),
   ...crudRoutes('/logistics/exports', MOCK_EXPORT_SHIPMENTS),
   ...crudRoutes('/hr/attendance', MOCK_ATTENDANCE),
@@ -284,6 +295,6 @@ export const MOCK_ROUTES: MockRoute[] = [
   ...crudRoutes('/quality/material-inspections', MOCK_MATERIAL_INSPECTIONS),
   ...crudRoutes('/quality/chemical-consumption', MOCK_CHEMICAL_CONSUMPTION),
   ...crudRoutes('/quality/maintenance', MOCK_MAINTENANCE, 'id', true, prepareMaintenance('quality')),
-  ...crudRoutes('/production/orders', MOCK_PRODUCTION_ORDERS, 'id', true, syncQcParent),
+  ...crudRoutes('/production/orders', MOCK_PRODUCTION_ORDERS, 'id', true, prepareProductionOrder),
   ...ACCESS_ROUTES,
 ];

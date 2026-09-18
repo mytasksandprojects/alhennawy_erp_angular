@@ -22,16 +22,24 @@ import { Translated } from '../../shared/translated.base';
         <div class="roll-label__grid">
           <div>{{ t('common.code') }}</div>
           <div class="mono">{{ s.specCode }}</div>
+          @if (s.rollSerial) {
+            <div>{{ t('quality.fields.rollSerial') }}</div>
+            <div class="mono">{{ s.rollSerial }}</div>
+          }
+          @if (s.ply) {
+            <div>{{ t('qc.fields.ply') }}</div>
+            <div class="mono">{{ s.ply }}</div>
+          }
           <div>{{ t('cutter.label.gsm') }}</div>
           <div class="mono">{{ fmtNum(s.gsm) }}</div>
-          <div>{{ t('quality.fields.moisture') }}</div>
-          <div class="mono">{{ fmtNum(s.moisturePercent) }}</div>
+          <div>{{ t('quality.fields.thickness') }}</div>
+          <div class="mono">{{ fmtNum(s.thickness) }}</div>
           <div>{{ t('quality.fields.brightness') }}</div>
           <div class="mono">{{ fmtNum(s.brightnessPercent) }}</div>
-          <div>{{ t('quality.fields.burst') }}</div>
-          <div class="mono">{{ fmtNum(s.burst) }}</div>
-          <div>{{ t('quality.fields.tensile') }}</div>
-          <div class="mono">{{ fmtNum(s.tensile) }}</div>
+          <div>{{ t('quality.fields.tensileMd') }}</div>
+          <div class="mono">{{ fmtNum(s.tensileMd) }}</div>
+          <div>{{ t('quality.fields.tensileCd') }}</div>
+          <div class="mono">{{ fmtNum(s.tensileCd) }}</div>
         </div>
         @if (s.notes) {
           <p class="ui-field__hint">{{ s.notes }}</p>
@@ -42,11 +50,21 @@ import { Translated } from '../../shared/translated.base';
 })
 export class TechSheetPrint extends Translated {
   readonly specCode = input('');
+  /** When set, the sheet registered for this roll serial wins over the spec-level one. */
+  readonly rollSerial = input<number | undefined>(undefined);
   private readonly api = inject(ApiClientService);
   private readonly rows = signal<TechDataSheet[]>([]);
-  protected readonly sheet = computed(
-    () => this.rows().find((row) => row.specCode === this.specCode()) ?? null,
-  );
+  protected readonly sheet = computed(() => {
+    const serial = this.rollSerial();
+    return (
+      (serial !== undefined
+        ? this.rows().find((row) => row.rollSerial === serial)
+        : undefined) ??
+      this.rows().find((row) => row.specCode === this.specCode() && row.rollSerial === undefined) ??
+      this.rows().find((row) => row.specCode === this.specCode()) ??
+      null
+    );
+  });
 
   constructor() {
     super();

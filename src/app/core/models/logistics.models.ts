@@ -52,7 +52,33 @@ export interface ExportShipment {
   vessel?: string;
   portKey?: string;
   loadingDate?: string;
+  /** ميناء الشحن / ميناء الوصول / موعد غلق المركب / الوصول المتوقع / وكيل الشحن. */
+  originPort?: string;
+  arrivalPort?: string;
+  cutoffTime?: string;
+  etaDate?: string;
+  shippingAgent?: string;
   shippingLineInvoicesTotal?: number;
   telexReleased: boolean;
   isLate: boolean;
+}
+
+/**
+ * باكينج ليست — derived from إذون الصرف of the warehouse: issue movements
+ * destined to an export order, grouped per (order, container number).
+ */
+export interface PackingList {
+  id: string;
+  number: string;
+  /** أمر التصدير this packing list belongs to. */
+  orderNumber: string;
+  customerName: string;
+  containerNumber: string;
+  /** إذن الصرف numbers merged into this list. */
+  issueNumbers: string;
+  itemsSummary?: string;
+  itemsCount: number;
+  totalQuantity: number;
+  unitKey?: string;
+  date: string;
 }

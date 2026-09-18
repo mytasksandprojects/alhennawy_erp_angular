@@ -19,6 +19,7 @@ import { LookupService } from '../../core/services/lookup.service';
 import { Translated } from '../translated.base';
 import { UiImageInput } from './ui-image-input';
 import { UiRequestLines } from './ui-request-lines';
+import { UiSalesLines } from './ui-sales-lines';
 
 type Draft = Record<string, string | number | boolean>;
 
@@ -26,14 +27,23 @@ type Draft = Record<string, string | number | boolean>;
 @Component({
   selector: 'ui-entity-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, UiImageInput, UiRequestLines],
+  imports: [FormsModule, UiImageInput, UiRequestLines, UiSalesLines],
   template: `
     <div class="ui-form-grid">
       @for (field of fields(); track field.key) {
+        @if (shown(field)) {
         @if (field.type === 'lines') {
           <div class="ui-field ui-field--wide">
             <span class="ui-field__label">{{ t(field.labelKey) }}</span>
             <ui-request-lines
+              [value]="asText(field.key)"
+              (valueChange)="set(field.key, $event)"
+            />
+          </div>
+        } @else if (field.type === 'salesLines') {
+          <div class="ui-field ui-field--wide">
+            <span class="ui-field__label">{{ t(field.labelKey) }}</span>
+            <ui-sales-lines
               [value]="asText(field.key)"
               (valueChange)="set(field.key, $event)"
             />
@@ -63,8 +73,20 @@ type Draft = Record<string, string | number | boolean>;
           }
         } @else {
         <label class="ui-field">
-          <span class="ui-field__label">{{ t(field.labelKey) }}</span>
+          <span class="ui-field__label">
+            {{ t(field.labelKey) }}
+            @if (isRequired(field)) {
+              <span class="ui-field__req">*</span>
+            }
+          </span>
           @switch (field.type) {
+            @case ('checkbox') {
+              <input
+                type="checkbox"
+                [ngModel]="!!draft()[field.key]"
+                (ngModelChange)="set(field.key, $event)"
+              />
+            }
             @case ('select') {
               <select
                 class="ui-control"
@@ -136,6 +158,7 @@ type Draft = Record<string, string | number | boolean>;
           }
         </label>
         }
+        }
       }
     </div>
   `,
@@ -190,8 +213,36 @@ export class UiEntityForm extends Translated {
     return value === undefined || value === null ? '' : String(value);
   }
 
-  protected set(key: string, value: string | number): void {
+  /**
+   * showWhen gate: every listed key must hold one of its values. A rule
+   * naming a field the form doesn't have is ignored (receipt forms reuse
+   * movement fields minus `type` — their fields stay visible).
+   */
+  protected shown(field: FormField): boolean {
+    const rules = field.showWhen;
+    if (!rules) return true;
+    const keys = new Set(this.fields().map((row) => row.key));
+    return Object.entries(rules).every(
+      ([key, values]) => !keys.has(key) || values.includes(this.asText(key)),
+    );
+  }
+
+  /** Static required, or dynamic when a picked lookup option carries the flag. */
+  protected isRequired(field: FormField): boolean {
+    if (field.required) return true;
+    const rule = field.requiredWhen;
+    return !!rule && this.lookups.hasFlag(rule.lookup, this.asText(rule.key), rule.flag);
+  }
+
+  protected set(key: string, value: string | number | boolean): void {
     this.draft.update((current) => ({ ...current, [key]: value }));
+    // Clear fields that just became hidden so stale values aren't saved.
+    for (const field of this.fields()) {
+      if (field.key !== key && field.showWhen && key in field.showWhen && !this.shown(field)) {
+        const reset = field.type === 'checkbox' ? false : (field.options?.[0]?.value ?? '');
+        this.draft.update((current) => ({ ...current, [field.key]: reset }));
+      }
+    }
   }
 
   /** Select change; also applies the option's default rate (overridable). */

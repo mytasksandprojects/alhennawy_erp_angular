@@ -55,7 +55,11 @@ export const EXPORT_SHIPMENT_COLUMNS: TableColumn[] = [
   { key: 'containersCount', labelKey: 'logistics.fields.containers', type: 'number', align: 'center' },
   { key: 'vessel', labelKey: 'logistics.fields.vessel', multilang: true },
   { key: 'portKey', labelKey: 'logistics.fields.port', type: 'key' },
+  { key: 'originPort', labelKey: 'logistics.fields.originPort', multilang: true },
+  { key: 'arrivalPort', labelKey: 'logistics.fields.arrivalPort', multilang: true },
   { key: 'loadingDate', labelKey: 'logistics.fields.loadingDate', type: 'date' },
+  { key: 'etaDate', labelKey: 'logistics.fields.eta', type: 'date' },
+  { key: 'shippingAgent', labelKey: 'logistics.fields.shippingAgent', multilang: true },
   { key: 'shippingLineInvoicesTotal', labelKey: 'logistics.fields.shippingInvoices', type: 'currency' },
   {
     key: 'telexReleased',
@@ -82,5 +86,24 @@ export const EXPORT_SHIPMENT_FIELDS: FormField[] = [
   { key: 'stage', labelKey: 'logistics.fields.stage', type: 'select', options: keysToOptions('logistics.exportStages.', ['booking', 'loading', 'shipped', 'documents', 'delivered', 'closed']) },
   { key: 'containersCount', labelKey: 'logistics.fields.containers', type: 'number' },
   { key: 'vessel', labelKey: 'logistics.fields.vessel', multilang: true },
+  { key: 'originPort', labelKey: 'logistics.fields.originPort', multilang: true },
+  { key: 'arrivalPort', labelKey: 'logistics.fields.arrivalPort', multilang: true },
+  { key: 'cutoffTime', labelKey: 'logistics.fields.cutoffTime', type: 'time' },
   { key: 'loadingDate', labelKey: 'logistics.fields.loadingDate', type: 'date' },
+  { key: 'etaDate', labelKey: 'logistics.fields.eta', type: 'date' },
+  { key: 'shippingAgent', labelKey: 'logistics.fields.shippingAgent', multilang: true },
+];
+
+/** باكينج ليست — generated from إذون الصرف (issue movements) per order+container. */
+export const PACKING_LIST_COLUMNS: TableColumn[] = [
+  { key: 'number', labelKey: 'common.number' },
+  { key: 'orderNumber', labelKey: 'logistics.fields.exportOrder' },
+  { key: 'customerName', labelKey: 'sales.fields.customer', multilang: true },
+  { key: 'containerNumber', labelKey: 'warehouse.fields.containerNumber' },
+  { key: 'issueNumbers', labelKey: 'logistics.fields.issueNumbers' },
+  { key: 'itemsSummary', labelKey: 'warehouse.tabs.items', multilang: true },
+  { key: 'itemsCount', labelKey: 'warehouse.fields.itemsCount', type: 'number', align: 'center' },
+  { key: 'totalQuantity', labelKey: 'logistics.fields.totalQuantity', type: 'number' },
+  { key: 'unitKey', labelKey: 'warehouse.fields.unit', type: 'key', align: 'center' },
+  { key: 'date', labelKey: 'common.date', type: 'date' },
 ];

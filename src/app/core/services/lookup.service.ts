@@ -63,6 +63,14 @@ export class LookupService {
     return row?.rate ?? null;
   }
 
+  /** True when the option carries a behavior flag (e.g. 'requireGroups'). */
+  hasFlag(group: string, value: string, flag: string): boolean {
+    const row = this.values().find(
+      (item) => item.group === group && item.value === value,
+    );
+    return !!row?.flags?.includes(flag);
+  }
+
   /** Label of one lookup value in a language (active language when omitted). */
   labelFor(group: string, value: string, lang?: string): string {
     const row = this.values().find((item) => item.group === group && item.value === value);

@@ -32,15 +32,15 @@ export const MOCK_STOCK_ITEMS: StockItem[] = [
 ];
 
 const BASE_WAREHOUSES: Warehouse[] = [
-  { id: 'wh-spare', nameKey: 'warehouse.names.spareParts', kind: 'spare-parts', occupancyPercent: 62, itemsCount: 0, totalValue: 1250000 },
-  { id: 'wh-raw', nameKey: 'warehouse.names.rawMaterials', kind: 'raw-materials', occupancyPercent: 44, itemsCount: 0, totalValue: 410000 },
-  { id: 'wh-supplies', nameKey: 'warehouse.names.supplies', kind: 'supplies', occupancyPercent: 18, itemsCount: 0, totalValue: 86000 },
-  { id: 'wh-chem', nameKey: 'warehouse.names.chemicals', kind: 'chemicals', occupancyPercent: 48, itemsCount: 0, totalValue: 890000 },
-  { id: 'wh-lab', nameKey: 'warehouse.names.labVirtual', kind: 'lab-virtual', occupancyPercent: 12, itemsCount: 14, totalValue: 96000 },
-  { id: 'wh-grease', nameKey: 'warehouse.names.greaseOils', kind: 'grease-oils', occupancyPercent: 35, itemsCount: 42, totalValue: 210000 },
-  { id: 'wh-dasht', nameKey: 'warehouse.names.dashtRaw', kind: 'dasht-raw', occupancyPercent: 81, itemsCount: 0, totalValue: 3400000 },
-  { id: 'wh-fin1', nameKey: 'warehouse.names.finishedFirst', kind: 'finished-first', occupancyPercent: 57, itemsCount: 0, totalValue: 5150000 },
-  { id: 'wh-fin2', nameKey: 'warehouse.names.finishedSecond', kind: 'finished-second', occupancyPercent: 22, itemsCount: 0, totalValue: 620000 },
+  { id: 'wh-spare', nameKey: 'warehouse.names.spareParts', kind: 'spare-parts', occupancyPercent: 62, itemsCount: 0, totalValue: 1250000, requireGroups: true },
+  { id: 'wh-raw', nameKey: 'warehouse.names.rawMaterials', kind: 'raw-materials', occupancyPercent: 44, itemsCount: 0, totalValue: 410000, requireGroups: false },
+  { id: 'wh-supplies', nameKey: 'warehouse.names.supplies', kind: 'supplies', occupancyPercent: 18, itemsCount: 0, totalValue: 86000, requireGroups: false },
+  { id: 'wh-chem', nameKey: 'warehouse.names.chemicals', kind: 'chemicals', occupancyPercent: 48, itemsCount: 0, totalValue: 890000, requireGroups: false },
+  { id: 'wh-lab', nameKey: 'warehouse.names.labVirtual', kind: 'lab-virtual', occupancyPercent: 12, itemsCount: 14, totalValue: 96000, requireGroups: false },
+  { id: 'wh-grease', nameKey: 'warehouse.names.greaseOils', kind: 'grease-oils', occupancyPercent: 35, itemsCount: 42, totalValue: 210000, requireGroups: false },
+  { id: 'wh-dasht', nameKey: 'warehouse.names.dashtRaw', kind: 'dasht-raw', occupancyPercent: 81, itemsCount: 0, totalValue: 3400000, requireGroups: false },
+  { id: 'wh-fin1', nameKey: 'warehouse.names.finishedFirst', kind: 'finished-first', occupancyPercent: 57, itemsCount: 0, totalValue: 5150000, requireGroups: false },
+  { id: 'wh-fin2', nameKey: 'warehouse.names.finishedSecond', kind: 'finished-second', occupancyPercent: 22, itemsCount: 0, totalValue: 620000, requireGroups: false },
 ];
 
 export const MOCK_WAREHOUSES: Warehouse[] = BASE_WAREHOUSES.map((row) => {
@@ -70,6 +70,10 @@ export const MOCK_MOVEMENTS: StockMovement[] = [
   { id: 'mv-14', number: 'ISS-2026-0516', date: daysAgo(12), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 1, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-028', byUser: 'STORE1' },
   { id: 'mv-15', number: 'ISS-2026-0517', date: daysAgo(9), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 2, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-033', byUser: 'STORE1' },
   { id: 'mv-16', number: 'ISS-2026-0518', date: daysAgo(6), type: 'issue', itemCode: 'SPR-201', itemName: 'رولمان بلي 6204', quantity: 1, unitKey: 'units.piece', fromWarehouseId: 'wh-spare', referenceKey: 'warehouse.refs.salesOrder', reference: 'WO-2026-041', byUser: 'STORE1' },
+  // تصدير — نفس الكونتينر على نفس أمر التصدير يندمج في باكينج ليست واحدة.
+  { id: 'mv-17', number: 'ISS-2026-0601', date: daysAgo(2), type: 'issue', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantity: 12000, unitKey: 'units.kg', fromWarehouseId: 'wh-fin1', toType: 'export', orderNumber: 'EXP-2026-0031', containerNumber: 'MSKU7845123', referenceKey: 'warehouse.refs.salesOrder', reference: 'EXP-2026-0031', byUser: 'STORE1' },
+  { id: 'mv-18', number: 'ISS-2026-0602', date: daysAgo(1), type: 'issue', itemCode: 'FIN-SMP-22', itemName: 'سوبر مكس مطبخ ط ٢ ج ٢٢', quantity: 10500, unitKey: 'units.kg', fromWarehouseId: 'wh-fin1', toType: 'export', orderNumber: 'EXP-2026-0031', containerNumber: 'MSKU7845123', referenceKey: 'warehouse.refs.salesOrder', reference: 'EXP-2026-0031', byUser: 'STORE2' },
+  { id: 'mv-19', number: 'ISS-2026-0603', date: daysAgo(1), type: 'issue', itemCode: 'FIN-TWL-25', itemName: 'تواليت فاخر ج ٢٥', quantity: 8000, unitKey: 'units.kg', fromWarehouseId: 'wh-fin1', toType: 'export', orderNumber: 'EXP-2026-0031', containerNumber: 'TCLU5521089', referenceKey: 'warehouse.refs.salesOrder', reference: 'EXP-2026-0031', byUser: 'STORE1' },
 ];
 
 export function listReceipts(): StockMovement[] {

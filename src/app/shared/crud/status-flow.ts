@@ -2,6 +2,16 @@ import { TableColumn } from '../../core/models/common.models';
 
 export const STATUS_KEYS = new Set(['status', 'stage', 'result', 'accepted']);
 
+/**
+ * Badge columns that also render row action buttons (approval / reschedule
+ * decisions) — not used for the status filter, which stays on STATUS_KEYS.
+ */
+export const ACTION_STATUS_KEYS = new Set([
+  ...STATUS_KEYS,
+  'approvalStatus',
+  'rescheduleStatus',
+]);
+
 export interface StatusPick {
   row: Record<string, unknown>;
   key: string;
@@ -11,6 +21,11 @@ export interface StatusPick {
 
 export function isStatusKey(key: string): boolean {
   return STATUS_KEYS.has(key);
+}
+
+/** True when the column should render row action buttons. */
+export function isActionStatusKey(key: string): boolean {
+  return ACTION_STATUS_KEYS.has(key);
 }
 
 export function statusFlowOf(col: TableColumn): string[] {

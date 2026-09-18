@@ -83,6 +83,10 @@
   color: var(--color-text-faint);
 }
 
+.ui-field__req {
+  color: var(--color-danger);
+}
+
 .ui-control {
   height: var(--control-height);
   padding: 0 var(--space-sm);
@@ -185,6 +189,20 @@ textarea.ui-control {
 .ui-request-lines__qty {
   width: calc(var(--space-xl) * 2.4);
   flex: 0 0 auto;
+}
+
+.ui-request-lines__total {
+  flex: 0 0 auto;
+  font-weight: var(--font-weight-semibold, 600);
+  min-width: calc(var(--space-xl) * 2);
+  text-align: end;
+}
+
+.ui-request-lines__grand {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-xs);
+  margin: 0;
 }
 
 .ui-tabs {

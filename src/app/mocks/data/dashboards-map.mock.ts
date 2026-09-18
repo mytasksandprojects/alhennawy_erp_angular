@@ -20,10 +20,13 @@ import { CLINIC_DASHBOARD, SAFETY_DASHBOARD } from './safety.mock';
 import { salesDashboard } from './sales-workflow';
 
 /** Live dashboards — sales/purchasing/maintenance recompute on each read. */
-export const DASHBOARDS: Record<string, DashboardData> = {
+export const DASHBOARDS: Record<
+  string,
+  DashboardData | ((query: URLSearchParams) => DashboardData)
+> = {
   home: HOME_DASHBOARD,
   finance: FINANCE_DASHBOARD,
-  get sales() { return salesDashboard(); },
+  sales: (query) => salesDashboard(query),
   get purchasing() { return purchasingDashboard(); },
   get maintenance() { return maintenanceDashboard(); },
   logistics: LOGISTICS_DASHBOARD,

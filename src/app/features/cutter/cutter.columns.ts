@@ -4,8 +4,12 @@ import { keysToOptions } from '../../shared/crud/options';
 /** Roll table configuration for the مقص list screen. */
 export const ROLL_COLUMNS: TableColumn[] = [
   { key: 'barcode', labelKey: 'cutter.fields.barcode' },
+  { key: 'serial', labelKey: 'cutter.fields.serial', type: 'number', align: 'center' },
+  { key: 'mainSerial', labelKey: 'cutter.fields.mainSerial', type: 'number', align: 'center' },
   { key: 'specName', labelKey: 'cutter.fields.spec', multilang: true },
   { key: 'customerCode', labelKey: 'cutter.fields.customer' },
+  { key: 'orderNumbers', labelKey: 'cutter.fields.orders' },
+  { key: 'ply', labelKey: 'qc.fields.ply', align: 'center' },
   { key: 'weightKg', labelKey: 'cutter.fields.weight', type: 'number' },
   { key: 'gsm', labelKey: 'cutter.fields.gsm', type: 'number', align: 'center' },
   { key: 'rollWidthMm', labelKey: 'cutter.fields.width', type: 'number', align: 'center' },
@@ -33,6 +37,8 @@ export const SPEC_COLUMNS: TableColumn[] = [
 export const ROLL_FIELDS: FormField[] = [
   { key: 'specName', labelKey: 'cutter.fields.specName', multilang: true },
   { key: 'customerCode', labelKey: 'cutter.fields.customer' },
+  { key: 'orderNumbers', labelKey: 'cutter.fields.orders' },
+  { key: 'ply', labelKey: 'qc.fields.ply', type: 'select', lookup: 'qcPly' },
   { key: 'weightKg', labelKey: 'cutter.fields.weight', type: 'number' },
   { key: 'gsm', labelKey: 'cutter.fields.gsm', type: 'number' },
   { key: 'rollWidthMm', labelKey: 'cutter.fields.width', type: 'number' },

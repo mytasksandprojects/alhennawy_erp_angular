@@ -44,6 +44,18 @@ import { Translated } from '../../shared/translated.base';
         <div class="mono">{{ fmtNum(r.rollWidthMm) }}</div>
         <div>{{ t('cutter.label.diameter') }}</div>
         <div class="mono">{{ fmtNum(r.diameterMm) }}</div>
+        @if (r.ply) {
+          <div>{{ t('qc.fields.ply') }}</div>
+          <div class="mono">{{ r.ply }}</div>
+        }
+        @if (r.mainSerial) {
+          <div>{{ t('cutter.label.mainSerial') }}</div>
+          <div class="mono">{{ r.mainSerial }}</div>
+        }
+        @if (r.orderNumbers) {
+          <div>{{ t('cutter.label.orders') }}</div>
+          <div>{{ r.orderNumbers }}</div>
+        }
         <div>{{ t('cutter.label.notes') }}</div>
         <div>{{ r.notes ?? '' }}</div>
         <div>{{ t('cutter.label.addUser') }}</div>

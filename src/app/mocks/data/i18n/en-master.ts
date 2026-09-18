@@ -1,12 +1,12 @@
 /** Master data and work-order quality fields. */
 export const EN_MASTER: Record<string, string> = {
-  'qc.fields.mixType': 'Mixed / Pure',
+  'qc.fields.mixType': 'Super Mix / Pure',
   'qc.fields.productName': 'Product name',
   'qc.fields.parent': 'Parent',
   'qc.fields.ply': 'Ply',
   'qc.fields.color': 'Color',
   'qc.fields.width': 'Width (mm)',
-  'qc.mix.mixed': 'Mixed',
+  'qc.mix.mixed': 'Super Mix',
   'qc.mix.pure': 'Pure',
   'qc.parents.facial': 'Facial',
   'qc.parents.toilet': 'Toilet',

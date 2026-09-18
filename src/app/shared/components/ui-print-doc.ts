@@ -92,6 +92,12 @@ type Row = Record<string, unknown>;
           <span>{{ due() }}</span>
         </div>
       </div>
+      @for (note of notes(); track note.labelKey) {
+        <section class="print-invoice__note">
+          <strong>{{ t(note.labelKey) }}</strong>
+          <p>{{ note.text }}</p>
+        </section>
+      }
       <footer class="print-sheet__foot">
         <div>{{ t(addressKey()) }}</div>
         @if (phone()) {
@@ -109,6 +115,8 @@ export class UiPrintDoc extends Translated {
   readonly columns = input.required<TableColumn[]>();
   readonly titleKey = input('');
   readonly kind = input<'record' | 'invoice'>('invoice');
+  /** Extra labeled blocks printed under the totals (terms, bank info…). */
+  readonly notes = input<{ labelKey: string; text: string }[]>([]);
 
   private readonly store = inject(RuntimeConfigStore);
   protected readonly logoUrl = () => this.store.settings()?.company.logoUrl ?? '';

@@ -139,6 +139,17 @@ ui-print-doc,
   font-weight: var(--font-weight-bold);
 }
 
+.print-invoice__note {
+  border-block-start: var(--border-width) solid var(--color-border);
+  padding-block-start: var(--space-sm);
+  font-size: var(--font-size-sm);
+  white-space: pre-line;
+}
+
+.print-invoice__note p {
+  margin: var(--space-xs) 0 0;
+}
+
 @media print {
   body.is-print-line tbody tr:not(.ui-table__row--line) {
     display: none;

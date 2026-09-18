@@ -25,8 +25,8 @@ import { UiIcon } from './ui-icon';
       <div>
         <div class="stat-card__value">
           {{ fmtNum(s.value) }}
-          @if (s.unitKey) {
-            <span class="text-faint">{{ t(s.unitKey) }}</span>
+          @if (s.unitKey || s.unitLabel) {
+            <span class="text-faint">{{ s.unitLabel || t(s.unitKey ?? '') }}</span>
           }
         </div>
         <div class="stat-card__label">{{ t(s.labelKey) }}</div>

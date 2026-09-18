@@ -9,6 +9,7 @@ import {
   EXPORT_SHIPMENT_FIELDS,
   IMPORT_COLUMNS,
   IMPORT_FIELDS,
+  PACKING_LIST_COLUMNS,
 } from './logistics.columns';
 
 /**
@@ -43,6 +44,13 @@ export class LogisticsPage {
       endpoint: API_ENDPOINTS.logistics.exports,
       columns: EXPORT_SHIPMENT_COLUMNS,
       fields: EXPORT_SHIPMENT_FIELDS,
+    },
+    {
+      id: 'packingLists',
+      labelKey: 'logistics.tabs.packingLists',
+      endpoint: API_ENDPOINTS.logistics.packingLists,
+      columns: PACKING_LIST_COLUMNS,
+      readOnly: true,
     },
   ];
 }

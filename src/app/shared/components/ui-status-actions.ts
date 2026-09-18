@@ -45,6 +45,8 @@ export class UiStatusActions extends Translated {
   protected readonly at = signal('');
 
   protected choices(): string[] {
+    // Rows without a value (e.g. no reschedule request) show no buttons.
+    if (!this.value()) return [];
     return statusChoices(this.col(), this.value());
   }
 

@@ -17,7 +17,7 @@ import { deleteRow, persistRow } from '../crud/crud-write';
 import { draftFromRow, emptyDraft, shownColumns, shownFields } from '../crud/form-draft';
 import { childFilterPatch, extrasFromParams, ListFilter, withStockFilter } from '../crud/list-filter';
 import { crudListQuery, decorateRows, readListParams } from '../crud/paged-list';
-import { coerceStatus, isStatusKey, StatusPick } from '../crud/status-flow';
+import { coerceStatus, isActionStatusKey, isStatusKey, StatusPick } from '../crud/status-flow';
 import { withGenerated } from '../crud/serial';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { printWide } from '../crud/print-page';
@@ -92,7 +92,7 @@ type Draft = Record<string, string | number | boolean>;
         [titleKey]="titleKey()"
         [printKind]="printKind()"
         [printAsReport]="moduleId() === 'reports'"
-        [statusCol]="!readOnly() && allow('edit') ? statusCol() ?? null : null"
+        [statusCols]="!readOnly() && allow('edit') ? statusCols() : []"
         (rowClick)="openEdit($event)"
         (statusChange)="applyStatus($event)"
       />
@@ -166,6 +166,10 @@ export class CrudPanel extends Translated {
   protected readonly activeFilters = computed(() => withStockFilter(this.filters(), this.hasStockFilter()));
   protected readonly statusCol = computed(() =>
     this.columns().find((col) => col.type === 'badge' && isStatusKey(col.key)),
+  );
+  /** Every badge column that renders row action buttons (status + approvals). */
+  protected readonly statusCols = computed(() =>
+    this.columns().filter((col) => col.type === 'badge' && isActionStatusKey(col.key)),
   );
   protected readonly statusKeys = computed(() => Object.keys(this.statusCol()?.badgeToneMap ?? {}));
   protected readonly dateKey = computed(

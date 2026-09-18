@@ -10,24 +10,36 @@ import { UiTabs, TabItem } from '../../shared/components/ui-tabs';
 import { routedTab, tabNavigator } from '../../shared/tab-route';
 import { CustomerStatement } from './customer-statement';
 import { SalesExportBoard } from './sales-export-board';
+import { SalesSettingsPanel } from './sales-settings';
 import {
   CUSTOMER_COLUMNS,
   CUSTOMER_FIELDS,
   INVOICE_COLUMNS,
   INVOICE_FIELDS,
+  TAX_INVOICE_COLUMNS,
+  TAX_INVOICE_FIELDS,
   WORK_ORDER_FIELDS,
   workOrderColumns,
 } from './sales.columns';
 
 /**
  * المبيعات — local work orders, customers (each with a unique code),
- * customer account statements (كشف حساب), export pipeline and invoices.
+ * customer account statements (كشف حساب), export pipeline, invoices,
+ * tax invoices (ETA queue) and sales settings.
  * Prices render only for Finance users.
  */
 @Component({
   selector: 'app-sales-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ModuleDashboard, UiPageHeader, UiTabs, CrudPanel, CustomerStatement, SalesExportBoard],
+  imports: [
+    ModuleDashboard,
+    UiPageHeader,
+    UiTabs,
+    CrudPanel,
+    CustomerStatement,
+    SalesExportBoard,
+    SalesSettingsPanel,
+  ],
   template: `
     <ui-page-header titleKey="sales.title" subtitleKey="sales.subtitle" />
 
@@ -39,13 +51,20 @@ import {
 
     @switch (active()) {
       @case ('dashboard') {
-        <module-dashboard moduleId="sales" />
+        <module-dashboard
+          moduleId="sales"
+          [withDates]="true"
+          [filters]="dashboardFilters"
+        />
       }
       @case ('statement') {
         <app-customer-statement />
       }
       @case ('exportOrders') {
         <app-sales-export-board />
+      }
+      @case ('settings') {
+        <app-sales-settings-panel />
       }
       @default {
         @for (tab of crudTabs; track tab.id) {
@@ -59,6 +78,7 @@ import {
               [idKey]="tab.idKey ?? 'id'"
               [titleKey]="tab.labelKey"
               [printKind]="tab.id === 'invoices' ? 'invoice' : 'record'"
+              [filters]="tab.filters ?? []"
             />
           }
         }
@@ -72,6 +92,11 @@ export class SalesPage {
 
   protected readonly active = routedTab('dashboard');
   private readonly navigateToTab = tabNavigator();
+
+  /** لوحة المؤشرات — from/to dates + currency filter on the main screen. */
+  protected readonly dashboardFilters = [
+    { key: 'currency', labelKey: 'common.currency', lookup: 'currencies' },
+  ];
 
   protected activate(tabId: string): void {
     this.active.set(tabId);
@@ -92,6 +117,15 @@ export class SalesPage {
       endpoint: API_ENDPOINTS.sales.invoices,
       columns: INVOICE_COLUMNS,
       fields: INVOICE_FIELDS,
+      filters: [{ key: 'currency', labelKey: 'common.currency', lookup: 'currencies' }],
+    },
+    {
+      id: 'taxInvoices',
+      labelKey: 'sales.tabs.taxInvoices',
+      endpoint: API_ENDPOINTS.sales.taxInvoices,
+      columns: TAX_INVOICE_COLUMNS,
+      fields: TAX_INVOICE_FIELDS,
+      filters: [{ key: 'currency', labelKey: 'common.currency', lookup: 'currencies' }],
     },
     {
       id: 'customers',
@@ -108,8 +142,10 @@ export class SalesPage {
       { id: 'workOrders', labelKey: 'sales.tabs.workOrders' },
       { id: 'exportOrders', labelKey: 'sales.tabs.exportOrders' },
       { id: 'invoices', labelKey: 'sales.tabs.invoices' },
+      { id: 'taxInvoices', labelKey: 'sales.tabs.taxInvoices' },
       { id: 'customers', labelKey: 'sales.tabs.customers' },
       { id: 'statement', labelKey: 'sales.tabs.statement' },
+      { id: 'settings', labelKey: 'sales.tabs.settings' },
     ].filter((tab) => this.access.canTab('sales', tab.id));
     if (this.access.canTab('sales', 'dashboard')) {
       tabs.unshift({ id: 'dashboard', labelKey: 'common.dashboardTab' });

@@ -53,10 +53,17 @@ export interface TechDataSheet {
   specCode: string;
   specName: string;
   gsm: number;
-  moisturePercent: number;
+  /** Serial of the cutter roll this sheet was registered for (roll-level sheets). */
+  rollSerial?: number;
+  /** Number of plies carried over from the roll. */
+  ply?: string;
+  /** السماكة — sheet thickness. */
+  thickness: number;
   brightnessPercent: number;
-  burst: number;
-  tensile: number;
+  /** شد طولي — machine-direction tensile. */
+  tensileMd: number;
+  /** شد عرضي — cross-direction tensile. */
+  tensileCd: number;
   notes?: string;
 }
 
@@ -83,4 +90,15 @@ export interface ProductionOrder {
   expectedFinish: string;
   /** Auto-created when stock did not cover a sales work order. */
   autoCreated: boolean;
+  /** Where the order came from — local work order / export order / manual. */
+  sourceType?: 'work-order' | 'export-order' | 'manual';
+  /** Sales-originated orders wait for production approval before running. */
+  approvalStatus?: 'pending' | 'approved' | 'rejected';
+  /** Schedule date captured when the order is approved. */
+  scheduledDate?: string;
+  /** Id of the linked sales work order / export order. */
+  sourceId?: string;
+  /** Request from Sales to move the loading date — decided here. */
+  rescheduleDate?: string;
+  rescheduleStatus?: 'pending' | 'approved' | 'rejected';
 }

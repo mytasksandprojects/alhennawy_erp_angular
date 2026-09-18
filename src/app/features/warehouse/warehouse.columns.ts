@@ -7,6 +7,13 @@ export const WAREHOUSE_COLUMNS: TableColumn[] = [
   { key: 'itemsCount', labelKey: 'warehouse.fields.itemsCount', type: 'number' },
   { key: 'totalValue', labelKey: 'warehouse.fields.totalValue', type: 'currency' },
   { key: 'occupancyPercent', labelKey: 'warehouse.fields.occupancy', type: 'number', align: 'center' },
+  {
+    key: 'requireGroups',
+    labelKey: 'warehouse.fields.requireGroups',
+    type: 'badge',
+    keyPrefix: 'warehouse.groupReq.',
+    badgeToneMap: { true: 'info', false: 'neutral' },
+  },
 ];
 
 export const STOCK_ITEM_COLUMNS: TableColumn[] = [
@@ -49,6 +56,15 @@ export const MOVEMENT_COLUMNS: TableColumn[] = [
   { key: 'itemName', labelKey: 'common.name', multilang: true },
   { key: 'fromWarehouseId', labelKey: 'common.from', type: 'key' },
   { key: 'toWarehouseId', labelKey: 'common.to', type: 'key' },
+  {
+    key: 'toType',
+    labelKey: 'warehouse.fields.destination',
+    type: 'badge',
+    keyPrefix: 'warehouse.dest.',
+    badgeToneMap: { local: 'info', export: 'warning' },
+  },
+  { key: 'orderNumber', labelKey: 'warehouse.fields.orderNumber' },
+  { key: 'containerNumber', labelKey: 'warehouse.fields.containerNumber' },
   { key: 'quantity', labelKey: 'common.quantity', type: 'number' },
   { key: 'unitKey', labelKey: 'warehouse.fields.unit', type: 'key', align: 'center' },
   { key: 'referenceKey', labelKey: 'warehouse.fields.referenceType', type: 'key' },
@@ -59,6 +75,11 @@ export const MOVEMENT_COLUMNS: TableColumn[] = [
 export const WAREHOUSE_FIELDS: FormField[] = [
   { key: 'nameKey', labelKey: 'common.name', required: true },
   { key: 'kind', labelKey: 'common.type', type: 'select', lookup: 'warehouseKinds' },
+  {
+    key: 'requireGroups',
+    labelKey: 'warehouse.fields.requireGroups',
+    type: 'checkbox',
+  },
   { key: 'itemsCount', labelKey: 'warehouse.fields.itemsCount', type: 'number' },
   { key: 'totalValue', labelKey: 'warehouse.fields.totalValue', type: 'number' },
   { key: 'occupancyPercent', labelKey: 'warehouse.fields.occupancy', type: 'number' },
@@ -76,9 +97,26 @@ export const STOCK_ITEM_FIELDS: FormField[] = [
   { key: 'code', labelKey: 'common.code', generated: true, generatedPrefix: 'ITM' },
   { key: 'name', labelKey: 'common.name', required: true, multilang: true },
   { key: 'warehouseId', labelKey: 'warehouse.tabs.warehouses', type: 'select', lookup: 'warehouses', required: true },
-  { key: 'groupKey', labelKey: 'warehouse.fields.group', type: 'select', lookup: 'itemGroups' },
-  { key: 'subGroupKey', labelKey: 'warehouse.fields.subGroup', type: 'select', lookup: 'itemSubGroups', filterBy: 'groupKey' },
+  {
+    key: 'groupKey',
+    labelKey: 'warehouse.fields.group',
+    type: 'select',
+    lookup: 'itemGroups',
+    requiredWhen: { key: 'warehouseId', lookup: 'warehouses', flag: 'requireGroups' },
+  },
+  {
+    key: 'subGroupKey',
+    labelKey: 'warehouse.fields.subGroup',
+    type: 'select',
+    lookup: 'itemSubGroups',
+    filterBy: 'groupKey',
+    requiredWhen: { key: 'warehouseId', lookup: 'warehouses', flag: 'requireGroups' },
+  },
   { key: 'location', labelKey: 'warehouse.fields.location' },
+  { key: 'ply', labelKey: 'qc.fields.ply' },
+  { key: 'color', labelKey: 'qc.fields.color', type: 'select', lookup: 'qcColors' },
+  { key: 'gsm', labelKey: 'cutter.label.gsm', type: 'number' },
+  { key: 'widthMm', labelKey: 'qc.fields.width', type: 'number' },
   { key: 'quantity', labelKey: 'common.quantity', type: 'number' },
   { key: 'unitKey', labelKey: 'warehouse.fields.unit', type: 'select', lookup: 'units', required: true },
   { key: 'minimumStock', labelKey: 'warehouse.fields.minimum', type: 'number' },
@@ -90,7 +128,35 @@ export const MOVEMENT_FIELDS: FormField[] = [
   { key: 'date', labelKey: 'common.date', type: 'date' },
   { key: 'type', labelKey: 'common.type', type: 'select', options: keysToOptions('warehouse.types.', ['receipt', 'issue', 'transfer', 'adjustment', 'warehouse-return', 'supplier-return']) },
   { key: 'fromWarehouseId', labelKey: 'common.from', type: 'select', lookup: 'warehouses' },
-  { key: 'toWarehouseId', labelKey: 'common.to', type: 'select', lookup: 'warehouses' },
+  // بين المخازن — receipts/transfers/returns move stock into a warehouse.
+  {
+    key: 'toWarehouseId',
+    labelKey: 'common.to',
+    type: 'select',
+    lookup: 'warehouses',
+    showWhen: { type: ['receipt', 'transfer', 'warehouse-return'] },
+  },
+  // إذن صرف — destination is a local work order or an export order.
+  {
+    key: 'toType',
+    labelKey: 'common.to',
+    type: 'select',
+    options: keysToOptions('warehouse.dest.', ['local', 'export']),
+    showWhen: { type: ['issue'] },
+  },
+  {
+    key: 'orderNumber',
+    labelKey: 'warehouse.fields.orderNumber',
+    type: 'select',
+    lookup: 'orderDestinations',
+    filterBy: 'toType',
+    showWhen: { type: ['issue'] },
+  },
+  {
+    key: 'containerNumber',
+    labelKey: 'warehouse.fields.containerNumber',
+    showWhen: { type: ['issue'], toType: ['export'] },
+  },
   { key: 'linesJson', labelKey: 'warehouse.tabs.items', type: 'lines' },
   { key: 'reference', labelKey: 'warehouse.fields.reference' },
   { key: 'byUser', labelKey: 'common.user' },
@@ -98,11 +164,11 @@ export const MOVEMENT_FIELDS: FormField[] = [
 
 /** أذون الإضافة — receipts only; type is fixed on the server. */
 export const RECEIPT_COLUMNS: TableColumn[] = MOVEMENT_COLUMNS.filter(
-  (col) => col.key !== 'type',
+  (col) => !['type', 'toType', 'orderNumber', 'containerNumber'].includes(col.key),
 );
 
 export const RECEIPT_FIELDS: FormField[] = MOVEMENT_FIELDS.filter(
-  (field) => field.key !== 'type',
+  (field) => !['type', 'toType', 'orderNumber', 'containerNumber'].includes(field.key),
 );
 
 export const LOOKUP_LABEL_COLUMNS: TableColumn[] = [

@@ -29,6 +29,8 @@ export interface LookupValue {
   parentValue?: string;
   /** Item groups only: short code used in SKUs (OS → SPR-OS-0001). */
   codePrefix?: string;
+  /** Option behavior flags (e.g. warehouses: 'requireGroups'). */
+  flags?: string[];
 }
 
 /** A backend feature/integration switch with its live status. */

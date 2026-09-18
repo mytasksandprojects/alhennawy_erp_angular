@@ -47,6 +47,8 @@ export interface StatCardData extends RouteTarget {
   labelKey: string;
   value: number;
   unitKey?: string;
+  /** Raw unit text (e.g. a currency code) — wins over unitKey when set. */
+  unitLabel?: string;
   icon: string;
   /** Trend vs previous period, percent. Positive = up. */
   trendPercent?: number;
@@ -151,8 +153,15 @@ export interface Localized {
 export interface FormField {
   key: string;
   labelKey: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'date' | 'time' | 'select' | 'textarea' | 'images' | 'files' | 'lines';
+  type?: 'text' | 'email' | 'password' | 'number' | 'date' | 'time' | 'select' | 'textarea' | 'images' | 'files' | 'lines' | 'salesLines' | 'checkbox';
   required?: boolean;
+  /**
+   * Required only while another draft field's selected lookup value
+   * carries `flag` — e.g. a warehouse that mandates group/sub-group.
+   */
+  requiredWhen?: { key: string; lookup: string; flag: string };
+  /** Field is visible only when every listed draft key matches one of its values. */
+  showWhen?: Record<string, string[]>;
   /** Text field repeated once per configured language (see multilangKey). */
   multilang?: boolean;
   options?: SelectOption[];

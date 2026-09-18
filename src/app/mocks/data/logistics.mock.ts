@@ -1,7 +1,10 @@
 import {
   ExportShipment,
   ImportShipment,
+  PackingList,
 } from '../../core/models/logistics.models';
+import { MOCK_EXPORT_ORDERS } from './sales.mock';
+import { MOCK_MOVEMENTS } from './warehouse.mock';
 
 /** MOCK LAYER — import/export shipments with full BRD lifecycle. */
 const daysAgo = (d: number) => new Date(Date.now() - d * 86400000).toISOString();
@@ -40,7 +43,51 @@ export const MOCK_IMPORTS: ImportShipment[] = [
 ];
 
 export const MOCK_EXPORT_SHIPMENTS: ExportShipment[] = [
-  { id: 'exs-1', number: 'SHP-2026-0044', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', stage: 'loading', containersCount: 2, vessel: 'MSC AURORA', portKey: 'logistics.ports.alexandria', loadingDate: daysAhead(7), telexReleased: false, isLate: false },
-  { id: 'exs-2', number: 'SHP-2026-0043', customerCode: 'CUS-007', customerName: 'شركة المعالي للورق الصحي', stage: 'documents', containersCount: 1, vessel: 'CMA CGM NILE', portKey: 'logistics.ports.damietta', loadingDate: daysAgo(6), shippingLineInvoicesTotal: 3850, telexReleased: true, isLate: false },
-  { id: 'exs-3', number: 'SHP-2026-0042', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', stage: 'delivered', containersCount: 2, vessel: 'MAERSK VALENCIA', portKey: 'logistics.ports.alexandria', loadingDate: daysAgo(24), shippingLineInvoicesTotal: 7400, telexReleased: true, isLate: true },
+  { id: 'exs-1', number: 'SHP-2026-0044', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', stage: 'loading', containersCount: 2, vessel: 'MSC AURORA', portKey: 'logistics.ports.alexandria', originPort: 'Alexandria', arrivalPort: 'Jeddah', cutoffTime: '16:00', loadingDate: daysAhead(7), etaDate: daysAhead(12), shippingAgent: 'MSC Egypt', telexReleased: false, isLate: false },
+  { id: 'exs-2', number: 'SHP-2026-0043', customerCode: 'CUS-007', customerName: 'شركة المعالي للورق الصحي', stage: 'documents', containersCount: 1, vessel: 'CMA CGM NILE', portKey: 'logistics.ports.damietta', originPort: 'Damietta', arrivalPort: 'Mersin', cutoffTime: '12:00', loadingDate: daysAgo(6), etaDate: daysAhead(4), shippingAgent: 'CMA CGM Egypt', shippingLineInvoicesTotal: 3850, telexReleased: true, isLate: false },
+  { id: 'exs-3', number: 'SHP-2026-0042', customerCode: 'CUS-006', customerName: 'شركة النورس الفني للتصنيع', stage: 'delivered', containersCount: 2, vessel: 'MAERSK VALENCIA', portKey: 'logistics.ports.alexandria', originPort: 'Alexandria', arrivalPort: 'Aqaba', cutoffTime: '18:00', loadingDate: daysAgo(24), etaDate: daysAgo(14), shippingAgent: 'Maersk Egypt', shippingLineInvoicesTotal: 7400, telexReleased: true, isLate: true },
 ];
+
+/**
+ * باكينج ليست — every issue movement destined to an export order with a
+ * container number joins the list of its (order, container) group: the
+ * same container on the same export order always lands in ONE list.
+ */
+export function packingLists(): PackingList[] {
+  const groups = new Map<string, PackingList>();
+  for (const mv of MOCK_MOVEMENTS) {
+    if (mv.type !== 'issue' || mv.toType !== 'export' || !mv.orderNumber || !mv.containerNumber) {
+      continue;
+    }
+    const key = `${mv.orderNumber}|${mv.containerNumber}`;
+    const order = MOCK_EXPORT_ORDERS.find((row) => row.number === mv.orderNumber);
+    const qty = Math.abs(Number(mv.quantity || 0));
+    const existing = groups.get(key);
+    if (existing) {
+      existing.issueNumbers = `${existing.issueNumbers}, ${mv.number}`;
+      if (mv.itemName && !existing.itemsSummary?.includes(mv.itemName)) {
+        existing.itemsSummary = existing.itemsSummary
+          ? `${existing.itemsSummary} · ${mv.itemName}`
+          : mv.itemName;
+      }
+      existing.itemsCount += 1;
+      existing.totalQuantity += qty;
+      if (mv.date > existing.date) existing.date = mv.date;
+    } else {
+      groups.set(key, {
+        id: `pl-${groups.size + 1}`,
+        number: `PL-${mv.orderNumber}-${mv.containerNumber}`,
+        orderNumber: mv.orderNumber,
+        customerName: order?.customerName ?? '',
+        containerNumber: mv.containerNumber,
+        issueNumbers: mv.number,
+        itemsSummary: mv.itemName,
+        itemsCount: 1,
+        totalQuantity: qty,
+        unitKey: mv.unitKey,
+        date: mv.date,
+      });
+    }
+  }
+  return [...groups.values()];
+}

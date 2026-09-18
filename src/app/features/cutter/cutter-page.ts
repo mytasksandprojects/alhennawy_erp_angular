@@ -107,7 +107,7 @@ type Draft = Record<string, string | number | boolean>;
         <div class="stack" style="align-items: center">
           <div class="print-area">
             <app-roll-label [roll]="roll" />
-            <app-tech-sheet-print [specCode]="roll.specCode" />
+            <app-tech-sheet-print [specCode]="roll.specCode" [rollSerial]="roll.serial" />
           </div>
           <ui-entity-form [fields]="rollFields" [(draft)]="draft" />
           <div class="row">

@@ -6,8 +6,10 @@ import { ApiResponse } from '../../core/models/common.models';
 import {
   CustomerSpec,
   CutterRoll,
+  CutterRollBatchCreateRequest,
   CutterRollCreateRequest,
 } from '../../core/models/cutter.models';
+import { ProductionOrder } from '../../core/models/quality.models';
 
 /** Data access for المقص — rolls, specs and label print registration. */
 @Injectable({ providedIn: 'root' })
@@ -20,6 +22,21 @@ export class CutterApiService {
 
   createRoll(request: CutterRollCreateRequest): Observable<CutterRoll> {
     return this.api.post<CutterRoll>(API_ENDPOINTS.cutter.rolls, request);
+  }
+
+  /** Multi-roll registration — one main serial + a serial per sub-roll entry. */
+  createRolls(request: CutterRollBatchCreateRequest): Observable<CutterRoll[]> {
+    return this.api.post<CutterRoll[]>(API_ENDPOINTS.cutter.rollBatch, request);
+  }
+
+  /** Next serial the backend will assign — shown on the form before saving. */
+  nextSerial(): Observable<{ serial: number }> {
+    return this.api.get<{ serial: number }>(API_ENDPOINTS.cutter.nextSerial);
+  }
+
+  /** أوامر الإنتاج the new rolls are being cut for (multi-select source). */
+  listProductionOrders(): Observable<ProductionOrder[]> {
+    return this.api.get<ProductionOrder[]>(API_ENDPOINTS.production.orders, { pageSize: 200 });
   }
 
   listSpecs(): Observable<CustomerSpec[]> {

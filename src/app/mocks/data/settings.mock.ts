@@ -188,6 +188,13 @@ export const MOCK_MENU: MenuItem[] = [
     permission: 'backups.view',
   },
   {
+    id: 'taxApi',
+    labelKey: 'menu.taxApi',
+    icon: 'customs',
+    route: '/tax-api',
+    permission: 'taxApi.view',
+  },
+  {
     id: 'system',
     labelKey: 'menu.system',
     icon: 'shield',

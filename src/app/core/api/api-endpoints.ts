@@ -88,6 +88,7 @@ export const API_ENDPOINTS = {
   logistics: {
     imports: '/logistics/imports',
     exports: '/logistics/exports',
+    packingLists: '/logistics/packing-lists',
   },
   warehouse: {
     warehouses: '/warehouse/warehouses',
@@ -123,7 +124,11 @@ export const API_ENDPOINTS = {
     workOrders: '/sales/work-orders',
     exportOrders: '/sales/export-orders',
     advanceExport: (id: string) => `/sales/export-orders/${id}/advance`,
+    proformaDecision: (id: string) => `/sales/export-orders/${id}/proforma-decision`,
+    loadingRequest: (id: string) => `/sales/export-orders/${id}/loading-request`,
     invoices: '/sales/invoices',
+    taxInvoices: '/sales/tax-invoices',
+    settings: '/sales/settings',
     customerStatement: (code: string) => `/sales/customers/${code}/statement`,
   },
   weighbridge: {
@@ -132,8 +137,14 @@ export const API_ENDPOINTS = {
   },
   cutter: {
     rolls: '/cutter/rolls',
+    rollBatch: '/cutter/rolls/batch',
+    nextSerial: '/cutter/rolls/next-serial',
     specs: '/cutter/specs',
     print: (rollId: string) => `/cutter/rolls/${rollId}/print`,
+  },
+  taxApi: {
+    settings: '/tax-api/settings',
+    test: '/tax-api/test',
   },
   backups: {
     list: '/backups',

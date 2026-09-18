@@ -1,7 +1,7 @@
 import { nextGenerated } from '../../shared/crud/serial';
 import { MOCK_PRODUCTION_ORDERS } from './quality.mock';
 import { MOCK_EXPORT_ORDERS, MOCK_WORK_ORDERS } from './sales.mock';
-import { MOCK_STOCK_ITEMS } from './warehouse.mock';
+import { MOCK_MOVEMENTS, MOCK_STOCK_ITEMS } from './warehouse.mock';
 
 type Row = Record<string, unknown>;
 export type StockPart = {
@@ -19,7 +19,17 @@ function specOf(code: string): string {
   return code.replace(/^FIN\d*-/, '') || code;
 }
 
-function reservedOn(row: { itemCode?: string; availableFromStockKg?: number; linesJson?: string }, code: string): number {
+function reservedOn(
+  row: {
+    itemCode?: string;
+    availableFromStockKg?: number;
+    linesJson?: string;
+    stockDeducted?: boolean;
+  },
+  code: string,
+): number {
+  // خُصمت فعليًا من المخزن — لا تُحسب حجزًا مرة أخرى.
+  if (row.stockDeducted) return 0;
   try {
     const parsed = JSON.parse(String(row.linesJson || '[]')) as { itemCode?: string; quantity?: number; available?: number }[];
     if (Array.isArray(parsed) && parsed.length) {
@@ -144,7 +154,91 @@ export function spawnShortage(workOrderNumber: string, parts: StockPart[], sourc
       status: 'open',
       expectedFinish: finish,
       autoCreated: true,
+      sourceType: 'manual',
+      approvalStatus: 'approved',
       ...qc,
+    });
+  });
+}
+
+/**
+ * Send a sales order to أوامر الإنتاج — one pending-approval order linked to
+ * the work order (local) or export order (export). Production approves or
+ * rejects it; approving captures the schedule date.
+ */
+export function spawnSalesOrder(
+  refNumber: string,
+  sourceId: string,
+  sourceType: 'work-order' | 'export-order',
+  parts: StockPart[],
+  source?: Row,
+): string {
+  const existing = MOCK_PRODUCTION_ORDERS.find((row) => row.workOrderNumber === refNumber);
+  if (!refNumber || existing) return existing?.id ?? '';
+  const finish = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+  const qc = qcOf(source);
+  const first = parts[0];
+  const total = parts.reduce((sum, part) => sum + (part.quantity || part.toProduce || 0), 0);
+  const order = {
+    id: `prd-${Date.now()}`,
+    number: nextGenerated(MOCK_PRODUCTION_ORDERS, 'number', 'PRD'),
+    date: new Date().toISOString(),
+    workOrderNumber: refNumber,
+    specCode: specOf(first?.itemCode || ''),
+    specName: qc.productName || first?.itemName || '',
+    quantityKg: total,
+    producedKg: 0,
+    wastePercent: 0,
+    rollsTarget: Math.max(1, Math.round(total / 300)),
+    rollsProduced: 0,
+    status: 'open' as const,
+    expectedFinish: finish,
+    autoCreated: true,
+    sourceType,
+    approvalStatus: 'pending' as const,
+    sourceId,
+    ...qc,
+  };
+  MOCK_PRODUCTION_ORDERS.unshift(order);
+  return order.id;
+}
+
+/**
+ * خصم المخزون — physically deduct the stock-covered quantity of every planned
+ * line and log an إذن صرف movement so the deduction shows in الحركات.
+ * (local → work order • export → export order)
+ */
+export function deductPlannedStock(
+  orderNumber: string,
+  parts: Pick<StockPart, 'itemCode' | 'itemName' | 'available'>[],
+  toType: 'local' | 'export',
+): void {
+  parts.forEach((part, index) => {
+    const planned = Number(part.available ?? 0);
+    if (planned <= 0) return;
+    const item = MOCK_STOCK_ITEMS.find(
+      (stock) => stock.code === part.itemCode || stock.name === part.itemName,
+    );
+    if (!item) return;
+    const take = Math.min(item.quantity, planned);
+    if (take <= 0) return;
+    item.quantity = Math.max(0, item.quantity - take);
+    item.isBelowMinimum = item.minimumStock > 0 && item.quantity <= item.minimumStock;
+    MOCK_MOVEMENTS.unshift({
+      id: `mv-${Date.now()}-${index}`,
+      number: nextGenerated(MOCK_MOVEMENTS, 'number', 'ISS'),
+      date: new Date().toISOString(),
+      type: 'issue',
+      itemCode: item.code,
+      itemName: item.name,
+      quantity: take,
+      unitKey: 'units.kg',
+      fromWarehouseId: item.warehouseId,
+      toType,
+      orderNumber,
+      referenceKey: 'warehouse.refs.salesOrder',
+      reference: orderNumber,
+      byUser: 'STORE1',
     });
   });
 }

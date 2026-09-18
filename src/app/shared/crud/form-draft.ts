@@ -8,15 +8,17 @@ export function emptyDraft(fields: FormField[]): Draft {
   const next: Draft = {};
   for (const field of fields) {
     next[field.key] =
-      field.type === 'lines'
+      field.type === 'lines' || field.type === 'salesLines'
         ? '[]'
-        : field.type === 'number'
-          ? 0
-          : field.type === 'date'
-            ? field.key === 'returnedAt'
-              ? ''
-              : new Date().toISOString().slice(0, 10)
-            : field.options?.[0]?.value ?? '';
+        : field.type === 'checkbox'
+          ? false
+          : field.type === 'number'
+            ? 0
+            : field.type === 'date'
+              ? field.key === 'returnedAt'
+                ? ''
+                : new Date().toISOString().slice(0, 10)
+              : field.options?.[0]?.value ?? '';
   }
   return next;
 }

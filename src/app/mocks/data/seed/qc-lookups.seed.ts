@@ -39,8 +39,8 @@ const COLORS: [string, string, string][] = [
 ];
 
 export const QC_LOOKUPS: LookupValue[] = [
-  lk('lv-mix-1', 'qcMix', 'qc.mix.mixed', 'مخلوط', 'Mixed'),
-  lk('lv-mix-2', 'qcMix', 'qc.mix.pure', 'نقي', 'Pure'),
+  lk('lv-mix-1', 'qcMix', 'qc.mix.mixed', 'سوبر مكس', 'Super Mix'),
+  lk('lv-mix-2', 'qcMix', 'qc.mix.pure', 'بيور', 'Pure'),
   ...PARENTS.map(([id, ar, en]) => lk(`lv-par-${id}`, 'qcParents', `qc.parents.${id}`, ar, en)),
   ...PLIES.map((ply) => lk(`lv-ply-${ply}`, 'qcPly', ply, ply, ply)),
   ...COLORS.map(([id, ar, en]) => lk(`lv-col-${id}`, 'qcColors', `qc.colors.${id}`, ar, en)),

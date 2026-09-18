@@ -17,7 +17,14 @@ import {
   issuePurchaseOrder,
   selectQuotation,
 } from './data/purchasing-workflow';
-import { advanceExportOrder, createExportQuotation } from './data/sales-workflow';
+import {
+  advanceExportOrder,
+  createExportQuotation,
+  decideProforma,
+  requestLoadingChange,
+} from './data/sales-workflow';
+import { getSalesSettings, saveSalesSettings } from './data/sales-settings.mock';
+import { getTaxApiSettings, saveTaxApiSettings, testTaxApiConnection } from './data/tax-api.mock';
 import { listRoles, upsertRole } from './data/roles.mock';
 import {
   MOCK_CHEM_ACCOUNTS,
@@ -141,6 +148,21 @@ export const ACCESS_ROUTES: MockRoute[] = [
     pattern: '/sales/export-orders/:id/advance',
     handler: ({ path, body }) => advanceExportOrder(path.split('/').filter(Boolean)[2] ?? '', body),
   },
+  {
+    method: 'POST',
+    pattern: '/sales/export-orders/:id/proforma-decision',
+    handler: ({ path, body }) => decideProforma(path.split('/').filter(Boolean)[2] ?? '', body),
+  },
+  {
+    method: 'POST',
+    pattern: '/sales/export-orders/:id/loading-request',
+    handler: ({ path, body }) => requestLoadingChange(path.split('/').filter(Boolean)[2] ?? '', body),
+  },
+  { method: 'GET', pattern: '/sales/settings', handler: () => getSalesSettings() },
+  { method: 'PUT', pattern: '/sales/settings', handler: ({ body }) => saveSalesSettings(body) },
+  { method: 'GET', pattern: '/tax-api/settings', handler: () => getTaxApiSettings() },
+  { method: 'PUT', pattern: '/tax-api/settings', handler: ({ body }) => saveTaxApiSettings(body) },
+  { method: 'POST', pattern: '/tax-api/test', handler: () => testTaxApiConnection() },
   { method: 'GET', pattern: '/maintenance/jobs', handler: () => listMaintenance() },
   ...crudRoutes('/maintenance/jobs', MOCK_MAINTENANCE, 'id', true, prepareMaintenance('quality')),
   { method: 'GET', pattern: '/production/maintenance', handler: () => listMaintenance('production') },

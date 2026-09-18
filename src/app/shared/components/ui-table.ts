@@ -67,7 +67,7 @@ type Row = Record<string, unknown>;
             @for (col of columns(); track col.key) {
               <th [class]="cellClass(col)">{{ t(col.labelKey) }}</th>
             }
-            @if (rowExport() || statusCol()) {
+            @if (rowExport() || statusCols().length) {
               <th class="ui-table__actions-col cell--center">{{ t('common.actions') }}</th>
             }
           </tr>
@@ -98,10 +98,12 @@ type Row = Record<string, unknown>;
                       {{ t(asText(row[col.key])) || asText(row[col.key]) }}
                     }
                     @case ('badge') {
-                      <ui-badge
-                        [labelKey]="(col.keyPrefix ?? '') + asText(row[col.key])"
-                        [tone]="col.badgeToneMap?.[asText(row[col.key])] ?? 'neutral'"
-                      />
+                      @if (asText(row[col.key])) {
+                        <ui-badge
+                          [labelKey]="(col.keyPrefix ?? '') + asText(row[col.key])"
+                          [tone]="col.badgeToneMap?.[asText(row[col.key])] ?? 'neutral'"
+                        />
+                      }
                     }
                     @case ('image') {
                       @if (imageUrls(row[col.key]).length) {
@@ -149,10 +151,10 @@ type Row = Record<string, unknown>;
                   }
                 </td>
               }
-              @if (rowExport() || statusCol()) {
+              @if (rowExport() || statusCols().length) {
                 <td class="ui-table__actions-col" (click)="$event.stopPropagation()">
                   <div class="ui-table__actions">
-                    @if (statusCol(); as col) {
+                    @for (col of statusCols(); track col.key) {
                       <ui-status-actions
                         [col]="col"
                         [value]="asText(row[col.key])"
@@ -201,7 +203,7 @@ export class UiTable extends Translated {
   readonly titleKey = input('');
   readonly printKind = input<'record' | 'invoice' | 'sheet'>('record');
   readonly printAsReport = input(false);
-  readonly statusCol = input<TableColumn | null>(null);
+  readonly statusCols = input<TableColumn[]>([]);
   readonly rowClick = output<Row>();
   readonly statusChange = output<StatusPick>();
   protected readonly viewer = inject(ImageViewerService);

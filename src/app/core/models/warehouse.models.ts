@@ -20,6 +20,8 @@ export interface Warehouse extends Localized {
   occupancyPercent: number;
   itemsCount: number;
   totalValue: number;
+  /** When set, items added here must pick a main group and a sub-group. */
+  requireGroups?: boolean;
 }
 
 export interface StockItem extends Localized {
@@ -37,6 +39,11 @@ export interface StockItem extends Localized {
   minimumStock: number;
   unitCost: number;
   isBelowMinimum: boolean;
+  /** Product spec — الطبقات / اللون / الجراماج / العرض (finished goods). */
+  ply?: string;
+  color?: string;
+  gsm?: number;
+  widthMm?: number;
   /** Free-text bin / section, e.g. «سيكشن أ — الرف 3». */
   location?: string;
   /** تاريخ آخر حركة — date of last movement. */
@@ -64,6 +71,11 @@ export interface StockMovement {
   unitKey: string;
   fromWarehouseId?: string;
   toWarehouseId?: string;
+  /** Issue destination: محلي → work order • تصدير → export order + container. */
+  toType?: 'local' | 'export';
+  /** أمر الشغل / أمر التصدير the issue was made for. */
+  orderNumber?: string;
+  containerNumber?: string;
   referenceKey?: string;
   reference?: string;
   byUser: string;

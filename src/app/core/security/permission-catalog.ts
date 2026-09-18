@@ -285,6 +285,25 @@ export const PERMISSION_CATALOG: CatalogModule[] = [
   },
   { id: 'backups', labelKey: 'menu.backups', tabs: [tab('list', 'backup.title', [])] },
   {
+    id: 'taxApi',
+    labelKey: 'menu.taxApi',
+    tabs: [
+      tab('settings', 'taxApi.title', [
+        { key: 'enabled', labelKey: 'taxApi.fields.enabled' },
+        { key: 'environment', labelKey: 'taxApi.fields.environment' },
+        { key: 'apiUrl', labelKey: 'taxApi.fields.apiUrl' },
+        { key: 'clientId', labelKey: 'taxApi.fields.clientId' },
+        { key: 'clientSecret', labelKey: 'taxApi.fields.clientSecret' },
+        { key: 'registrationNumber', labelKey: 'taxApi.fields.registrationNumber' },
+        { key: 'branchCode', labelKey: 'taxApi.fields.branchCode' },
+        { key: 'activityCode', labelKey: 'taxApi.fields.activityCode' },
+        { key: 'posSerial', labelKey: 'taxApi.fields.posSerial' },
+        { key: 'issuerType', labelKey: 'taxApi.fields.issuerType' },
+        { key: 'documentVersion', labelKey: 'taxApi.fields.documentVersion' },
+      ]),
+    ],
+  },
+  {
     id: 'system',
     labelKey: 'menu.system',
     tabs: [

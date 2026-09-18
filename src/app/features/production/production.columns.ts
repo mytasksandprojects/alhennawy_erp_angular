@@ -27,6 +27,17 @@ export const PRODUCTION_ORDER_COLUMNS: TableColumn[] = [
     badgeToneMap: { true: 'info', false: 'neutral' },
   },
   {
+    key: 'sourceType',
+    labelKey: 'production.fields.source',
+    type: 'badge',
+    keyPrefix: 'production.sources.',
+    badgeToneMap: {
+      'work-order': 'info',
+      'export-order': 'warning',
+      'manual': 'neutral',
+    },
+  },
+  {
     key: 'status',
     labelKey: 'common.status',
     type: 'badge',
@@ -38,6 +49,35 @@ export const PRODUCTION_ORDER_COLUMNS: TableColumn[] = [
       'completed': 'success',
       'late': 'danger',
       'stopped': 'danger',
+    },
+  },
+  {
+    key: 'approvalStatus',
+    labelKey: 'production.fields.approvalStatus',
+    type: 'badge',
+    statusFlow: ['pending', 'approved', 'rejected'],
+    statusNeed: {
+      approved: { key: 'scheduledDate', labelKey: 'production.fields.scheduledDate' },
+    },
+    keyPrefix: 'production.approval.',
+    badgeToneMap: {
+      'pending': 'warning',
+      'approved': 'success',
+      'rejected': 'danger',
+    },
+  },
+  { key: 'scheduledDate', labelKey: 'production.fields.scheduledDate', type: 'date' },
+  { key: 'rescheduleDate', labelKey: 'production.fields.rescheduleDate', type: 'date' },
+  {
+    key: 'rescheduleStatus',
+    labelKey: 'production.fields.rescheduleStatus',
+    type: 'badge',
+    statusFlow: ['pending', 'approved', 'rejected'],
+    keyPrefix: 'production.reschedule.',
+    badgeToneMap: {
+      'pending': 'warning',
+      'approved': 'success',
+      'rejected': 'danger',
     },
   },
 ];

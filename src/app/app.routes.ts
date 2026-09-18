@@ -188,6 +188,13 @@ export const routes: Routes = [
           import('./features/backups/backups-page').then((m) => m.BackupsPage),
       },
       {
+        path: 'tax-api',
+        canActivate: [permissionGuard],
+        data: { permission: 'taxApi.view' },
+        loadComponent: () =>
+          import('./features/tax-api/tax-api-page').then((m) => m.TaxApiPage),
+      },
+      {
         path: 'system',
         canActivate: [permissionGuard],
         data: { permission: 'system.view' },

@@ -10,16 +10,18 @@ import { Translated } from '../translated.base';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="crud-filters">
-      <label class="crud-filter crud-filter--search">
-        <span class="ui-field__label">{{ t('common.search') }}</span>
-        <input
-          class="ui-control"
-          type="search"
-          [placeholder]="t('common.search')"
-          [value]="search()"
-          (input)="searchChange.emit($any($event.target).value)"
-        />
-      </label>
+      @if (showSearch()) {
+        <label class="crud-filter crud-filter--search">
+          <span class="ui-field__label">{{ t('common.search') }}</span>
+          <input
+            class="ui-control"
+            type="search"
+            [placeholder]="t('common.search')"
+            [value]="search()"
+            (input)="searchChange.emit($any($event.target).value)"
+          />
+        </label>
+      }
       @for (filter of filters(); track filter.key) {
         <label class="crud-filter">
           <span class="ui-field__label">{{ t(filter.labelKey) }}</span>
@@ -63,6 +65,7 @@ import { Translated } from '../translated.base';
 })
 export class UiListFilters extends Translated {
   readonly search = input('');
+  readonly showSearch = input(true);
   readonly filters = input<ListFilter[]>([]);
   readonly values = input<Record<string, string>>({});
   readonly status = input('');

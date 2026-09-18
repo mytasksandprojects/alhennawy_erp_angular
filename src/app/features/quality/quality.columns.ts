@@ -122,11 +122,13 @@ export const MAINTENANCE_FIELDS: FormField[] = [
 export const TECH_SHEET_COLUMNS: TableColumn[] = [
   { key: 'specCode', labelKey: 'common.code' },
   { key: 'specName', labelKey: 'common.name' },
+  { key: 'rollSerial', labelKey: 'quality.fields.rollSerial', type: 'number', align: 'center' },
+  { key: 'ply', labelKey: 'qc.fields.ply', align: 'center' },
   { key: 'gsm', labelKey: 'cutter.label.gsm', type: 'number', align: 'center' },
-  { key: 'moisturePercent', labelKey: 'quality.fields.moisture', type: 'number', align: 'center' },
+  { key: 'thickness', labelKey: 'quality.fields.thickness', type: 'number', align: 'center' },
   { key: 'brightnessPercent', labelKey: 'quality.fields.brightness', type: 'number', align: 'center' },
-  { key: 'burst', labelKey: 'quality.fields.burst', type: 'number', align: 'center' },
-  { key: 'tensile', labelKey: 'quality.fields.tensile', type: 'number', align: 'center' },
+  { key: 'tensileMd', labelKey: 'quality.fields.tensileMd', type: 'number', align: 'center' },
+  { key: 'tensileCd', labelKey: 'quality.fields.tensileCd', type: 'number', align: 'center' },
   { key: 'notes', labelKey: 'common.notes' },
 ];
 
@@ -134,9 +136,9 @@ export const TECH_SHEET_FIELDS: FormField[] = [
   { key: 'specCode', labelKey: 'common.code', required: true },
   { key: 'specName', labelKey: 'common.name', required: true },
   { key: 'gsm', labelKey: 'cutter.label.gsm', type: 'number' },
-  { key: 'moisturePercent', labelKey: 'quality.fields.moisture', type: 'number' },
+  { key: 'thickness', labelKey: 'quality.fields.thickness', type: 'number' },
   { key: 'brightnessPercent', labelKey: 'quality.fields.brightness', type: 'number' },
-  { key: 'burst', labelKey: 'quality.fields.burst', type: 'number' },
-  { key: 'tensile', labelKey: 'quality.fields.tensile', type: 'number' },
+  { key: 'tensileMd', labelKey: 'quality.fields.tensileMd', type: 'number' },
+  { key: 'tensileCd', labelKey: 'quality.fields.tensileCd', type: 'number' },
   { key: 'notes', labelKey: 'common.notes', type: 'textarea' },
 ];
